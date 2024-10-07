@@ -37,7 +37,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React | Tommy Florio
+          Learn React | Thomas Florio
         </a>
       </header>
       <Form>
