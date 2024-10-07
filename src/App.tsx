@@ -37,7 +37,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React | Ryan Burtson
+          Learn React | Ryan Burtson | Levi Chen
         </a>
       </header>
       <Form>
