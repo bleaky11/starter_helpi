@@ -47,7 +47,7 @@ function App() {
         <br></br>
         <Button className="Submit-Button" onClick={handleSubmit}>Submit</Button>
       </Form>
-      {basicCareerComponent}
+      //{basicCareerComponent}
     </div>
   );
 }
