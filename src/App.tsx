@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Button, Form } from 'react-bootstrap';
-import { basicCareerComponent } from './basicCareer';
+import { HomePage } from './homepagelogo';
+//import { basicCareerComponent } from './basicCareer';
 
 //local storage and API Key: key should be entered in by the user and will be stored in local storage (NOT session storage)
 let keyData = "";
@@ -27,6 +28,7 @@ function App() {
   }
   return (
     <div className="App">
+      <HomePage></HomePage>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -47,7 +49,6 @@ function App() {
         <br></br>
         <Button className="Submit-Button" onClick={handleSubmit}>Submit</Button>
       </Form>
-      //{basicCareerComponent}
     </div>
   );
 }
