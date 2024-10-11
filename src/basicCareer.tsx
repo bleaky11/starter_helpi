@@ -1,8 +1,16 @@
+import { useState } from "react"
+import { Button } from "react-bootstrap";
 
 export function BasicCareerComponent(): JSX.Element
-{return(
+{
+    const[page, setPage] = useState<boolean>(false);
+    function changePage(): void
+    {
+        setPage(!page);
+    }
+    return(
     <div>
-        Here is the Basic Career Page!
-        <a href = "https://bleaky11.github.io/starter_helpi/"> Go to Home</a>
-    </div>)
+        <Button onClick = {changePage}>Basic Career Questions</Button>
+    </div>
+    )
 }

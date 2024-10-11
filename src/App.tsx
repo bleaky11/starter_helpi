@@ -15,6 +15,11 @@ if (prevKey !== null) {
 
 function App() {
   const [key, setKey] = useState<string>(keyData); //for api key input
+
+  interface BasicCareerComponent
+  {
+    
+  }
   
   //sets the local storage item to the api key the user inputed
   function handleSubmit() {
@@ -30,6 +35,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <HomePage></HomePage>
+        <BasicCareerComponent></BasicCareerComponent>
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
@@ -49,7 +55,6 @@ function App() {
         <br></br>
         <Button className="Submit-Button" onClick={handleSubmit}>Submit</Button>
       </Form>
-      <BasicCareerComponent></BasicCareerComponent>
     </div>
   );
 }
