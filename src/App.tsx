@@ -28,8 +28,8 @@ function App() {
   }
   return (
     <div className="App">
-      <HomePage></HomePage>
       <header className="App-header">
+        <HomePage></HomePage>
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
@@ -49,6 +49,7 @@ function App() {
         <br></br>
         <Button className="Submit-Button" onClick={handleSubmit}>Submit</Button>
       </Form>
+      <BasicCareerComponent></BasicCareerComponent>
     </div>
   );
 }
