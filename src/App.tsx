@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Button, Form } from 'react-bootstrap';
-import { BasicCareerComponent } from './basicCareer';
+import { HomePage } from './homepagelogo';
+//import { basicCareerComponent } from './basicCareer';
 
 //local storage and API Key: key should be entered in by the user and will be stored in local storage (NOT session storage)
 let keyData = "";
@@ -28,6 +29,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <HomePage></HomePage>
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
