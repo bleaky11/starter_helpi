@@ -1,5 +1,5 @@
 
-export function basicCareerComponent(): JSX.Element
+export function BasicCareerComponent(): JSX.Element
 {return(
     <div>
         Here is the Basic Career Page!
