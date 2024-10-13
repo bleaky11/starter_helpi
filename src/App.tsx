@@ -13,14 +13,32 @@ if (prevKey !== null) {
   keyData = JSON.parse(prevKey);
 }
 
+interface BasicCareer
+{
+    setVisible: (newVisibility: boolean) => void
+    visible: boolean
+}
+  
+function SwitchPage({ setVisible, visible }: BasicCareer): JSX.Element 
+{
+  const handleClick = () => 
+  {
+    setVisible(!visible)
+  };
+
+  return (
+      <div>
+          <Button onClick={handleClick}>
+            Basic Career Page
+          </Button>
+      </div>
+  );
+}
+
 function App() {
   const [key, setKey] = useState<string>(keyData); //for api key input
+  const [visible, setVisible] = useState<boolean>(false); // visibilty for accessing basic questions
 
-  interface BasicCareerComponent
-  {
-    
-  }
-  
   //sets the local storage item to the api key the user inputed
   function handleSubmit() {
     localStorage.setItem(saveKeyData, JSON.stringify(key));
@@ -35,7 +53,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <HomePage></HomePage>
-        <BasicCareerComponent></BasicCareerComponent>
+        <SwitchPage setVisible={setVisible} visible={visible}/>
+        {visible && <BasicCareerComponent></BasicCareerComponent>}
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
