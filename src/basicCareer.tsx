@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { Component, useState } from "react"
 import { Button } from "react-bootstrap";
 import { headingStyle } from "./CSS/Heading"
+import { Route } from "react-router-dom";
 
 export function BasicCareerComponent(): JSX.Element
+
 {return(
     <div>
         <h1 style={headingStyle}>Here is the Basic Career Page!</h1>

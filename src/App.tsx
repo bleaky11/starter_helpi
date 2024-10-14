@@ -4,8 +4,8 @@ import './App.css';
 import { Button, Form } from 'react-bootstrap';
 import { HomePage } from './homepagelogo';
 import { BasicCareerComponent } from './basicCareer';
-import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
 import { buttonStyle } from './CSS/Button';
+import { BrowserRouter as Routes, Route } from 'react-router-dom';
 
 //local storage and API Key: key should be entered in by the user and will be stored in local storage (NOT session storage)
 let keyData = "";
