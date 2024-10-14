@@ -10,14 +10,41 @@ export function BasicCareerComponent(): JSX.Element
 
         <h3>Question 1.</h3>
         How much noise do you mind in your work environment?
+        <p>- No noise
+        - A little noise
+        - A lot of noise
+        - I don't mind any</p>
         <h3>Question 2.</h3>
         What type of environment would you prefer to work in?
+        <p>- Office
+        - Outdoors
+        - At Home
+        - Hybrid
+        </p>
         <h3>Question 3.</h3>
         Are you interested in any STEM fields?
+        <p>
+            - Science
+            - Technology 
+            - Engineering
+            - Math 
+            - None
+        </p>
         <h3>Question 4.</h3>
         Would you be fine doing manual labor?
+        <p>
+            - Not at all
+            - Some is fine
+            - More often than not
+            - Very comfortable
+        </p>
         <h3>Question 5.</h3>
         How much would you like to interact with others?
+        <p>
+            - As little as possible
+            - Occasional interaction
+            - 
+        </p>
         <h3>Question 6.</h3>
         How comfortable are you with technology?
         <h3>Question 7.</h3>
