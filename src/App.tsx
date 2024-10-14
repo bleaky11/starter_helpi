@@ -13,31 +13,26 @@ if (prevKey !== null) {
   keyData = JSON.parse(prevKey);
 }
 
-interface BasicCareer
+interface pageProps
 {
-    setVisible: (newVisibility: boolean) => void
-    visible: boolean
+    setPage: (newPage: string) => void
+    page: string
 }
   
-function SwitchPage({ setVisible, visible }: BasicCareer): JSX.Element 
+function SwitchPage({setPage, page}: pageProps): JSX.Element 
 {
-  const handleClick = () => 
-  {
-    setVisible(!visible)
-  };
-
   return (
       <div>
-          <Button onClick={handleClick}>
-            Basic Career Page
-          </Button>
+          <Button className = "me-2" onClick={() => setPage("Home")}>Home</Button>
+          <Button className = "me-2" onClick={() => setPage("Basic Questions")}><a href = "src/basicCareer.tsx"></a>Basic Questions</Button>
+          <Button className = "me-2" onClick={() => setPage("Detailed Questions")}>Detailed Questions</Button>
       </div>
   );
 }
 
 function App() {
   const [key, setKey] = useState<string>(keyData); //for api key input
-  const [visible, setVisible] = useState<boolean>(false); // visibilty for accessing basic questions
+  const [page, setPage] = useState<string>("Home"); // visibilty for accessing basic questions
 
   //sets the local storage item to the api key the user inputed
   function handleSubmit() {
@@ -50,11 +45,14 @@ function App() {
     setKey(event.target.value);
   }
   return (
-    <div className="App">
+    <div>
+      <SwitchPage setPage = {setPage} page = {page}></SwitchPage>
+            {page === "Basic Questions" ? <BasicCareerComponent></BasicCareerComponent>:
+            null}
+      {page === "Home" ?
+      <div className="App">
       <header className="App-header">
-        <HomePage></HomePage>
-        <SwitchPage setVisible={setVisible} visible={visible}/>
-        {visible && <BasicCareerComponent></BasicCareerComponent>}
+        <HomePage />
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
@@ -70,12 +68,18 @@ function App() {
       </header>
       <Form>
         <Form.Label>API Key:</Form.Label>
-        <Form.Control type="password" placeholder="Insert API Key Here" onChange={changeKey}></Form.Control>
-        <br></br>
-        <Button className="Submit-Button" onClick={handleSubmit}>Submit</Button>
+        <Form.Control
+          type="password"
+          placeholder="Insert API Key Here"
+          onChange={changeKey}
+        ></Form.Control>
+        <br />
+        <Button className="Submit-Button" onClick={handleSubmit}>
+          Submit
+        </Button>
       </Form>
-    </div>
-  );
-}
+    </div>: null}
+  </div>
+  )}
 
 export default App;
