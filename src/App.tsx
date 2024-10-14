@@ -4,6 +4,8 @@ import './App.css';
 import { Button, Form } from 'react-bootstrap';
 import { HomePage } from './homepagelogo';
 import { BasicCareerComponent } from './basicCareer';
+import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
+import { buttonStyle } from './CSS/Button';
 
 //local storage and API Key: key should be entered in by the user and will be stored in local storage (NOT session storage)
 let keyData = "";
@@ -23,8 +25,9 @@ function SwitchPage({setPage, page}: pageProps): JSX.Element
 {
   return (
       <div>
+          <a href='src\basicCareer.tsx' style={buttonStyle}>Hi</a>
           <Button className = "me-2" onClick={() => setPage("Home")}>Home</Button>
-          <Button className = "me-2" onClick={() => setPage("Basic Questions")}><a href = "src/basicCareer.tsx"></a>Basic Questions</Button>
+          <Button className = "me-2" onClick={() => setPage("Basic Questions")}>Basic Questions</Button>
           <Button className = "me-2" onClick={() => setPage("Detailed Questions")}>Detailed Questions</Button>
       </div>
   );
