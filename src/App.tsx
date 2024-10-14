@@ -21,7 +21,7 @@ if (prevKey !== null) {
 
 function App() {
   const [key, setKey] = useState<string>(keyData); // For API key input
-  const [page, setPage] = useState<string>(""); // Visibility for accessing basic questions
+  const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
 
   // Sets the local storage item to the API key the user inputted
   function handleSubmit() {
@@ -43,40 +43,44 @@ function App() {
               <Link to="/detailed-questions" onClick={() => setPage("Detailed-Questions")}>
                 <Button>Detailed Questions</Button>
               </Link>
+              <Link to="/home" onClick = {() => setPage("Home")}>
+              <Button> Home </Button>
+              </Link>
             </nav>
             <Routes>
               <Route path="/basic-questions" element={<BasicCareerComponent/>}/>
               <Route path="/detailed-questions" element={<div>Detailed Questions</div>} />
             </Routes>
           </>
+          {page === "Home" ?
           <div className="App">
-            <header className="App-header">
-              <HomePage />
-              <img src={logo} className="App-logo" alt="logo" />
-              <p>Edit <code>src/App.tsx</code> and save to reload.</p>
-              <a
-                className="App-link"
-                href="https://reactjs.org"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Learn React | Ryan Burtson | Levi Chen | Thomas Florio | Tolu AKin
-              </a>
-            </header>
-            <Form>
-              <Form.Label>API Key:</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Insert API Key Here"
-                onChange={changeKey}
-              />
-              <br />
-              <Button className="Submit-Button" onClick={handleSubmit}>
-                Submit
-              </Button>
-            </Form>
-          </div>
-        )
+          <header className="App-header">
+            <HomePage />
+            <img src={logo} className="App-logo" alt="logo" />
+            <p>Edit <code>src/App.tsx</code> and save to reload.</p>
+            <a
+              className="App-link"
+              href="https://reactjs.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn React | Ryan Burtson | Levi Chen | Thomas Florio | Tolu AKin
+            </a>
+          </header>
+          <Form>
+            <Form.Label>API Key:</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Insert API Key Here"
+              onChange={changeKey}
+            />
+            <br />
+            <Button className="Submit-Button" onClick={handleSubmit}>
+              Submit
+            </Button>
+          </Form>
+        </div>: null}
+      )
     </Router>
   );
 }
