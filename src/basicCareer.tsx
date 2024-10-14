@@ -1,5 +1,3 @@
-import { useState } from "react"
-import { Button } from "react-bootstrap";
 
 export function BasicCareerComponent(): JSX.Element
 {return(
