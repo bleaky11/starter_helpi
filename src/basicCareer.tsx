@@ -8,25 +8,28 @@ export function BasicCareerComponent(): JSX.Element
         <h5>Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.</h5>
 
 
-        {/*  
-        Question 1.
+        <h3>Question 1.</h3>
         How much noise do you mind in your work environment?
-        Question 2.
+        <h3>Question 2.</h3>
         What type of environment would you prefer to work in?
-        Question 3.
+        <h3>Question 3.</h3>
         Are you interested in any STEM fields?
-        Question 4.
+        <h3>Question 4.</h3>
         Would you be fine doing manual labor?
-        Question 5.
-        How much teamwork 
-        Question 6.
-        Question 7.
-        Question 8.
-        Question 9.
-        Question 10.
+        <h3>Question 5.</h3>
+        How much would you like to interact with others?
+        <h3>Question 6.</h3>
+        How comfortable are you with technology?
+        <h3>Question 7.</h3>
+        What is your ideal salary range?
+        <h3>Question 8.</h3>
+        How much do you value communication skills?
+        <h3>Question 9.</h3>
+        ***************
+        <h3>Question 10.</h3>
+        ***************
         
-        
-        */}
+        <br/>
         <a href = "https://bleaky11.github.io/starter_helpi/"> Go to Home</a>
     </div>)
 }
