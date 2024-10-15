@@ -1,9 +1,9 @@
 import { headingStyle } from "./CSS/Heading";
 
-export function BasicCareerComponent(): JSX.Element {
+export function DetailedCareerComponent(): JSX.Element {
   return (
     <div>
-      <h1 style={headingStyle}>Here is the Basic Career Page!</h1>
+      <h1 style={headingStyle}>Here is the Detailed Career Page!</h1>
       <div></div>
       <h5 style={headingStyle}>
         This assessment is designed to determine an appopriate career path going
@@ -11,8 +11,8 @@ export function BasicCareerComponent(): JSX.Element {
       </h5>
       <br />
       <h5 style={headingStyle}>
-        You will be asked a series of multiple choice questions. If you're
-        looking for more in-depth questions, go to the Detailed Career Page.
+        You will be asked a series of elaborate questions that may require some
+        additional thought to answer.
       </h5>
       <br />
       <h5 style={headingStyle}>

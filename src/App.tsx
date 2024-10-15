@@ -10,6 +10,7 @@ import {
 import { Button, Form } from 'react-bootstrap';
 import { HomePage } from './homepagelogo';
 import { BasicCareerComponent } from './basicCareer';
+import { DetailedCareerComponent } from './detailedCareer';
 
 // Local storage and API Key
 let keyData = "";
@@ -49,7 +50,7 @@ function App() {
             </nav>
             <Routes>
               <Route path="/basic-questions" element={<BasicCareerComponent/>}/>
-              <Route path="/detailed-questions" element={<div>Detailed Questions</div>} />
+              <Route path="/detailed-questions" element={<DetailedCareerComponent/>} />
             </Routes>
           </>
           {page === "Home" ?
