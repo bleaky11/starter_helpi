@@ -4,6 +4,7 @@ import { borderedStyle } from "./CSS/Border";
 import { headingStyle } from "./CSS/Heading";
 import { HomePage } from "./homepagelogo";
 import logo from "./logo.svg"
+import { NotifBell } from "./notification";
 
 interface HomeComponentProps {
     page: string
@@ -15,6 +16,7 @@ export function MainPage({setPage, page}: HomeComponentProps): JSX.Element {
     return(
         <div className="App">
           <header className="App-header">
+            <NotifBell/>
             <HomePage />
             <img src={logo} className="App-logo" alt="logo" />
             <Container>
