@@ -11,6 +11,11 @@ import { Button, Form } from 'react-bootstrap';
 import { HomePage } from './homepagelogo';
 import { BasicCareerComponent } from './basicCareer';
 import { DetailedCareerComponent } from './detailedCareer';
+import { Container, Row, Col } from 'react-bootstrap'
+import { borderedStyle } from './CSS/Border';
+import { headingStyle } from './CSS/Heading';
+import { HeaderComponent } from './header';
+import { MainPage } from './home';
 
 // Local storage and API Key
 let keyData = "";
@@ -37,37 +42,13 @@ function App() {
   return (
     <Router>
           <>
-            <nav>
-              <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-                <Button>Basic Questions</Button>
-              </Link>
-              <Link to="/detailed-questions" onClick={() => setPage("Detailed-Questions")}>
-                <Button>Detailed Questions</Button>
-              </Link>
-              <Link to="/home" onClick = {() => setPage("Home")}>
-              <Button> Home </Button>
-              </Link>
-            </nav>
+          <HeaderComponent setPage={setPage} page={page} />
             <Routes>
               <Route path="/basic-questions" element={<BasicCareerComponent/>}/>
-              <Route path="/detailed-questions" element={<DetailedCareerComponent/>} />
+              <Route path="/detailed-questions" element={<DetailedCareerComponent/>}/>
+              <Route path="/" element={<MainPage setPage={setPage} page={page}/>} />
             </Routes>
           </>
-          {page === "Home" ?
-          <div className="App">
-          <header className="App-header">
-            <HomePage />
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>Edit <code>src/App.tsx</code> and save to reload.</p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React | Ryan Burtson | Levi Chen | Thomas Florio | Tolu AKin
-            </a>
-          </header>
           <Form>
             <Form.Label>API Key:</Form.Label>
             <Form.Control
@@ -80,8 +61,6 @@ function App() {
               Submit
             </Button>
           </Form>
-        </div>: null}
-      )
     </Router>
   );
 }
