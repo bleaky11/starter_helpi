@@ -1,5 +1,3 @@
-import React from "react";
-import { headingStyle } from "./CSS/Heading";
 import { Button } from "react-bootstrap";
 import { centerStyle } from "./CSS/Center";
 import { Link } from "react-router-dom";
@@ -9,7 +7,7 @@ interface HeaderComponentProps {
     setPage: (page: string) => void;
 }
 
-export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Element {
+export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Element | null {
     if(page === "Basic-Questions"){
         return(
             <div>
@@ -39,8 +37,6 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
         )
     }
     else{
-        return (
-            <h5 style={headingStyle}>Placeholder Header</h5>
-        )
+        return null 
     }
 }
