@@ -1,5 +1,3 @@
-import React from "react";
-import { headingStyle } from "./CSS/Heading";
 import { Button } from "react-bootstrap";
 import { centerStyle } from "./CSS/Center";
 import { Link } from "react-router-dom";
