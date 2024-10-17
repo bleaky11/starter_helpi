@@ -1,6 +1,6 @@
-import bell from "./Bell (1).png"
+import bell from "./bell.png"
 export function NotifBell(): JSX.Element{
     return (
-        <img src={bell} onClick={() => console.log("It works")} alt="Bell here"> </img>
+        <img src={bell} onClick={() => console.log("something else")} alt="Bell here" className="notif-bell"></img>
     )
 }

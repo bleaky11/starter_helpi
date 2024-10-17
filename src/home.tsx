@@ -16,7 +16,7 @@ export function MainPage({setPage, page}: HomeComponentProps): JSX.Element {
     return(
         <div className="App">
           <header className="App-header">
-            <NotifBell/>
+            <NotifBell />
             <HomePage />
             <img src={logo} className="App-logo" alt="logo" />
             <Container>
