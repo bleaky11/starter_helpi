@@ -9,7 +9,7 @@ interface HeaderComponentProps {
     setPage: (page: string) => void;
 }
 
-export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Element {
+export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Element | null {
     if(page === "Basic-Questions"){
         return(
             <div>
@@ -39,8 +39,6 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
         )
     }
     else{
-        return (
-            <h5 style={headingStyle}>Placeholder Header</h5>
-        )
+        return null 
     }
 }
