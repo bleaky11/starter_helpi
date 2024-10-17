@@ -1,6 +1,5 @@
 import { headingStyle } from "./CSS/Heading";
 import { backgroundStyle } from "./CSS/Background";
-import { Container } from "react-bootstrap";
 
 
 export function BasicCareerComponent(): JSX.Element {

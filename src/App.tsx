@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
 } from "react-router-dom";
 import { Button, Form } from 'react-bootstrap';
-import { HomePage } from './homepagelogo';
 import { BasicCareerComponent } from './basicCareer';
 import { DetailedCareerComponent } from './detailedCareer';
-import { Container, Row, Col } from 'react-bootstrap'
-import { borderedStyle } from './CSS/Border';
-import { headingStyle } from './CSS/Heading';
 import { HeaderComponent } from './header';
 import { MainPage } from './home';
 
