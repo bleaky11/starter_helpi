@@ -25,12 +25,14 @@ export function BasicCareerComponent(): JSX.Element {
           Before you begin, make sure you're in a comfortable environment and
           answer each question to your best ability.
         </h5>
+        <div style={{textAlign:"center"}}>
                 <h3>Question 1.</h3>
         How much noise do you mind in your work environment?
         <p>- No noise
         - A little noise
         - A lot of noise
-        - I don't mind any</p>
+        - I don't mind any
+        </p>
         <h3>Question 2.</h3>
         What type of environment would you prefer to work in?
         <p>
@@ -97,7 +99,7 @@ export function BasicCareerComponent(): JSX.Element {
             - Master's Degree
             - Doctoral Degree
         </p>
-        
+        </div>
         
         
         <br/>
