@@ -16,7 +16,8 @@ export function BasicCareerComponent(): JSX.Element
         - I don't mind any</p>
         <h3>Question 2.</h3>
         What type of environment would you prefer to work in?
-        <p>- Office
+        <p>
+        - Office
         - Outdoors
         - At Home
         - Hybrid
@@ -41,20 +42,46 @@ export function BasicCareerComponent(): JSX.Element
         <h3>Question 5.</h3>
         How much would you like to interact with others?
         <p>
+            - Strictly never
             - As little as possible
             - Occasional interaction
-            - 
+            - Fairly often
+            - All the time
         </p>
         <h3>Question 6.</h3>
         How comfortable are you with technology?
+        <p>
+            - Very Uncomfortable
+            - Slightly Uncomforable
+            - Decently Experienced
+            - Extremely Comfortable
+        </p>
         <h3>Question 7.</h3>
-        What is your ideal salary range?
+        What is your ideal annual salary?
+        <p>
+            - $30k - $50k
+            - $50k - $70k
+            - $70k - $90k
+            - $90k - $110k
+        </p>
         <h3>Question 8.</h3>
         How much do you value communication skills?
+        <p>
+            - Not important at all
+            - A fair amount
+            - A lot
+            - Extremely important
+        </p>
         <h3>Question 9.</h3>
-        ***************
-        <h3>Question 10.</h3>
-        ***************
+        What's the highest level of education you plan on taking?
+        <p>
+            - High School Diploma
+            - Bachelor's Degree
+            - Master's Degree
+            - Doctoral Degree
+        </p>
+        
+        
         
         <br/>
         <a href = "https://bleaky11.github.io/starter_helpi/"> Go to Home</a>
