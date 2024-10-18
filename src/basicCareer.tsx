@@ -6,13 +6,16 @@ export function BasicCareerComponent(): JSX.Element
 {
 
   const questions = ["Mock Question 1", "Mock Question 2", "Mock Question 3"]
+  const answers = [
+    {id: 1, label: "question-1"},
+    {id: 2, label: "question-2"},
+    {id: 3, label: "question-3"}
+  ]
 
   const [progress, setProgress] = useState<number>(0);
-  const[answer, setAnswer] = useState<string>("");
 
   function updateAnswer(event: React.ChangeEvent<HTMLInputElement>) 
   {
-    setAnswer(event.target.value);
     setProgress((prevProgress) => Math.min(prevProgress + (100 / questions.length), 100));
   }
 
@@ -50,7 +53,6 @@ export function BasicCareerComponent(): JSX.Element
                         onChange={updateAnswer} // Call updateAnswer on change
                     />
           </Form>
-          You answered {answer}!
           {questions[1]}
           <Form>
                     <Form.Check
