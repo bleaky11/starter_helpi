@@ -5,24 +5,24 @@ import { Container, Form } from "react-bootstrap";
 export function BasicCareerComponent(): JSX.Element 
 {
 
-  const questions = ["Mock Question 1", "Mock Question 2", "Mock Question 3"]
-  const answers = [
-    {id: 1, label: "question-1"},
-    {id: 2, label: "question-2"},
-    {id: 3, label: "question-3"}
+  const questions = [
+    {question: "Mock Answer #1", isAnswered: false},
+    {question: "Mock Answer #2", isAnswered: false},
+    {question: "Mock Answer #3", isAnswered: false}
   ]
 
   const [progress, setProgress] = useState<number>(0);
 
-  function updateAnswer(event: React.ChangeEvent<HTMLInputElement>) 
+  function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number) 
   {
-    setProgress((prevProgress) => Math.min(prevProgress + (100 / questions.length), 100));
+    questions[index].isAnswered = !questions[index].isAnswered;
   }
 
   return (
     <div style={backgroundStyle}>
       <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
+      
       <label htmlFor="question" style={{ marginRight: "10px" }}>
           Percent Complete: {progress.toFixed(0)}%
      </label>
@@ -43,34 +43,34 @@ export function BasicCareerComponent(): JSX.Element
         <div
           style = {{marginLeft: "30px"}}>
           <br></br>
-          {questions[0]}
+          {questions[0].question}
           <Form>
                     <Form.Check
                         type="radio"
                         label="answer"
                         name="quizAnswer"
                         value="answer" // Or some unique value
-                        onChange={updateAnswer} // Call updateAnswer on change
+                        onChange = {(event) => updateAnswer(event, 0)} // Call updateAnswer on change
                     />
           </Form>
-          {questions[1]}
+          {questions[1].question}
           <Form>
                     <Form.Check
                         type="radio"
                         label="answer"
                         name="quizAnswer"
                         value="answer" // Or some unique value
-                        onChange={updateAnswer} // Call updateAnswer on change
+                        onChange ={(event) => updateAnswer(event, 1)}  // Call updateAnswer on change
                     />
           </Form>
-          {questions[2]}
+          {questions[2].question}
           <Form>
                     <Form.Check
                         type="radio"
                         label="answer"
                         name="quizAnswer"
                         value="answer" // Or some unique value
-                        onChange={updateAnswer} // Call updateAnswer on change
+                        onChange={(event) => updateAnswer(event, 2)}  // Call updateAnswer on change
                     />
           </Form>
         </div>
