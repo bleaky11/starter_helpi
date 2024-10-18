@@ -4,12 +4,11 @@ import { Container, Form } from "react-bootstrap";
 
 export function BasicCareerComponent(): JSX.Element 
 {
-  
+
   const questions = ["Mock Question 1", "Mock Question 2", "Mock Question 3"]
 
   const [progress, setProgress] = useState<number>(0);
   const[answer, setAnswer] = useState<string>("");
-  const [isAnswered, setIsAnswered] = useState<boolean[]>(Array(questions.length).fill(false));
 
   function updateAnswer(event: React.ChangeEvent<HTMLInputElement>) 
   {
@@ -51,6 +50,7 @@ export function BasicCareerComponent(): JSX.Element
                         onChange={updateAnswer} // Call updateAnswer on change
                     />
           </Form>
+          You answered {answer}!
           {questions[1]}
           <Form>
                     <Form.Check
