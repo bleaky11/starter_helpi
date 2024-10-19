@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { borderedStyle } from "./CSS/Border";
 import { headingStyle } from "./CSS/Heading";
 import { HomePage } from "./homepagelogo";
-import logo from "./logo.svg"
 
 interface HomeComponentProps {
     page: string
@@ -16,7 +15,6 @@ export function MainPage({setPage, page}: HomeComponentProps): JSX.Element {
         <div className="App">
           <header className="App-header">
             <HomePage />
-            <img src={logo} className="App-logo" alt="logo" />
             <Container>
               <Row>
                 <Col style={borderedStyle}>

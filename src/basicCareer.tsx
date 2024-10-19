@@ -1,12 +1,12 @@
 import { headingStyle } from "./CSS/Heading";
-import { backgroundStyle } from "./CSS/Background";
+import './CSS/Background.css';
 
 
 export function BasicCareerComponent(): JSX.Element {
   
 
   return (
-    <div style={backgroundStyle}>
+    <div className="Basic">
       <div>
         <h1 style={headingStyle}>Here is the Basic Career Page!</h1>
         <div></div>

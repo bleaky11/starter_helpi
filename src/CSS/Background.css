@@ -1,0 +1,11 @@
+.Basic {
+    background: linear-gradient(to bottom, #52ACFF, #FFE32C);
+    min-height: 100vh;
+    color: white
+}
+
+.Detailed {
+    background: linear-gradient(to bottom, #52ACFF, #FFE32C);
+    min-height: 100vh;
+    color: white
+}
