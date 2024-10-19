@@ -9,6 +9,10 @@ export function BasicCareerComponent(): JSX.Element
         { text: "Mock Question #1", choices: [{ id: 1, label: "choice-1" }, { id: 2, label: "choice-2" }, { id: 3, label: "choice-3" }], selected: [false, false, false] },
         { text: "Mock Question #2", choices: [{ id: 1, label: "choice-1" }, { id: 2, label: "choice-2" }, { id: 3, label: "choice-3" }], selected: [false, false, false] },
         { text: "Mock Question #3", choices: [{ id: 1, label: "choice-1" }, { id: 2, label: "choice-2" }, { id: 3, label: "choice-3" }], selected: [false, false, false] },
+        { text: "Mock Question #4", choices: [{ id: 1, label: "choice-1" }, { id: 2, label: "choice-2" }, { id: 3, label: "choice-3" }], selected: [false, false, false] },
+        { text: "Mock Question #5", choices: [{ id: 1, label: "choice-1" }, { id: 2, label: "choice-2" }, { id: 3, label: "choice-3" }], selected: [false, false, false] },
+        { text: "Mock Question #6", choices: [{ id: 1, label: "choice-1" }, { id: 2, label: "choice-2" }, { id: 3, label: "choice-3" }], selected: [false, false, false] },
+        { text: "Mock Question #7", choices: [{ id: 1, label: "choice-1" }, { id: 2, label: "choice-2" }, { id: 3, label: "choice-3" }], selected: [false, false, false] }
       ]);
 
       function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number) 
@@ -84,7 +88,7 @@ export function BasicCareerComponent(): JSX.Element
           </Form>
           {questions[2].text}
           <Form>
-          {questions[0].choices.map((choice) =>
+          {questions[2].choices.map((choice) =>
                     <Form.Check
                     key = {choice.id}
                     type = "radio"
@@ -92,6 +96,58 @@ export function BasicCareerComponent(): JSX.Element
                     name = "basic-question"
                     value = {choice.label}
                     onChange={(event) => updateAnswer(event, 2)}
+                    >
+                    </Form.Check>)}
+          </Form>
+          {questions[3].text}
+          <Form>
+          {questions[3].choices.map((choice) =>
+                    <Form.Check
+                    key = {choice.id}
+                    type = "radio"
+                    label = {choice.label}
+                    name = "basic-question"
+                    value = {choice.label}
+                    onChange={(event) => updateAnswer(event, 3)}
+                    >
+                    </Form.Check>)}
+          </Form>
+          {questions[4].text}
+          <Form>
+          {questions[4].choices.map((choice) =>
+                    <Form.Check
+                    key = {choice.id}
+                    type = "radio"
+                    label = {choice.label}
+                    name = "basic-question"
+                    value = {choice.label}
+                    onChange={(event) => updateAnswer(event, 4)}
+                    >
+                    </Form.Check>)}
+          </Form>
+          {questions[5].text}
+          <Form>
+          {questions[5].choices.map((choice) =>
+                    <Form.Check
+                    key = {choice.id}
+                    type = "radio"
+                    label = {choice.label}
+                    name = "basic-question"
+                    value = {choice.label}
+                    onChange={(event) => updateAnswer(event, 5)}
+                    >
+                    </Form.Check>)}
+          </Form>
+          {questions[6].text}
+          <Form>
+          {questions[6].choices.map((choice) =>
+                    <Form.Check
+                    key = {choice.id}
+                    type = "radio"
+                    label = {choice.label}
+                    name = "basic-question"
+                    value = {choice.label}
+                    onChange={(event) => updateAnswer(event, 6)}
                     >
                     </Form.Check>)}
           </Form>
