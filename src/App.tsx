@@ -22,6 +22,7 @@ if (prevKey !== null) {
 function App() {
   const [key, setKey] = useState<string>(keyData); // For API key input
   const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
+  const [basicComplete, toggleBasic] = useState<boolean>(false)// To track basic question completion
 
   // Sets the local storage item to the API key the user inputted
   function handleSubmit() {
@@ -38,9 +39,9 @@ function App() {
           <>
           <HeaderComponent setPage={setPage} page={page} />
             <Routes>
-              <Route path="/basic-questions" element={<BasicCareerComponent/>}/>
+              <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}/>}/>
               <Route path="/detailed-questions" element={<DetailedCareerComponent/>}/>
-              <Route path="/" element={<MainPage setPage={setPage} page={page}/>} />
+              <Route path="/" element={<MainPage setPage={setPage} page={page} basicComplete={basicComplete}/>} />
             </Routes>
           </>
           <Form>

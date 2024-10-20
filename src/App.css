@@ -27,9 +27,7 @@
 .notif-bar {
   display: flex;
   justify-content: flex-end;
-  padding-top: 50px;
   position: absolute;
-  padding-right: 5px;
   outline: auto;
   outline-width: 100px;
 }

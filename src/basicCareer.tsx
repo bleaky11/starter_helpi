@@ -1,11 +1,19 @@
 import { headingStyle } from "./CSS/Heading";
 import { backgroundStyle } from "./CSS/Background";
+import { Button } from "react-bootstrap";
+
+export interface submitButton{ // Interface for keeping track of Basic Question Completion
+  basicComplete: boolean;
+  toggleBasic: (notBasic: boolean) => void;
+}
+function BasicSubmit({basicComplete, toggleBasic}: submitButton): JSX.Element {
+  return(<div>
+    <Button onClick={() => toggleBasic(!basicComplete)}>Submit</Button>
+  </div>)
+}
 
 
-
-export function BasicCareerComponent(): JSX.Element {
-  
-
+export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton): JSX.Element {
   return (
     <div style={backgroundStyle}>
       <div>
@@ -99,6 +107,7 @@ export function BasicCareerComponent(): JSX.Element {
             - Master's Degree
             - Doctoral Degree
         </p>
+          <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}></BasicSubmit>
         </div>
         
         

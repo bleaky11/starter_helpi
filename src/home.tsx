@@ -9,14 +9,14 @@ import { NotifBell } from "./notification";
 interface HomeComponentProps {
     page: string
     setPage: (page: string) => void;
+    basicComplete: boolean
 }
 
-
-export function MainPage({setPage, page}: HomeComponentProps): JSX.Element {
+export function MainPage({setPage, page, basicComplete}: HomeComponentProps): JSX.Element {
     return(
         <div className="App">
           <header className="App-header">
-            <NotifBell />
+            <NotifBell basicComplete={basicComplete}></NotifBell>
             <HomePage />
             <img src={logo} className="App-logo" alt="logo" />
             <Container>
