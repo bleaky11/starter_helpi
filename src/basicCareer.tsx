@@ -1,6 +1,7 @@
 import { backgroundStyle } from "./CSS/Background";
 import { useState } from "react";
 import { Container, Form } from "react-bootstrap";
+import { progressBar } from "./CSS/Elements";
 
 export function BasicCareerComponent(): JSX.Element {
   const [progress, setProgress] = useState<number>(0);
