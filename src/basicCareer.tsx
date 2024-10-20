@@ -1,7 +1,6 @@
 import { backgroundStyle } from "./CSS/Background";
 import { useState } from "react";
 import { Container, Form } from "react-bootstrap";
-import { progressBar } from "./CSS/Elements";
 
 export function BasicCareerComponent(): JSX.Element {
   const [progress, setProgress] = useState<number>(0);
@@ -54,7 +53,7 @@ export function BasicCareerComponent(): JSX.Element {
             </p>
           </Container>
         </div>
-        <div style={{ marginLeft: "30px"}}>
+        <div style={{ marginLeft: "100px"}}>
           <br />
           {questions.map((question, index) => (
             <div key={index}>
