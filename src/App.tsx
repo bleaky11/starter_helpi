@@ -10,6 +10,7 @@ import { BasicCareerComponent } from './basicCareer';
 import { DetailedCareerComponent } from './detailedCareer';
 import { HeaderComponent } from './header';
 import { MainPage } from './home';
+import './CSS/Header-Footer.css'
 
 // Local storage and API Key
 let keyData = "";
@@ -43,8 +44,8 @@ function App() {
               <Route path="/" element={<MainPage setPage={setPage} page={page}/>} />
             </Routes>
           </>
-          <Form>
-            <Form.Label>API Key:</Form.Label>
+          <Form className='Background'>
+            <Form.Label style={{color: "white"}}>API Key:</Form.Label>
             <Form.Control
               type="password"
               placeholder="Insert API Key Here"
