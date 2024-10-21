@@ -13,6 +13,31 @@
   }
 }
 
+.container {
+  display: flex;
+  justify-content: flex-end;  /* Pushes the image to the right */
+  align-items: center;        /* Optional: vertically center the image */
+  height: 10%;              /* Full viewport height */
+  padding-right: 10px;        /* Adjust space between the image and screen edge */
+}
+.testing{
+  position: absolute;
+}
+
+.notif-bar {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  outline: auto;
+  height: 100px;
+  outline-width: 100px;
+}
+
+.notif-bell{
+  width: 50px;
+  position: absolute;
+}
+
 .App-header {
   min-height: 100vh;
   display: flex;

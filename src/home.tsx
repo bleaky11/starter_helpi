@@ -3,17 +3,20 @@ import { Link } from "react-router-dom";
 import { borderedStyle } from "./CSS/Border";
 import { headingStyle } from "./CSS/Heading";
 import { HomePage } from "./homepagelogo";
+import { NotifBell } from "./notification";
 
 interface HomeComponentProps {
     page: string
     setPage: (page: string) => void;
+    basicComplete: boolean
+    detailedComplete: boolean
 }
 
-
-export function MainPage({setPage, page}: HomeComponentProps): JSX.Element {
+export function MainPage({setPage, page, basicComplete, detailedComplete}: HomeComponentProps): JSX.Element {
     return(
         <div className="App">
           <header className="App-header">
+            <NotifBell basicComplete={basicComplete} detailedComplete={detailedComplete}></NotifBell>
             <HomePage />
             <Container>
               <Row>

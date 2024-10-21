@@ -1,6 +1,17 @@
+import { Button } from "react-bootstrap";
 import { headingStyle } from "./CSS/Heading";
 
-export function DetailedCareerComponent(): JSX.Element {
+export interface submitButton{ // Interface for keeping track of Basic Question Completion
+  detailedComplete: boolean;
+  toggleDetailed: (notDetailed: boolean) => void;
+}
+function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element {
+  return(<div>
+    <Button onClick={() => toggleDetailed(!detailedComplete)}>Submit</Button>
+  </div>)
+}
+
+export function DetailedCareerComponent({detailedComplete, toggleDetailed}: submitButton): JSX.Element {
   return (
     <div className="Detailed">
       <div>
@@ -21,6 +32,7 @@ export function DetailedCareerComponent(): JSX.Element {
           answer each question to your best ability.
         </h5>
       </div>
+      <DetailedSubmit detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}></DetailedSubmit>
     </div>
   );
 }

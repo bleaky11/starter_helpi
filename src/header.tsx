@@ -10,7 +10,7 @@ interface HeaderComponentProps {
 export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Element | null {
     if(page === "Basic-Questions"){
         return(
-            <div className='Background'>
+            <div className='Header'>
                 <nav style={centerStyle}>
                     <Link to="/">
                         <Button onClick={() => setPage("Home")}>Home</Button>
