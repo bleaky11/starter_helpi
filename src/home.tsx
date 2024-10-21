@@ -13,7 +13,8 @@ interface HomeComponentProps {
     detailedComplete: boolean
 }
 
-export function MainPage({setPage, page, basicComplete, detailedComplete}: HomeComponentProps): JSX.Element {
+export function MainPage({setPage, page, basicComplete, detailedComplete}: HomeComponentProps): JSX.Element 
+{
     return(
         <div className="App">
           <header className="App-header">
