@@ -1,7 +1,7 @@
 import { backgroundStyle } from "./CSS/Background";
 import { useState } from "react";
-import { Container, Form } from "react-bootstrap";
 import { FormCheckType } from "react-bootstrap/esm/FormCheck";
+import { Button, Container, Form } from "react-bootstrap";
 
 export function BasicCareerComponent(): JSX.Element {
   const [progress, setProgress] = useState<number>(0);
@@ -82,6 +82,12 @@ export function BasicCareerComponent(): JSX.Element {
             </div>
           ))}
         </div>
+        <div style={{ marginLeft: "1350px"}}>
+    <Button style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button> 
+    <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => alert("Thanks for completing the Basic Career quiz!")}>
+        Submit
+    </Button>
+</div>
       </div>
     </div>
   );
