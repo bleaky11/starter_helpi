@@ -29,6 +29,7 @@
   justify-content: flex-end;
   position: absolute;
   outline: auto;
+  height: 100px;
   outline-width: 100px;
 }
 

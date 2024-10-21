@@ -1,22 +1,23 @@
 import { useState } from "react"
-
 import bell from "./bell.png"
 
 export interface submitButton{ // Interface for keeping track of Basic Question Completion
     basicComplete: boolean;
+    detailedComplete: boolean;
 }
 
-export function NotifBell({basicComplete}: submitButton): JSX.Element{
+export function NotifBell({basicComplete, detailedComplete}: submitButton): JSX.Element{
     const [notifBar, toggleBar] = useState<boolean>(false);
-    // const [detailedComplete, toggleDetailed] = useState<boolean>(false);
-    function toggleNotif(): void{
+    function basicToggle(): void{
         toggleBar(!notifBar);
-        console.log(basicComplete)
     }
     return (<div className="container">
         <div>
-            <img src={bell} onClick={toggleNotif} alt="Bell here" className="notif-bell"></img>
+            <img src={bell} onClick={basicToggle} alt="Bell here" className="notif-bell"></img>
         </div>
-        {(basicComplete)? (notifBar && <div className="notif-bar">Basic Questions are complete!</div>) : notifBar && <div className="notif-bar">No questions finished yet</div>}
+        {(basicComplete && detailedComplete)? (notifBar && <div className="notif-bar">Basic Questions are complete! <br></br> Detailed Questions are complete!</div>) :
+        ((basicComplete && !detailedComplete)? (notifBar && <div className="notif-bar">Basic Questions are complete!</div>) :
+        ((detailedComplete && !basicComplete)?  (notifBar && <div className="notif-bar">Detailed Questions are complete!</div> ): (notifBar && <div className="notif-bar">No questions finished yet</div>)))}
+
     </div>)
 }

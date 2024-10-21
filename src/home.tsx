@@ -10,13 +10,14 @@ interface HomeComponentProps {
     page: string
     setPage: (page: string) => void;
     basicComplete: boolean
+    detailedComplete: boolean
 }
 
-export function MainPage({setPage, page, basicComplete}: HomeComponentProps): JSX.Element {
+export function MainPage({setPage, page, basicComplete, detailedComplete}: HomeComponentProps): JSX.Element {
     return(
         <div className="App">
           <header className="App-header">
-            <NotifBell basicComplete={basicComplete}></NotifBell>
+            <NotifBell basicComplete={basicComplete} detailedComplete={detailedComplete}></NotifBell>
             <HomePage />
             <img src={logo} className="App-logo" alt="logo" />
             <Container>
