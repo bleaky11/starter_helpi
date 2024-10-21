@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { Button } from "react-bootstrap";
 import { backgroundStyle } from "./CSS/Background";
 import { headingStyle } from "./CSS/Heading";
 
-export function DetailedCareerComponent(): JSX.Element {
+export interface submitButton{ // Interface for keeping track of Basic Question Completion
+  detailedComplete: boolean;
+  toggleDetailed: (notDetailed: boolean) => void;
+}
+function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element {
+  return(<div>
+    <Button onClick={() => toggleDetailed(!detailedComplete)}>Submit</Button>
+  </div>)
+}
 
-  const [answerStatus, setAnswer] = useState<boolean[]>([false, false,false,false,false,false,false,false]);
-
-  function changeAnswer(questNum: number) {
-      
-  } 
-  
+export function DetailedCareerComponent({detailedComplete, toggleDetailed}: submitButton): JSX.Element {
   return (
     <div style={backgroundStyle}>
       <div>
@@ -45,6 +48,7 @@ export function DetailedCareerComponent(): JSX.Element {
 
         </div>
       </div>
+      <DetailedSubmit detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}></DetailedSubmit>
     </div>
   );
 }
