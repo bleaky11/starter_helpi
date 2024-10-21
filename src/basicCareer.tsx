@@ -1,35 +1,48 @@
 import { backgroundStyle } from "./CSS/Background";
 import { useState } from "react";
 import { Container, Form } from "react-bootstrap";
+import { FormCheckType } from "react-bootstrap/esm/FormCheck";
 
 export function BasicCareerComponent(): JSX.Element {
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState([
-    { text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, {id: 4, label: "I don't mind any"}], selected: [false, false, false] },
-    { text: "What type of environment would you prefer to work in?", type: "radio", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, {id: 4, label: "Hybrid" }], selected: [false, false, false] },
-    { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" } ], selected: [false, false, false] },
+    { text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, {id: 4, label: "I don't mind any"}], selected: [false, false, false, false] },
+    { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, {id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
+    { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" } ], selected: [false, false, false, false, false]},
     { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Some is fine" }, { id: 3, label: "More often than not" }, { id: 4, label: "Very comfortable" }], selected: [false, false, false] },
     { text: "How much would you like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasional interaction" },{ id: 4, label: "Fairly often" }, { id: 5, label: "All the time" } ], selected: [false, false, false] },
     { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, {id: 4, label: "Extrmemely comfortable"}], selected: [false, false, false] },
     { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, {id: 4, label: "$90k - $110k"}], selected: [false, false, false] },
     { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "A fair amount" }, { id: 3, label: "A lot" }, {id: 4, label: "Extremely important"}], selected: [false, false, false] },
-    { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, {id: 4, label: "Doctoral Degree"}], selected: [false, false, false] }
+    { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, {id: 4, label: "Doctoral Degree"}], selected: [false, false, false]}
   ]);
 
-  function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number) {
+  function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number, selectIndex: number) 
+  {
     const updatedQuestions = [...questions];
 
-    if (updatedQuestions[index].selected.every((isSelected) => isSelected === false)) {
-      updatedQuestions[index].selected = updatedQuestions[index].selected.map(() => true);
+    if (updatedQuestions[index].type === "radio") 
+    {
+      updatedQuestions[index].selected = updatedQuestions[index].selected.map((_, i) => i === selectIndex); //returns true or false
       setQuestions(updatedQuestions);
-      updateProgress(index);
-    } else {
-      setQuestions(updatedQuestions); // Still need to update state for other UI updates
+      updateProgress(updatedQuestions); 
+    } 
+    else 
+    {
+      updatedQuestions[index].selected[selectIndex] = event.target.checked; //checkbox logic
+      setQuestions(updatedQuestions);
+      updateProgress(updatedQuestions); 
     }
   }
 
-  function updateProgress(index: number): void {
-    setProgress((prevProgress) => Math.min(prevProgress + (100 / questions.length), 100));
+  function updateProgress(updatedQuestions: typeof questions): void 
+  {
+    const totalQuestions = updatedQuestions.length;
+    const answeredQuestions = updatedQuestions.filter((question) =>
+      question.selected.some((isSelected) => isSelected === true)
+    ).length;
+    const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+    setProgress(progressPercentage);
   }
 
   return (
@@ -49,7 +62,7 @@ export function BasicCareerComponent(): JSX.Element {
               This assessment is designed to determine an appropriate career path going forward.
               You will be asked a series of multiple choice questions. If you're looking for more
               in-depth questions, go to the Detailed Career Page. Before you begin, make sure you're
-              in a comfortable environment and answer each question to the best ability of your ability.
+              in a comfortable environment and answer each question to the best of your ability.
             </p>
           </Container>
         </div>
@@ -59,14 +72,15 @@ export function BasicCareerComponent(): JSX.Element {
             <div key={index}>
               <b>{question.text}</b>
               <Form>
-                {question.choices.map((choice) => (
+                {question.choices.map((choice, selectIndex) => (
                   <Form.Check
                     key={choice.id}
-                    type="radio"
+                    type={question.type as FormCheckType}
                     label={choice.label}
                     name={`basic-question-${index}`} // Unique name for each question
-                    value={choice.label}
-                    onChange={(event) => updateAnswer(event, index)}
+                    value={choice.id}
+                    checked={question.selected[selectIndex]} // Keep track of selected state
+                    onChange={(event) => updateAnswer(event, index, selectIndex)}
                   />
                 ))}
               </Form>
