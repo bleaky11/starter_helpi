@@ -11,12 +11,6 @@ export function Submit({basicComplete, toggleBasic}: submitButton){
     toggleBasic(!basicComplete);
     alert("Thanks for completing the Basic Career quiz!");
 }
-function BasicSubmit({basicComplete, toggleBasic}: submitButton): JSX.Element {
-  return(<div>
-    <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => Submit(basicComplete, toggleBasic)}>Submit</Button>
-  </div>)
-}
-
 
 export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton): JSX.Element {
   const [progress, setProgress] = useState<number>(0);
@@ -32,6 +26,12 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, {id: 4, label: "Doctoral Degree"}], selected: [false, false, false, false] }
   ]);
 
+  function BasicSubmit({basicComplete, toggleBasic}: submitButton): JSX.Element {
+    return(<div>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => Submit({basicComplete, toggleBasic})}>Submit</Button>
+    </div>)
+  }
+  
   function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number, selectIndex: number) {
     const updatedQuestions = [...questions];
 
@@ -98,9 +98,8 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
         </div>
         <div style={{ marginLeft: "1350px"}}>
     <Button style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button> 
-    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}><BasicSubmit>
-        Submit
-    </Button>
+    <Button><BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
+        Submit</Button>
 </div>
       </div>
     </div>
