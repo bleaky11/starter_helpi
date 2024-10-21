@@ -3,7 +3,22 @@ import { useState } from "react";
 import { FormCheckType } from "react-bootstrap/esm/FormCheck";
 import { Button, Container, Form } from "react-bootstrap";
 
-export function BasicCareerComponent(): JSX.Element {
+export interface submitButton{ // Interface for keeping track of Basic Question Completion
+  basicComplete: boolean;
+  toggleBasic: (notBasic: boolean) => void;
+}
+export function Submit({basicComplete, toggleBasic}: submitButton){
+    toggleBasic(!basicComplete);
+    alert("Thanks for completing the Basic Career quiz!");
+}
+function BasicSubmit({basicComplete, toggleBasic}: submitButton): JSX.Element {
+  return(<div>
+    <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => Submit(basicComplete, toggleBasic)}>Submit</Button>
+  </div>)
+}
+
+
+export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton): JSX.Element {
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState([
     { text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, {id: 4, label: "I don't mind any"}], selected: [false, false, false, false] },
@@ -39,7 +54,6 @@ export function BasicCareerComponent(): JSX.Element {
     const progressPercentage = (answeredQuestions / totalQuestions) * 100;
     setProgress(progressPercentage);
   }
-
   return (
     <div style={backgroundStyle}>
       <div>
@@ -84,7 +98,7 @@ export function BasicCareerComponent(): JSX.Element {
         </div>
         <div style={{ marginLeft: "1350px"}}>
     <Button style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button> 
-    <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => alert("Thanks for completing the Basic Career quiz!")}>
+    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}><BasicSubmit>
         Submit
     </Button>
 </div>
