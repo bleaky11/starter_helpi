@@ -24,7 +24,7 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
     }
     else if(page === "Detailed-Questions"){
         return(
-            <div>
+            <div className="Header">
                 <nav style={centerStyle}>
                     <Link to="/">
                         <Button onClick={() => setPage("Home")}>Home</Button>

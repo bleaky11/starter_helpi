@@ -98,8 +98,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
         </div>
         <div style={{ marginLeft: "1350px"}}>
     <Button style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button> 
-    <Button><BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
-        Submit</Button>
+    <Button><BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/></Button>
 </div>
       </div>
     </div>

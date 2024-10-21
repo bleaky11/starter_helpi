@@ -1,5 +1,6 @@
 import { Button } from "react-bootstrap";
 import { headingStyle } from "./CSS/Heading";
+import './CSS/Background.css';
 
 export interface submitButton{ // Interface for keeping track of Basic Question Completion
   detailedComplete: boolean;

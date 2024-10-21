@@ -5,7 +5,7 @@
 }
 
 .Detailed {
-    background: linear-gradient(to bottom, #52ACFF, #FFE32C);
+    background: linear-gradient(to bottom, blue, gold);
     min-height: 100vh;
     color: white
 }
