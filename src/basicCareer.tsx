@@ -1,5 +1,5 @@
 import { backgroundStyle } from "./CSS/Background";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormCheckType } from "react-bootstrap/esm/FormCheck";
 import { Button, Container, Form } from "react-bootstrap";
 
@@ -12,8 +12,7 @@ export function Submit({basicComplete, toggleBasic}: submitButton){
     alert("Thanks for completing the Basic Career quiz!");
 }
 
-export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton): JSX.Element 
-{
+export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton): JSX.Element {
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState([
     { text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, {id: 4, label: "I don't mind any"}], selected: [false, false, false, false] },
@@ -26,7 +25,30 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
     { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "A fair amount" }, { id: 3, label: "A lot" }, {id: 4, label: "Extremely important"}], selected: [false, false, false, false] },
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, {id: 4, label: "Doctoral Degree"}], selected: [false, false, false, false] }
   ]);
-  
+
+  useEffect(() => 
+    {
+    const savedProgress = localStorage.getItem("quizProgress");
+    const savedAnswers = localStorage.getItem("quizAnswers");
+    if (savedProgress) 
+    {
+      setProgress(JSON.parse(savedProgress));
+    }
+    else
+    {
+      setProgress(0);
+    }
+    if (savedAnswers) 
+    {
+      setQuestions(JSON.parse(savedAnswers));
+    }
+  }, []);
+
+  const handleSave = () => {
+  localStorage.setItem("quizProgress", JSON.stringify(progress));
+  localStorage.setItem("quizAnswers", JSON.stringify(questions));
+  }
+
   function BasicSubmit({basicComplete, toggleBasic}: submitButton): JSX.Element {
     return(<div>
       <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => Submit({basicComplete, toggleBasic})}>Submit</Button>
@@ -55,56 +77,6 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
     const progressPercentage = (answeredQuestions / totalQuestions) * 100;
     setProgress(progressPercentage);
   }
-
-  const [save, setSave] = useState<JSX.Element>(
-    <div style={backgroundStyle}>
-      <div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
-          <label htmlFor="question" style={{ marginRight: "10px" }}>
-            Percent Complete: {progress.toFixed(0)}%
-          </label>
-          <progress id="question" value={progress} max="100" />
-        </div>
-        <h1 style={{ textAlign: "center" }}>Here is the Basic Career Page!</h1>
-        <br />
-        <div>
-          <Container style={{ border: "2px solid red" }}>
-            <p>
-              This assessment is designed to determine an appropriate career path going forward.
-              You will be asked a series of multiple choice questions. If you're looking for more
-              in-depth questions, go to the Detailed Career Page. Before you begin, make sure you're
-              in a comfortable environment and answer each question to the best of your ability.
-            </p>
-          </Container>
-        </div>
-        <div style={{ marginLeft: "100px"}}> {/* Add styles as needed */}
-          <br />
-          {questions.map((question, index) => (
-            <div key={index}>
-              <b>{question.text}</b>
-              <Form>
-                {question.choices.map((choice, selectIndex) => (
-                  <Form.Check
-                    key={choice.id}
-                    type={question.type as FormCheckType}
-                    label={choice.label}
-                    name={`basic-question-${index}`} // Unique name for each question
-                    value={choice.id}
-                    checked={question.selected[selectIndex]} // Keep track of selected state
-                    onChange={(event) => updateAnswer(event, index, selectIndex)}
-                  />
-                ))}
-              </Form>
-            </div>
-          ))}
-          <div style = {{display: "flex", float: "right"}}>
-    <Button onClick = {() => setSave(save)} style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button>
-    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
-    </div>
-        </div>
-</div>
-</div>
-  );
   return (
     <div style={backgroundStyle}>
       <div>
@@ -146,13 +118,13 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
               </Form>
             </div>
           ))}
-          <div style = {{display: "flex", float: "right"}}>
-    <Button onClick = {() => setSave(save)} style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button>
-    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
-    {save}
-    </div>
         </div>
+        <div style={{ marginLeft: "1350px"}}>
+    <Button onClick = {handleSave} style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button> 
+    <Button><BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
+        Submit</Button>
 </div>
-</div>
-);
+      </div>
+    </div>
+  );
 }
