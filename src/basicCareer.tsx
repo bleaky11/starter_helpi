@@ -58,10 +58,10 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
     <div className="Basic">
       <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
-          <label htmlFor="question" style={{ marginRight: "10px" }}>
+          <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px"}}>
             Percent Complete: {progress.toFixed(0)}%
           </label>
-          <progress id="question" value={progress} max="100" />
+          <progress id="question" value={progress} max="100" style={{height: "45px", width: "300px"}} />
         </div>
         <h1 style={{ textAlign: "center" }}>Here is the Basic Career Page!</h1>
         <br />
