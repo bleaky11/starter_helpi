@@ -44,7 +44,7 @@ function App() {
             <Routes>
               <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic} count = {count} setCount = {setCount} savedCareer= {savedCareer} setCareer={setCareer}/>}/>
               <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
-              <Route path="/" element={<MainPage setPage={setPage} page={page} basicComplete={basicComplete} detailedComplete={detailedComplete}/>} />
+              <Route path="/" element={<MainPage setPage={setPage} count = {count} page={page} basicComplete={basicComplete} detailedComplete={detailedComplete}/>} />
             </Routes>
           </>
           <Form>

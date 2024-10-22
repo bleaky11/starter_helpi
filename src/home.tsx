@@ -5,16 +5,17 @@ import { headingStyle } from "./CSS/Heading";
 import { HomePage } from "./homepagelogo";
 import logo from "./logo.svg";
 import { NotifBell } from "./notification";
-import { saveButton } from "./basicCareer";
+import { BasicCareerComponent } from "./basicCareer";
 
 interface HomeComponentProps {
     page: string;
     setPage: (page: string) => void;
     basicComplete: boolean;
     detailedComplete: boolean;
+    count: number;  // Add count here directly
 }
 
-export function MainPage({ setPage, page, basicComplete, detailedComplete }: HomeComponentProps, {count}: saveButton): JSX.Element {
+export function MainPage({ setPage, page, basicComplete, detailedComplete, count }: HomeComponentProps): JSX.Element {
 
     return (
         <div className="App">
@@ -30,9 +31,17 @@ export function MainPage({ setPage, page, basicComplete, detailedComplete }: Hom
                                 You will be asked a series of multiple-choice questions. If you're looking for more in-depth questions and results, go to the Detailed Career Page. Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.
                             </h6>
                             <nav>
+                                {count === 0 ?
                                 <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-                                    <Button aria-label="Start Basic Questions">Basic Questions</Button>
+                                <Button aria-label="Basic Questions">Basic Questions</Button>
                                 </Link>
+                                :count > 0 ? (
+                                    <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+                                    <Button aria-label="Basic Questions">Basic Questions (Last Save)</Button>
+                                    </Link>
+                             ) : (
+                            null
+                            )}
                             </nav>
                         </Col>
                         <Col style={borderedStyle}>
@@ -48,20 +57,7 @@ export function MainPage({ setPage, page, basicComplete, detailedComplete }: Hom
                         </Col>
                     </Row>
                 </Container>
-                <nav>
-  {count > 0 ? (
-    <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-      <Button aria-label="See Saved Progress!">See Saved Progress!</Button>
-    </Link>
-  ) : (
-    <p>You must complete the basic quiz to view saved progress!</p>
-  )}
-</nav>
-
-            <div style = {{color: "yellow"}}>{count}</div>
             </header>
         </div>
     );
 }
-
-
