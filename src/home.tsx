@@ -49,7 +49,7 @@ export function MainPage({ setPage, page, basicComplete, detailedComplete }: Hom
                     </Row>
                 </Container>
                 <nav>
-                     {!count ? (
+                     {count !== 0 ? (
                         <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
                         <Button aria-label="See Saved Progress!">See Saved Progress!</Button>
                         </Link>
