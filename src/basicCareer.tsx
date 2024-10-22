@@ -7,12 +7,15 @@ export interface submitButton{ // Interface for keeping track of Basic Question 
   basicComplete: boolean;
   toggleBasic: (notBasic: boolean) => void;
 }
-export function Submit({basicComplete, toggleBasic}: submitButton){
-    toggleBasic(!basicComplete);
-    alert("Thanks for completing the Basic Career quiz!");
+
+export interface saveButton
+{
+  savedCareer: string
+  setCareer: (newState: string) => void;
 }
 
-export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton): JSX.Element {
+export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, setCareer}: submitButton & saveButton): JSX.Element 
+{
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState([
     { text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, {id: 4, label: "I don't mind any"}], selected: [false, false, false, false] },
@@ -26,8 +29,28 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, {id: 4, label: "Doctoral Degree"}], selected: [false, false, false, false] }
   ]);
 
-  useEffect(() => 
+  function handleSave()
+  {
+    localStorage.setItem("quizProgress", JSON.stringify(progress));
+    localStorage.setItem("quizAnswers", JSON.stringify(questions));
+  }
+
+  function handleSubmit({basicComplete, toggleBasic}: submitButton)
+  {
+    toggleBasic(!basicComplete);
+    handleSave();
+    if (questions.some(question => question.selected.some(selected => selected))) 
     {
+      setCareer("quizAnswers");
+    } 
+    else 
+    {
+      setCareer("");
+    }
+    alert("Thanks for completing the Basic Career quiz!");
+  }
+
+  useEffect(() => {
     const savedProgress = localStorage.getItem("quizProgress");
     const savedAnswers = localStorage.getItem("quizAnswers");
     if (savedProgress) 
@@ -38,22 +61,33 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
     {
       setProgress(0);
     }
-    if (savedAnswers) 
-    {
+    if (savedAnswers) {
       setQuestions(JSON.parse(savedAnswers));
     }
   }, []);
 
-  const handleSave = () => {
-  localStorage.setItem("quizProgress", JSON.stringify(progress));
-  localStorage.setItem("quizAnswers", JSON.stringify(questions));
-  }
-
   function BasicSubmit({basicComplete, toggleBasic}: submitButton): JSX.Element {
     return(<div>
-      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => Submit({basicComplete, toggleBasic})}>Submit</Button>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => handleSubmit({basicComplete, toggleBasic})}>Submit</Button>
     </div>)
   }
+
+  function BasicSave({savedCareer, setCareer }: saveButton): JSX.Element 
+  {
+      const savedAnswers = localStorage.getItem("quizAnswers");
+      const savedProgress = localStorage.getItem("quizProgress");
+      if (savedAnswers) {
+        setCareer("quizAnswers");
+      } else if (savedProgress) {
+        setCareer("quizProgress");
+      } else {
+        setCareer("");
+      }
+    return(<div>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100}>Submit</Button>
+    </div>)
+  }
+
   
   function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number, selectIndex: number) {
     const updatedQuestions = [...questions];
@@ -120,9 +154,10 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
           ))}
         </div>
         <div style={{ marginLeft: "1350px"}}>
-    <Button onClick = {handleSave} style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button> 
-    <Button><BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
-        Submit</Button>
+    <div style = {{display: "flex", float: "right"}}>
+    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
+    <BasicSave savedCareer= {savedCareer} setCareer={setCareer}></BasicSave>
+    </div>
 </div>
       </div>
     </div>
