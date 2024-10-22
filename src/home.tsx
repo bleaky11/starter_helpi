@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { borderedStyle } from "./CSS/Border";
@@ -6,6 +5,7 @@ import { headingStyle } from "./CSS/Heading";
 import { HomePage } from "./homepagelogo";
 import logo from "./logo.svg";
 import { NotifBell } from "./notification";
+import { saveButton } from "./basicCareer";
 
 interface HomeComponentProps {
     page: string;
@@ -14,7 +14,7 @@ interface HomeComponentProps {
     detailedComplete: boolean;
 }
 
-export function MainPage({ setPage, page, basicComplete, detailedComplete }: HomeComponentProps): JSX.Element {
+export function MainPage({ setPage, page, basicComplete, detailedComplete }: HomeComponentProps, {count}: saveButton): JSX.Element {
 
     return (
         <div className="App">
@@ -48,6 +48,15 @@ export function MainPage({ setPage, page, basicComplete, detailedComplete }: Hom
                         </Col>
                     </Row>
                 </Container>
+                <nav>
+                     {!count ? (
+                        <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+                        <Button aria-label="See Saved Progress!">See Saved Progress!</Button>
+                        </Link>
+                     ) : (
+                        <p>You must complete the basic quiz to view saved progress!</p>
+                     )}
+                    </nav>
             </header>
         </div>
     );

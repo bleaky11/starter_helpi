@@ -12,9 +12,11 @@ export interface saveButton
 {
   savedCareer: string
   setCareer: (newState: string) => void;
+  count: number
+  setCount: (clicks: number) => void;
 }
 
-export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, setCareer}: submitButton & saveButton): JSX.Element 
+export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, setCareer, count, setCount}: submitButton & saveButton): JSX.Element 
 {
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState([
@@ -33,6 +35,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
   {
     localStorage.setItem("quizProgress", JSON.stringify(progress)); //keep track of question and progress states
     localStorage.setItem("quizAnswers", JSON.stringify(questions));
+    setCount(count + 1);
   }
 
   function handleSubmit({basicComplete, toggleBasic}: submitButton)
@@ -65,7 +68,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
     </div>)
   }
 
-  function BasicSave({savedCareer, setCareer }: saveButton): JSX.Element 
+  function BasicSave({savedCareer, setCareer}: saveButton): JSX.Element 
   {
     return(<div>
       <Button onClick = {handleSave} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
@@ -138,7 +141,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
         </div>
         <div style={{ marginLeft: "1350px"}}>
     <div style = {{display: "flex", float: "right"}}>
-    <BasicSave savedCareer= {savedCareer} setCareer={setCareer}></BasicSave>
+    <BasicSave count = {count} setCount = {setCount} savedCareer= {savedCareer} setCareer={setCareer}></BasicSave>
     <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
     </div>
 </div>
