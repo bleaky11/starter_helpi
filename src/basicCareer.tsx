@@ -1,4 +1,4 @@
-import { backgroundStyle } from "./CSS/Background";
+import './CSS/Background.css';
 import { useState } from "react";
 import { FormCheckType } from "react-bootstrap/esm/FormCheck";
 import { Button, Container, Form } from "react-bootstrap";
@@ -55,7 +55,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
     setProgress(progressPercentage);
   }
   return (
-    <div style={backgroundStyle}>
+    <div className="Basic">
       <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
           <label htmlFor="question" style={{ marginRight: "10px" }}>
@@ -98,8 +98,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic}: submitButton)
         </div>
         <div style={{ marginLeft: "1350px"}}>
     <Button style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button> 
-    <Button><BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
-        Submit</Button>
+    <Button><BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/></Button>
 </div>
       </div>
     </div>

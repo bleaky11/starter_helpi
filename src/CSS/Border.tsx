@@ -6,5 +6,6 @@ export const borderedStyle: CSS.Properties = {
     borderStyle: "solid",
     padding: "16px",
     margin: "10px",
-    flex: 1
+    flex: 1,
+    backgroundColor: "white"
 }
