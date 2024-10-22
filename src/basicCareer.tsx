@@ -28,13 +28,11 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer,
 {
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const[saved, isSaved] = useState<boolean>(false);
 
   function handleSave()
   {
     localStorage.setItem("quizProgress", JSON.stringify(progress)); //keep track of question and progress states
     localStorage.setItem("quizAnswers", JSON.stringify(questions));
-    isSaved(true);
     setCount(count + 1);
     alert("Quiz saved!");
   }
@@ -66,18 +64,18 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer,
 
   useEffect(() => 
     {
-    if (!saved) 
-    {
-      clearStorage();
-    } 
-    else 
-    {
-        const savedProgress = localStorage.getItem("quizProgress");
-        const savedAnswers = localStorage.getItem("quizAnswers");
-        setProgress(JSON.parse(savedProgress || "0"));
-        setQuestions(JSON.parse(savedAnswers || "[]"));
-    }
-}, [saved]); 
+      const savedProgress = localStorage.getItem("quizProgress");
+      const savedAnswers = localStorage.getItem("quizAnswers");
+      if (!savedProgress && !savedAnswers) 
+      {
+        clearStorage();
+      } 
+      else 
+      {
+       setProgress(JSON.parse(savedProgress || "0")); // should load saved website
+       setQuestions(JSON.parse(savedAnswers || "[]"));
+      }
+}, []); 
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element {
     return(<div>
