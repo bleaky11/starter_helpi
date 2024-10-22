@@ -1,4 +1,5 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { borderedStyle } from "./CSS/Border";
 import { headingStyle } from "./CSS/Heading";
@@ -13,7 +14,8 @@ interface HomeComponentProps {
     detailedComplete: boolean;
 }
 
-export function MainPage({ setPage, page, basicComplete, detailedComplete}: HomeComponentProps): JSX.Element {
+export function MainPage({ setPage, page, basicComplete, detailedComplete }: HomeComponentProps): JSX.Element {
+
     return (
         <div className="App">
             <header className="App-header">
@@ -50,3 +52,5 @@ export function MainPage({ setPage, page, basicComplete, detailedComplete}: Home
         </div>
     );
 }
+
+

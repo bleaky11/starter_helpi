@@ -24,7 +24,7 @@ function App() {
   const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
   const [basicComplete, toggleBasic] = useState<boolean>(false)// To track basic question completion
   const [detailedComplete, toggleDetailed] = useState<boolean>(false) // To track detailed question completion
-  const[savedCareer, setCareer] = useState<string>("");
+  const [savedCareer, setCareer] = useState<string>("");
 
   // Sets the local storage item to the API key the user inputted
   function handleSubmit() {

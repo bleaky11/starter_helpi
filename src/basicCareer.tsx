@@ -31,7 +31,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
 
   function handleSave()
   {
-    localStorage.setItem("quizProgress", JSON.stringify(progress));
+    localStorage.setItem("quizProgress", JSON.stringify(progress)); //keep track of question and progress states
     localStorage.setItem("quizAnswers", JSON.stringify(questions));
   }
 
@@ -39,14 +39,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
   {
     toggleBasic(!basicComplete);
     handleSave();
-    if (questions.some(question => question.selected.some(selected => selected))) 
-    {
-      setCareer("quizAnswers");
-    } 
-    else 
-    {
-      setCareer("");
-    }
+    setCareer("quizAnswers");
     alert("Thanks for completing the Basic Career quiz!");
   }
 
@@ -74,17 +67,8 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
 
   function BasicSave({savedCareer, setCareer }: saveButton): JSX.Element 
   {
-      const savedAnswers = localStorage.getItem("quizAnswers");
-      const savedProgress = localStorage.getItem("quizProgress");
-      if (savedAnswers) {
-        setCareer("quizAnswers");
-      } else if (savedProgress) {
-        setCareer("quizProgress");
-      } else {
-        setCareer("");
-      }
     return(<div>
-      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
+      <Button onClick = {handleSave} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
     </div>)
   }
 
