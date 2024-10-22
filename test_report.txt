@@ -3,7 +3,7 @@
 > react-scripts test --coverage
 
 FAIL src/App.test.tsx
-  ✕ renders learn react link (56 ms)
+  ✕ renders learn react link (61 ms)
 
   ● renders learn react link
 
@@ -32,7 +32,7 @@ FAIL src/App.test.tsx
             [36m<div>[39m
               [36m<a[39m
                 [33mhref[39m=[32m"https://bleaky11.github.io/starter_helpi/"[39m
-                [33mstyle[39m=[32m"color: black;"[39m
+                [33mstyle[39m=[32m"color: white;"[39m
               [36m>[39m
                 [36m<h1>[39m
                   [0mThe Career Quiz[0m
@@ -47,17 +47,28 @@ FAIL src/App.test.tsx
               [36m>[39m
                 [36m<div[39m
                   [33mclass[39m=[32m"col"[39m
-                  [33mstyle[39m=[32m"border: 2px; border-color: black; border-style: solid; padding: 16px; margin: 10px; flex: 1; background-color: white;"[39m
+                  [33mstyle[39m=[32m"border: 2px; border-color: black; border-style: solid; border-radius: 25px; padding: 16px; margin: 10px; flex: 1; background-color: rgb(167, 202, 232); height: 500px; display: flex; flex-direction: column;"[39m
                 [36m>[39m
-                  [36m<h2>[39m
-                    [0mBasic Career Assessment[0m
-                  [36m</h2>[39m
-                  [36m<h6[39m
-                    [33mstyle[39m=[32m"text-align: center; font-size: 12px;"[39m
+                  [36m<div[39m
+                    [33mstyle[39m=[32m"flex: 1;"[39m
                   [36m>[39m
-                    [0mYou will be asked a series of multiple choice questions. If you're looking for more in-depth questions and results, go to the Detailed Career Page. Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.[0m
-                  [36m</h6>[39m
-                  [36m<nav>[39m
+                    [36m<h2>[39m
+                      [0mBasic Career Assessment[0m
+                    [36m</h2>[39m
+                    [36m<h6[39m
+                      [33mstyle[39m=[32m"text-align: center; font-size: 16px;"[39m
+                    [36m>[39m
+                      [0mYou will be asked a series of multiple choice questions. If you're looking for more in-depth questions and results, go to the Detailed Career Page. Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.[0m
+                    [36m</h6>[39m
+                  [36m</div>[39m
+                  [36m<img[39m
+                    [33malt[39m=[32m"Magnifying Glass"[39m
+                    [33msrc[39m=[32m"magnifying-glass.jpg"[39m
+                    [33mstyle[39m=[32m"margin: 0px auto; padding-bottom: 30px; width: 200px; height: 230px;"[39m
+                  [36m/>[39m
+                  [36m<nav[39m
+                    [33mstyle[39m=[32m"margin-top: auto; text-align: center;"[39m
+                  [36m>[39m
                     [36m<div>[39m
                       [36m<button[39m
                         [33mclass[39m=[32m"btn btn-primary"[39m
@@ -74,17 +85,37 @@ FAIL src/App.test.tsx
                 [36m</div>[39m
                 [36m<div[39m
                   [33mclass[39m=[32m"col"[39m
-                  [33mstyle[39m=[32m"border: 2px; border-color: black; border-style: solid; padding: 16px; margin: 10px; flex: 1; background-color: white;"[39m
+                  [33mstyle[39m=[32m"border: 2px; border-color: black; border-style: solid; border-radius: 25px; padding: 16px; margin: 10px; flex: 1; background-color: rgb(167, 202, 232); height: 500px; display: flex; flex-direction: column;"[39m
                 [36m>[39m
-                  [36m<h2>[39m
-                    [0mDetailed Career Assessment[0m
-                  [36m</h2>[39m
-                  [36m<h6[39m
-                    [33mstyle[39m=[32m"text-align: center; font-size: 12px;"[39m
+                  [36m<div[39m
+                    [33mstyle[39m=[32m"flex: 1;"[39m
                   [36m>[39m
-                    [0mYou will be asked a series of elaborate questions that may require some additional thought to answer. Your results will be more accurate and personable than the basic assessment. Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.[0m
-                  [36m</h6>[39m
-                  [36m<nav>[39m
+                    [36m<h2>[39m
+                      [0mDetailed Career Assessment[0m
+                    [36m</h2>[39m
+                    [36m<h6[39m
+                      [33mstyle[39m=[32m"text-align: center; font-size: 16px;"[39m
+                    [36m>[39m
+                      [0mYou will be asked a series of elaborate questions that may require some additional thought to answer. Your results will be more accurate and personable than the basic assessment. Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.[0m
+                    [36m</h6>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mstyle[39m=[32m"display: flex; justify-content: center; margin-bottom: 30px;"[39m
+                  [36m>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"Detective"[39m
+                      [33msrc[39m=[32m"Detective.png"[39m
+                      [33mstyle[39m=[32m"margin: 0px 10px 0px auto; padding-bottom: 30px; width: 200px; height: 230px;"[39m
+                    [36m/>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"Detective"[39m
+                      [33msrc[39m=[32m"Detective.png"[39m
+                      [33mstyle[39m=[32m"margin: 0px 40px 0px auto; padding-bottom: 30px; width: 200px; height: 230px;"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                  [36m<nav[39m
+                    [33mstyle[39m=[32m"margin-top: auto; text-align: center;"[39m
+                  [36m>[39m
                     [36m<div>[39m
                       [36m<button[39m
                         [33mclass[39m=[32m"btn btn-primary"[39m
@@ -149,16 +180,16 @@ FAIL src/App.test.tsx
 ---------------------|---------|----------|---------|---------|-------------------
 File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ---------------------|---------|----------|---------|---------|-------------------
-All files            |   28.16 |     37.5 |   16.12 |   28.98 |                   
- src                 |      25 |     37.5 |   16.12 |   25.75 |                   
+All files            |   30.76 |    39.58 |   18.75 |   31.57 |                   
+ src                 |      28 |    39.58 |   18.75 |   28.76 |                   
   App.tsx            |   66.66 |    66.66 |   33.33 |   66.66 | 20,32-39          
-  basicCareer.tsx    |       0 |        0 |       0 |       0 | 11-92             
+  basicCareer.tsx    |       0 |        0 |       0 |       0 | 12-98             
   detailedCareer.tsx |       0 |      100 |       0 |       0 | 10-16             
   header.tsx         |   33.33 |       50 |      20 |   33.33 | 12-19,26-33       
-  home.tsx           |   33.33 |       50 |   33.33 |   33.33 | 30-41             
+  home.tsx           |   33.33 |       50 |   33.33 |   33.33 | 35-52             
   homepagelogo.tsx   |     100 |      100 |     100 |     100 |                   
   index.tsx          |       0 |      100 |     100 |       0 | 7-19              
-  notification.tsx   |   66.66 |       35 |      50 |   66.66 | 12                
+  notification.tsx   |      60 |    39.28 |   66.66 |      60 | 16,23-25          
   reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10              
  src/CSS             |     100 |      100 |     100 |     100 |                   
   Border.tsx         |     100 |      100 |     100 |     100 |                   
@@ -168,7 +199,7 @@ All files            |   28.16 |     37.5 |   16.12 |   28.98 |
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.173 s
+Time:        3.089 s
 Ran all test suites.
 [0;33mOne of your dependencies, babel-preset-react-app, is importing the
 "@babel/plugin-proposal-private-property-in-object" package without
