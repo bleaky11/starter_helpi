@@ -2,7 +2,6 @@ import './CSS/Background.css';
 import { useState } from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
-import { borderedStyle } from './CSS/Border';
 
 export interface SubmitButton { // Interface for keeping track of Basic Question Completion
   basicComplete: boolean;
