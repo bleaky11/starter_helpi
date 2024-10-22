@@ -57,12 +57,12 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
     {
       setProgress(JSON.parse(savedProgress));
     }
+    if (savedAnswers) {
+      setQuestions(JSON.parse(savedAnswers));
+    }
     else
     {
       setProgress(0);
-    }
-    if (savedAnswers) {
-      setQuestions(JSON.parse(savedAnswers));
     }
   }, []);
 
