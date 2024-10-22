@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { FormCheckType } from "react-bootstrap/esm/FormCheck";
 import { Button, Container, Form } from "react-bootstrap";
 
-export interface submitButton{ // Interface for keeping track of Basic Question Completion
+export interface submitButton{
   basicComplete: boolean;
   toggleBasic: (notBasic: boolean) => void;
 }
@@ -84,11 +84,10 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
         setCareer("");
       }
     return(<div>
-      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100}>Submit</Button>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
     </div>)
   }
 
-  
   function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number, selectIndex: number) {
     const updatedQuestions = [...questions];
 
@@ -155,8 +154,8 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
         </div>
         <div style={{ marginLeft: "1350px"}}>
     <div style = {{display: "flex", float: "right"}}>
-    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
     <BasicSave savedCareer= {savedCareer} setCareer={setCareer}></BasicSave>
+    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
     </div>
 </div>
       </div>
