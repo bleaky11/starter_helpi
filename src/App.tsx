@@ -25,10 +25,12 @@ function App() {
   const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
   const [basicComplete, toggleBasic] = useState<boolean>(false)// To track basic question completion
   const [detailedComplete, toggleDetailed] = useState<boolean>(false) // To track detailed question completion
+  const [isKeyEntered] = useState<boolean>(JSON.parse(sessionStorage.getItem('isKeyEntered') || 'false')); // To track if user has entered an API Key
 
   // Sets the local storage item to the API key the user inputted
   function handleSubmit() {
     localStorage.setItem(saveKeyData, JSON.stringify(key));
+    sessionStorage.setItem('isKeyEntered', JSON.stringify(key.length > 0)); // Store key status
     window.location.reload();
   }
 
@@ -43,10 +45,10 @@ function App() {
             <Routes>
               <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}/>}/>
               <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
-              <Route path="/" element={<MainPage setPage={setPage} page={page} basicComplete={basicComplete} detailedComplete={detailedComplete}/>} />
+              <Route path="/" element={<MainPage setPage={setPage} page={page} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered}/>} />
             </Routes>
           </>
-          <Form className='Footer'>
+          {page === "Home" ? <Form className='Footer'>
             <Form.Label style={{color: "white"}}>API Key:</Form.Label>
             <Form.Control
               type="password"
@@ -57,7 +59,7 @@ function App() {
             <Button className="Submit-Button" onClick={handleSubmit}>
               Submit
             </Button>
-          </Form>
+          </Form> : null }
     </Router>
   );
 }

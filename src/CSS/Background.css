@@ -1,11 +1,11 @@
 .Basic {
-    background: linear-gradient(to bottom, blue, gold);
+    background: linear-gradient(to bottom, black, blue, gold);
     min-height: 100vh;
     color: white
 }
 
 .Detailed {
-    background: linear-gradient(to bottom, blue, gold);
+    background: linear-gradient(to bottom, black, blue, gold);
     min-height: 100vh;
     color: white
 }
