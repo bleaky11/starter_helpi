@@ -100,6 +100,7 @@ export function BasicCareerComponent({basicComplete, toggleBasic, savedCareer, s
   return (
     <div style={backgroundStyle}>
       <div>
+      <div style = {{color: "yellow"}}>{count}</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
           <label htmlFor="question" style={{ marginRight: "10px" }}>
             Percent Complete: {progress.toFixed(0)}%

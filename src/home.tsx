@@ -49,14 +49,16 @@ export function MainPage({ setPage, page, basicComplete, detailedComplete }: Hom
                     </Row>
                 </Container>
                 <nav>
-                     {count !== 0 ? (
-                        <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-                        <Button aria-label="See Saved Progress!">See Saved Progress!</Button>
-                        </Link>
-                     ) : (
-                        <p>You must complete the basic quiz to view saved progress!</p>
-                     )}
-                    </nav>
+  {count > 0 ? (
+    <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+      <Button aria-label="See Saved Progress!">See Saved Progress!</Button>
+    </Link>
+  ) : (
+    <p>You must complete the basic quiz to view saved progress!</p>
+  )}
+</nav>
+
+            <div style = {{color: "yellow"}}>{count}</div>
             </header>
         </div>
     );
