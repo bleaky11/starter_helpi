@@ -46,8 +46,8 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer,
   }
 
   const clearStorage = () => {
-    localStorage.removeItem("quizProgress");
-    localStorage.removeItem("quizAnswers");
+    sessionStorage.removeItem("quizProgress");
+    sessionStorage.removeItem("quizAnswers");
     setQuestions([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "I don't mind any" }], selected: [false, false, false, false] },
           { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
           { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
