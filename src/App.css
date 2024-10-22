@@ -38,7 +38,8 @@
 }
 
 .notif-bell{
-  width: 50px;
+  width: auto;
+  height: 100px;
   position: absolute;
 }
 
