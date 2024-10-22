@@ -30,26 +30,34 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, count,
                   <h6 style={{...headingStyle, fontSize: "16px"}}>You will be asked a series of multiple choice questions. If you're
                   looking for more in-depth questions and results, go to the Detailed Career Page. Before you begin, make sure you're in a comfortable environment and
                   answer each question to your best ability.</h6>
-                  <nav>
-                                {count === 0 ?
-                                <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-                                <Button aria-label="Basic Questions">Basic Questions</Button>
-                                </Link>
-                                :count > 0 ? (
-                                    <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-                                    <Button aria-label="Basic Questions">Basic Questions (Last Save)</Button>
-                                    </Link>
-                             ) : (
-                            null
-                            )}
-                </nav>
                   </div>
                   <img src={magGlass} alt="Magnifying Glass" style={{margin: "0 auto", paddingBottom: "30px", width: "200px", height: "230px"}}/>
-                    <nav style={{marginTop: "auto", textAlign: "center"}}>
-                      {!isKeyEntered ? <div><Button disabled={true}>Basic Questions</Button><h6>Please enter An API Key</h6></div> : <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-                        < Button>Basic Questions</Button>
-                      </Link>}
-                    </nav>
+                  <nav style={{ marginTop: "auto", textAlign: "center" }}>
+  {count === 0 ? (
+    !isKeyEntered ? (
+      <div>
+        <Button disabled={true}>Basic Questions</Button>
+        <h6>Please enter an API Key</h6>
+      </div>
+    ) : (
+      <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+        <Button>Basic Questions</Button>
+      </Link>
+    )
+  ) : count > 0 ? (
+    !isKeyEntered ? (
+      <div>
+        <Button disabled={true}>Basic Questions</Button>
+        <h6>Please enter an API Key</h6>
+      </div>
+    ) : (
+      <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+        <Button>Basic Questions (Last Save)</Button>
+      </Link>
+    )
+  ) : null}
+</nav>
+
                 </Col>
                 <Col style={{...borderedStyle, display: "flex", flexDirection: "column"}}>
                 <div style={{flex: 1}} >
