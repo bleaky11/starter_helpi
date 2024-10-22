@@ -28,25 +28,30 @@
   display: flex;
   justify-content: flex-end;
   position: absolute;
-  outline: auto;
   height: 100px;
-  outline-width: 100px;
+  background-color: white;
+  border: 2px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 25px;
+  padding: 10px;
 }
 
 .notif-bell{
-  width: 50px;
+  width: auto;
+  height: 100px;
   position: absolute;
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
+  background: linear-gradient(to bottom, black, blue, gold);
 }
 
 .App-link {
