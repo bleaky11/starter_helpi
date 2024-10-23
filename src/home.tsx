@@ -12,11 +12,10 @@ interface HomeComponentProps {
     setPage: (page: string) => void;
     basicComplete: boolean;
     detailedComplete: boolean;
-    count: number;  // Add count here directly
     isKeyEntered: boolean
 }
 
-export function MainPage({setPage, page, basicComplete, detailedComplete, count, isKeyEntered}: HomeComponentProps): JSX.Element {
+export function MainPage({setPage, page, basicComplete, detailedComplete, isKeyEntered}: HomeComponentProps): JSX.Element {
     return(
         <div className="App">
           <header className="App-header">
@@ -33,7 +32,7 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, count,
                   </div>
                   <img src={magGlass} alt="Magnifying Glass" style={{margin: "0 auto", paddingBottom: "30px", width: "200px", height: "230px"}}/>
                   <nav style={{ marginTop: "auto", textAlign: "center" }}>
-  {count === 0 ? (
+  {localStorage.length === 0 ? (
     !isKeyEntered ? (
       <div>
         <Button disabled={true}>Basic Questions</Button>
@@ -44,10 +43,10 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, count,
         <Button>Basic Questions</Button>
       </Link>
     )
-  ) : count > 0 ? (
+  ) : localStorage.length > 0 ? (
     !isKeyEntered ? (
       <div>
-        <Button disabled={true}>Basic Questions</Button>
+        <Button disabled={true}>Basic Questions (Last Save) </Button>
         <h6>Please enter an API Key</h6>
       </div>
     ) : (
