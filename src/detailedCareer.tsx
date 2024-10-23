@@ -1,6 +1,6 @@
 import { Button } from "react-bootstrap";
-import { backgroundStyle } from "./CSS/Background";
 import { headingStyle } from "./CSS/Heading";
+import './CSS/Background.css';
 
 export interface submitButton{ // Interface for keeping track of Basic Question Completion
   detailedComplete: boolean;
@@ -14,7 +14,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
 
 export function DetailedCareerComponent({detailedComplete, toggleDetailed}: submitButton): JSX.Element {
   return (
-    <div style={backgroundStyle}>
+    <div className="Detailed">
       <div>
         <h1 style={headingStyle}>Here is the Detailed Career Page!</h1>
         <div></div>
