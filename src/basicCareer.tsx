@@ -45,37 +45,52 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer,
     alert("Thanks for completing the Basic Career quiz!");
   }
 
-  const clearStorage = () => {
-    sessionStorage.removeItem("quizProgress");
-    sessionStorage.removeItem("quizAnswers");
-    setQuestions([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "I don't mind any" }], selected: [false, false, false, false] },
-          { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
-          { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
-          { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Some is fine" }, { id: 3, label: "More often than not" }, { id: 4, label: "Very comfortable" }], selected: [false, false, false, false] },
-          { text: "How much would you like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasional interaction" }, { id: 4, label: "Fairly often" }, { id: 5, label: "All the time" }], selected: [false, false, false, false, false] },
-          { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
-          { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
-          { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "A fair amount" }, { id: 3, label: "A lot" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
-          { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false] }
-  ]); // Reset questions or re-initialize as needed
-    setProgress(0); // Reset progress
-    console.log("Local storage cleared. INITIAL NO SAVE.");
-};
-
-  useEffect(() => 
+  const clearStorage = () => 
     {
-      const savedProgress = localStorage.getItem("quizProgress");
-      const savedAnswers = localStorage.getItem("quizAnswers");
-      if (!savedProgress && !savedAnswers) 
-      {
-        clearStorage();
-      } 
-      else 
-      {
-       setProgress(JSON.parse(savedProgress || "0")); // should load saved website
-       setQuestions(JSON.parse(savedAnswers || "[]"));
-      }
-}, []); 
+      console.log("Clearing local storage");
+    
+      localStorage.removeItem("quizProgress");
+      console.log("Removed quizProgress:", localStorage);
+      
+      localStorage.removeItem("quizAnswers");
+      console.log("Removed quizAnswers:", localStorage);
+      
+      localStorage.removeItem("MYKEY"); // Remove the API key if necessary
+      console.log("Removed MYKEY:", localStorage);
+      
+      sessionStorage.removeItem("visited");
+      console.log("Cleared session storage:", sessionStorage);
+      
+    setQuestions([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "I don't mind any" }], selected: [false, false, false, false] },
+      { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
+      { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
+      { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Some is fine" }, { id: 3, label: "More often than not" }, { id: 4, label: "Very comfortable" }], selected: [false, false, false, false] },
+      { text: "How much would you like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasional interaction" }, { id: 4, label: "Fairly often" }, { id: 5, label: "All the time" }], selected: [false, false, false, false, false] },
+      { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
+      { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
+      { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "A fair amount" }, { id: 3, label: "A lot" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
+      { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false] }
+]);
+}
+
+useEffect(() => {
+  const savedProgress = localStorage.getItem("quizProgress");
+  const savedAnswers = localStorage.getItem("quizAnswers");
+  const hasVisited = sessionStorage.getItem("visited");
+
+  console.log("Has Visited:", hasVisited); // Debug output
+
+  if (!hasVisited) {
+      clearStorage(); // This will clear local storage and session storage
+      sessionStorage.setItem("visited", "true"); // Set the visited flag
+      console.log("Set visited to true:", sessionStorage.getItem("visited")); // Log the state after setting
+      console.log("CHILLIN IN THE WRONG SPOT"); // Expect this on the first visit
+  } else {
+      setProgress(JSON.parse(savedProgress || "0")); // Load saved progress
+      setQuestions(JSON.parse(savedAnswers || "[]")); // Load saved answers
+      console.log("HELLO CAN YOU HEAR ME"); // Expect this on subsequent visits
+  }
+}, []);
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element {
     return(<div>
