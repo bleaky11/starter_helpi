@@ -32,30 +32,33 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, isKeyE
                   </div>
                   <img src={magGlass} alt="Magnifying Glass" style={{margin: "0 auto", paddingBottom: "30px", width: "200px", height: "230px"}}/>
                   <nav style={{ marginTop: "auto", textAlign: "center" }}>
-  {localStorage.length === 0 ? (
-    !isKeyEntered ? (
-      <div>
-        <Button disabled={true}>Basic Questions</Button>
-        <h6>Please enter an API Key</h6>
-      </div>
-    ) : 
-    (
-      <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-        <Button>Basic Questions</Button>
-      </Link>
-    )
-  ) : localStorage.length > 0 ? (
-    !isKeyEntered ? (
-      <div>
-        <Button disabled={true}>Basic Questions (Last Save) </Button>
-        <h6>Please enter an API Key</h6>
-      </div>
-    ) : (
-      <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
-        <Button>Basic Questions (Last Save)</Button>
-      </Link>
-    )
+                  <nav>
+  {/* Case 1: First visit (no progress saved, no API key entered) */}
+  {!localStorage.getItem("quizProgress") && !sessionStorage.getItem("isKeyEntered") ? (
+    <div>
+      <Button disabled={true}>Basic Questions</Button>
+      <h6>Please enter an API Key</h6>
+    </div>
+  ) : /* Case 2: First visit, API key entered but no saved progress */
+  !localStorage.getItem("quizProgress") && sessionStorage.getItem("isKeyEntered") ? (
+    <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+      <Button>Basic Questions</Button>
+    </Link>
+  ) : /* Case 3: Returning visit with saved progress but no API key entered */
+  localStorage.getItem("quizProgress") && !sessionStorage.getItem("isKeyEntered") ? (
+    <div>
+      <Button disabled={true}>Basic Questions (Last Save)</Button>
+      <h6>Please enter an API Key</h6>
+    </div>
+  ) : /* Case 4: Returning visit with saved progress and API key entered */
+  localStorage.getItem("quizProgress") && sessionStorage.getItem("isKeyEntered") ? (
+    <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+      <Button>Basic Questions (Last Save)</Button>
+    </Link>
   ) : null}
+</nav>
+
+
 </nav>
 
                 </Col>
