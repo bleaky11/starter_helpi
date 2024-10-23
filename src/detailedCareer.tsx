@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { headingStyle } from "./CSS/Heading";
 import './CSS/Background.css';
 
@@ -34,7 +34,12 @@ export function DetailedCareerComponent({detailedComplete, toggleDetailed}: subm
         </h5>
         <div style={{textAlign:"center"}}>
         <h3>Question 1.</h3>
-
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Email address</Form.Label>
+        <Form.Control type="answer" placeholder="Enter answer" />
+        <Form.Text className="text-muted">
+        </Form.Text>
+    </Form.Group>
         <h3>Question 2.</h3>
         <h3>Question 3.</h3>
         <h3>Question 4.</h3>
