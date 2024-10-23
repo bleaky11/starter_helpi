@@ -38,7 +38,8 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, isKeyE
         <Button disabled={true}>Basic Questions</Button>
         <h6>Please enter an API Key</h6>
       </div>
-    ) : (
+    ) : 
+    (
       <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
         <Button>Basic Questions</Button>
       </Link>

@@ -39,7 +39,10 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer,
   {
     localStorage.setItem("quizProgress", JSON.stringify(progress)); //keep track of question and progress states
     localStorage.setItem("quizAnswers", JSON.stringify(questions));
-    alert("Quiz saved!");
+    if(progress < 100)
+    {
+      alert("Quiz saved!");
+    }
   }
 
   function handleSubmit({basicComplete, toggleBasic}: SubmitButton)
