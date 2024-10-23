@@ -25,6 +25,7 @@ function App() {
   const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
   const [basicComplete, toggleBasic] = useState<boolean>(false)// To track basic question completion
   const [detailedComplete, toggleDetailed] = useState<boolean>(false) // To track detailed question completion
+  const [savedCareer, setCareer] = useState<string>("");
   const [isKeyEntered] = useState<boolean>(JSON.parse(sessionStorage.getItem('isKeyEntered') || 'false')); // To track if user has entered an API Key
 
   // Sets the local storage item to the API key the user inputted
@@ -43,9 +44,9 @@ function App() {
           <>
           <HeaderComponent setPage={setPage} page={page} />
             <Routes>
-              <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}/>}/>
+              <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic} savedCareer= {savedCareer} setCareer={setCareer}/>}/>
               <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
-              <Route path="/" element={<MainPage setPage={setPage} page={page} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered}/>} />
+              <Route path="/" element={<MainPage setPage={setPage} page={page} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered}/>}/>
             </Routes>
           </>
           {page === "Home" ? <Form className='Footer'>
