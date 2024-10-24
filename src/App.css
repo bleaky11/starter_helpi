@@ -51,7 +51,9 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: black;
-  background: linear-gradient(to bottom, black, blue, gold);
+  background: #FDF6C3;
+  border-color: #bc6c25;
+  border-style: solid;
 }
 
 .App-link {
@@ -65,4 +67,41 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Header-footer {
+  background: #DDA15E;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: solid;
+}
+
+.Background {
+  background: #FDF6C3;
+  border-color: #bc6c25;
+  border-style: solid;
+  min-height: 100vh;
+  color: Black
+}
+
+.Bordered {
+  border: 10px solid #bc6c25;
+  border-radius: 25px;
+  padding: 16px;
+  margin: 10px;
+  flex: 1;
+  background-color: #dda15e;
+  height: 500px;
+}
+
+.Body-Heading {
+  text-align: center;
+  font-size: 12px;
+}
+
+.Centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 65px;
 }

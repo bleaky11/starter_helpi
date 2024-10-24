@@ -1,4 +1,3 @@
-import './CSS/Background.css';
 import { useEffect, useState } from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
@@ -10,8 +9,8 @@ export interface SubmitButton {
 
 export interface saveButton
 {
-  savedCareer: string
-  setCareer: (newState: string) => void;
+  savedBasicCareer: string
+  setBasicCareer: (newState: string) => void;
 }
 
 interface Question 
@@ -22,7 +21,7 @@ interface Question
   selected: boolean[];
 }
 
-export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer, setCareer}: SubmitButton & saveButton): JSX.Element 
+export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer}: SubmitButton & saveButton): JSX.Element 
 {
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "I don't mind any" }], selected: [false, false, false, false] },
@@ -35,10 +34,10 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer,
     { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "A fair amount" }, { id: 3, label: "A lot" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}]);
 
-  function handleSave()
+  function handleBasicSave()
   {
-    localStorage.setItem("quizProgress", JSON.stringify(progress)); //keep track of question and progress states
-    localStorage.setItem("quizAnswers", JSON.stringify(questions));
+    localStorage.setItem("basicQuizProgress", JSON.stringify(progress)); //keep track of question and progress states
+    localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
     if(progress < 100)
     {
       alert("Quiz saved!");
@@ -48,8 +47,8 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer,
   function handleSubmit({basicComplete, toggleBasic}: SubmitButton)
   {
     toggleBasic(!basicComplete);
-    handleSave();
-    setCareer("quizAnswers");
+    handleBasicSave();
+    setBasicCareer("basicQuizAnswers");
     alert("Thanks for completing the Basic Career quiz!");
   }
 
@@ -57,33 +56,33 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedCareer,
     {
       console.log("Clearing local storage");
     
-      localStorage.removeItem("quizProgress");
-      console.log("Removed quizProgress:", localStorage);
+      localStorage.removeItem("basicQuizProgress");
+      console.log("Removed basicQuizProgress:", localStorage);
       
-      localStorage.removeItem("quizAnswers");
-      console.log("Removed quizAnswers:", localStorage);
+      localStorage.removeItem("basicQuizAnswers");
+      console.log("Removed basicQuizAnswers:", localStorage);
       
       sessionStorage.removeItem("visited");
       console.log("Cleared session storage:", sessionStorage);
 }
 
 useEffect(() => {
-  const savedProgress = localStorage.getItem("quizProgress");
-  const savedAnswers = localStorage.getItem("quizAnswers");
+  const savedBasicProgress = localStorage.getItem("basicQuizProgress");
+  const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
 
-  console.log(savedProgress);
-  console.log(savedAnswers);
+  console.log(savedBasicProgress);
+  console.log(savedBasicAnswers);
 
-  if (!savedProgress && !savedAnswers) {
+  if (!savedBasicProgress && !savedBasicAnswers) {
       clearStorage(); // This will clear local storage and session storage
       sessionStorage.setItem("visited", "true"); // Set the visited flag
       console.log("Set visited to true:", sessionStorage.getItem("visited")); // Log the state after setting
       console.log("CHILLIN IN THE WRONG SPOT"); // Expect this on the first visit
   } 
-  else if (savedProgress && savedAnswers )
+  else if (savedBasicProgress && savedBasicAnswers )
   {
-      setProgress(JSON.parse(savedProgress || "0")); // Load saved progress
-      setQuestions(JSON.parse(savedAnswers || "[]")); // Load saved answers
+      setProgress(JSON.parse(savedBasicProgress || "0")); // Load saved progress
+      setQuestions(JSON.parse(savedBasicAnswers || "[]")); // Load saved answers
       console.log("HELLO CAN YOU HEAR ME"); // Expect this on subsequent visits
   }
 }, []);
@@ -94,10 +93,10 @@ useEffect(() => {
     </div>)
   }
 
-  function BasicSave({savedCareer, setCareer}: saveButton): JSX.Element 
+  function BasicSave({savedBasicCareer, setBasicCareer}: saveButton): JSX.Element 
   {
     return(<div>
-      <Button onClick = {handleSave} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
+      <Button onClick = {handleBasicSave} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
     </div>)
   }
 
@@ -126,7 +125,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="Basic">
+    <div className="Background">
       <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
           <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>
@@ -173,7 +172,7 @@ useEffect(() => {
         </div>
         <div style={{ marginLeft: "1350px"}}>
     <div style = {{display: "flex", float: "right"}}>
-    <BasicSave savedCareer= {savedCareer} setCareer={setCareer}></BasicSave>
+    <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
     <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
     </div>
 </div>
