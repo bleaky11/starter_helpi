@@ -48,7 +48,7 @@ function App() {
               <Route path="/" element={<MainPage setPage={setPage} page={page} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered}/>} />
             </Routes>
           </>
-          {page === "Home" ? <Form className='Footer'>
+          {page === "Home" ? <Form className='Header-footer'>
             <Form.Label style={{color: "white"}}>API Key:</Form.Label>
             <Form.Control
               type="password"

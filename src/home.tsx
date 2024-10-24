@@ -2,7 +2,6 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { borderedStyle } from "./CSS/Border";
 import { headingStyle } from "./CSS/Heading";
-import { HomePage } from "./homepagelogo";
 import { NotifBell } from "./notification";
 import magGlass from "./Images/magnifying-glass.jpg";
 import detective from "./Images/Detective.png";
@@ -20,7 +19,6 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, isKeyE
         <div className="App">
           <header className="App-header">
             <NotifBell basicComplete={basicComplete} detailedComplete={detailedComplete}></NotifBell>
-            <HomePage />
             <Container>
               <Row>
                 <Col style={{...borderedStyle, display: "flex", flexDirection: "column"}}>

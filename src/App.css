@@ -51,7 +51,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: black;
-  background: linear-gradient(to bottom, black, blue, gold);
+  background: #FDF6C3;
 }
 
 .App-link {

@@ -1,6 +1,7 @@
 import { Button } from "react-bootstrap";
 import { centerStyle } from "./CSS/Center";
 import { Link } from "react-router-dom";
+import { HomePage } from "./homepagelogo";
 
 interface HeaderComponentProps {
     page: string
@@ -10,7 +11,7 @@ interface HeaderComponentProps {
 export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Element | null {
     if(page === "Basic-Questions"){
         return(
-            <div className='Header'>
+            <div className='Header-footer'>
                 <nav style={centerStyle}>
                     <Link to="/">
                         <Button onClick={() => setPage("Home")}>Home</Button>
@@ -24,7 +25,7 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
     }
     else if(page === "Detailed-Questions"){
         return(
-            <div className="Header">
+            <div className="Header-footer">
                 <nav style={centerStyle}>
                     <Link to="/">
                         <Button onClick={() => setPage("Home")}>Home</Button>
@@ -37,6 +38,10 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
         )
     }
     else{
-        return null 
+        return(
+        <div className='Header-footer' style={{textAlign: "center"}}>
+            <HomePage />
+        </div>
+        )
     }
 }
