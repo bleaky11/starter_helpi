@@ -1,4 +1,3 @@
-import './CSS/Background.css';
 import { useState } from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
@@ -59,7 +58,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic }: SubmitButto
   }
 
   return (
-    <div className="Basic">
+    <div className="Background">
       <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
           <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>

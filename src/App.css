@@ -52,6 +52,8 @@
   font-size: calc(10px + 2vmin);
   color: black;
   background: #FDF6C3;
+  border-color: #bc6c25;
+  border-style: solid;
 }
 
 .App-link {
@@ -66,3 +68,19 @@
     transform: rotate(360deg);
   }
 }
+
+.Header-footer {
+  background: #DDA15E;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: solid;
+}
+
+.Background {
+  background: #FDF6C3;
+  border-color: #bc6c25;
+  border-style: solid;
+  min-height: 100vh;
+  color: Black
+}
+

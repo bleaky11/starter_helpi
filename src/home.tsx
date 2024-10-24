@@ -30,7 +30,7 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, isKeyE
                   </div>
                   <img src={magGlass} alt="Magnifying Glass" style={{margin: "0 auto", paddingBottom: "30px", width: "200px", height: "230px"}}/>
                     <nav style={{marginTop: "auto", textAlign: "center"}}>
-                      {!isKeyEntered ? <div><Button disabled={true}>Basic Questions</Button><h6>Please enter An API Key</h6></div> : <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+                      {!isKeyEntered ? <div><Button disabled={true}>Basic Questions</Button><h6>Please enter An API Key</h6></div> : <Link to="/basic-questions">
                         < Button>Basic Questions</Button>
                       </Link>}
                     </nav>
