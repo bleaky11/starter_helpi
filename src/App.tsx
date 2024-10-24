@@ -22,11 +22,12 @@ if (prevKey !== null) {
 }
 
 function App() {
-  const [key, setKey] = useState<string>(keyData);
-  const [page, setPage] = useState<string>("Home");
-  const [basicComplete, toggleBasic] = useState<boolean>(false);
-  const [detailedComplete, toggleDetailed] = useState<boolean>(false);
-  const [isKeyEntered] = useState<boolean>(JSON.parse(sessionStorage.getItem('isKeyEntered') || 'false'));
+  const [key, setKey] = useState<string>(keyData); // For API key input
+  const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
+  const [basicComplete, toggleBasic] = useState<boolean>(false)// To track basic question completion
+  const [detailedComplete, toggleDetailed] = useState<boolean>(false) // To track detailed question completion
+  const [savedCareer, setCareer] = useState<string>("");
+  const [isKeyEntered] = useState<boolean>(JSON.parse(sessionStorage.getItem('isKeyEntered') || 'false')); // To track if user has entered an API Key
 
   function handleSubmit() {
     localStorage.setItem(saveKeyData, JSON.stringify(key));
@@ -47,6 +48,8 @@ function App() {
         detailedComplete={detailedComplete}
         toggleDetailed={toggleDetailed}
         isKeyEntered={isKeyEntered}
+        setCareer={setCareer}
+        savedCareer={savedCareer}
       />
       {page === "Home" && (
         <Form className='Header-footer'>
@@ -74,6 +77,8 @@ interface MainContentProps {
   detailedComplete: boolean;
   toggleDetailed: React.Dispatch<React.SetStateAction<boolean>>;
   isKeyEntered: boolean;
+  savedCareer: string;
+  setCareer: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered }: MainContentProps) {
@@ -84,7 +89,7 @@ function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, to
     <>
       <HeaderComponent setPage={setPage} page={currentPage} />
       <Routes>
-        <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic} />} />
+        <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}  savedCareer= {savedCareer} setCareer={setCareer} />} />
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed} />} />
         <Route path="/" element={<MainPage setPage={setPage} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} />} />
         <Route path="*" element={<Navigate to="/" replace />} /> {/*Navigate to homepage if route is unrecognized*/}

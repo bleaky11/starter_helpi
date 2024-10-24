@@ -1,4 +1,4 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Button, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { borderedStyle } from "./CSS/Border";
 import { headingStyle } from "./CSS/Heading";
@@ -7,10 +7,10 @@ import magGlass from "./Images/magnifying-glass.jpg";
 import detective from "./Images/Detective.png";
 
 interface HomeComponentProps {
-    page: string
+    page: string;
     setPage: (page: string) => void;
-    basicComplete: boolean
-    detailedComplete: boolean
+    basicComplete: boolean;
+    detailedComplete: boolean;
     isKeyEntered: boolean
 }
 
@@ -29,11 +29,36 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, isKeyE
                   answer each question to your best ability.</h6>
                   </div>
                   <img src={magGlass} alt="Magnifying Glass" style={{margin: "0 auto", paddingBottom: "30px", width: "200px", height: "230px"}}/>
-                    <nav style={{marginTop: "auto", textAlign: "center"}}>
-                      {!isKeyEntered ? <div><Button disabled={true}>Basic Questions</Button><h6>Please enter An API Key</h6></div> : <Link to="/basic-questions">
-                        < Button>Basic Questions</Button>
-                      </Link>}
-                    </nav>
+                  <nav style={{ marginTop: "auto", textAlign: "center" }}>
+                  <nav>
+  {/* Case 1: First visit (no progress saved, no API key entered) */}
+  {!localStorage.getItem("quizProgress") && !sessionStorage.getItem("isKeyEntered") ? (
+    <div>
+      <Button disabled={true}>Basic Questions</Button>
+      <h6>Please enter an API Key</h6>
+    </div>
+  ) : /* Case 2: First visit, API key entered but no saved progress */
+  !localStorage.getItem("quizProgress") && sessionStorage.getItem("isKeyEntered") ? (
+    <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+      <Button>Basic Questions</Button>
+    </Link>
+  ) : /* Case 3: Returning visit with saved progress but no API key entered */
+  localStorage.getItem("quizProgress") && !sessionStorage.getItem("isKeyEntered") ? (
+    <div>
+      <Button disabled={true}>Basic Questions (Last Save)</Button>
+      <h6>Please enter an API Key</h6>
+    </div>
+  ) : /* Case 4: Returning visit with saved progress and API key entered */
+  localStorage.getItem("quizProgress") && sessionStorage.getItem("isKeyEntered") ? (
+    <Link to="/basic-questions" onClick={() => setPage("Basic-Questions")}>
+      <Button>Basic Questions (Last Save)</Button>
+    </Link>
+  ) : null}
+</nav>
+
+
+</nav>
+
                 </Col>
                 <Col style={{...borderedStyle, display: "flex", flexDirection: "column"}}>
                 <div style={{flex: 1}} >
@@ -56,5 +81,5 @@ export function MainPage({setPage, page, basicComplete, detailedComplete, isKeyE
             </Container>
           </header>
         </div>
-    )
+    );
 }
