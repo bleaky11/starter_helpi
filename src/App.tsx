@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import {
-  HashRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useLocation
-} from "react-router-dom";
+import {HashRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Button, Form } from 'react-bootstrap';
 import { BasicCareerComponent } from './basicCareer';
 import { DetailedCareerComponent } from './detailedCareer';
@@ -81,7 +75,7 @@ interface MainContentProps {
   setCareer: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered }: MainContentProps) {
+function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered, savedCareer, setCareer }: MainContentProps) {
   const location = useLocation();
   const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : "Detailed-Questions");
 
