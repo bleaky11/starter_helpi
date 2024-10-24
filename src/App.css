@@ -84,3 +84,24 @@
   color: Black
 }
 
+.Bordered {
+  border: 10px solid #bc6c25;
+  border-radius: 25px;
+  padding: 16px;
+  margin: 10px;
+  flex: 1;
+  background-color: #dda15e;
+  height: 500px;
+}
+
+.Body-Heading {
+  text-align: center;
+  font-size: 12px;
+}
+
+.Centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 65px;
+}
