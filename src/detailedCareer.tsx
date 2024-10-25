@@ -1,6 +1,7 @@
 import { Button, Form } from "react-bootstrap";
 import { headingStyle } from "./CSS/Heading";
-import './CSS/Background.css';
+import { useState } from "react";
+// import './CSS/Background.css';
 
 interface submitButton{ // Interface for keeping track of Basic Question Completion
   detailedComplete: boolean;
@@ -44,6 +45,24 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
 // }
 
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: submitButton): JSX.Element {
+  const [answer1,setAnswer1] = useState<string>("aaaaaa");
+  const [answer2,setAnswer2] = useState<string>("");
+  const [answer3,setAnswer3] = useState<string>("");
+  const [answer4,setAnswer4] = useState<string>("");
+  const [answer5,setAnswer5] = useState<string>("");
+  const [answer6,setAnswer6] = useState<string>("");
+  const [answer7,setAnswer7] = useState<string>("");
+  const [answer8,setAnswer8] = useState<string>("");
+  const [answer9,setAnswer9] = useState<string>("");
+  
+  function updateAnswer1(event: React.ChangeEvent<HTMLInputElement>) {
+    setAnswer1(event.target.value);
+  }
+
+    function updateAnswer2(event: React.ChangeEvent<HTMLInputElement>) {
+    setAnswer2(event.target.value);
+  }
+
   return (
     <div className="Background">
       <div className="Body-Heading">
@@ -65,13 +84,23 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
         </h5>
         <div style={{textAlign:"center"}}>
         <h3>Question 1.</h3>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control type="answer" placeholder="Enter answer" />
+        <Form.Group controlId="formQuest1">
+        <Form.Control value={answer1} 
+        onChange={updateAnswer1}
+        />
         <Form.Text className="text-muted">
         </Form.Text>
     </Form.Group>
+
+    <div>{answer1}</div>
         <h3>Question 2.</h3>
+        <Form.Group controlId="formQuest2">
+        <Form.Control value={answer2} 
+        onChange={updateAnswer2}
+        />
+        <Form.Text className="text-muted">
+        </Form.Text>
+    </Form.Group>
         <h3>Question 3.</h3>
         <h3>Question 4.</h3>
         <h3>Question 5.</h3>
