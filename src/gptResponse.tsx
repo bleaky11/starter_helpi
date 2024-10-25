@@ -12,7 +12,7 @@ export function GptResponse({apiKey}: api): JSX.Element {
     const handleSendMessage = async () => {
         setIsLoading(true);
         try {
-          const data = await getChatGptResponse("give a random fact about elephants", apiKey);
+          const data = await getChatGptResponse("give a random fact about jerboa", apiKey);
           setMessage(data.choices[0].message.content); // Get the first response from ChatGPT
         } catch (error) {
           console.error('Error getting response from ChatGPT:', error);

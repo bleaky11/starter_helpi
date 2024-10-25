@@ -9,7 +9,7 @@ export const getChatGptResponse = async (message: string, apiKey: string) => {
       {
         model: 'gpt-3.5-turbo', // or 'gpt-4' depending on your access
         messages: [{ role: 'user', content: message }],
-        max_tokens: 20
+        max_tokens: 30
       },
       {
         headers: {
