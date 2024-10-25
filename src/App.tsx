@@ -37,6 +37,7 @@ function App() {
   return (
     <Router>
       <MainContent
+        key={key}
         setPage={setPage}
         basicComplete={basicComplete}
         toggleBasic={toggleBasic}
@@ -78,9 +79,10 @@ interface MainContentProps {
   setBasicCareer: React.Dispatch<React.SetStateAction<string>>;
   savedDetailedCareer: string;
   setDetailedCareer: React.Dispatch<React.SetStateAction<string>>;
+  key:string;
 }
 
-function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered, savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer }: MainContentProps) {
+function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered, savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, key }: MainContentProps) {
   const location = useLocation();
   const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : "Detailed-Questions");
 
@@ -90,7 +92,7 @@ function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, to
       <Routes>
         <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}  savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} />} />
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed} />} />
-        <Route path="/" element={<MainPage setPage={setPage} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} />} />
+        <Route path="/" element={<MainPage setPage={setPage} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} key={key}/>} />
         <Route path="*" element={<Navigate to="/" replace />} /> {/*Navigate to homepage if route is unrecognized*/}
       </Routes>
     </>

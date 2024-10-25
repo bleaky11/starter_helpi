@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { NotifBell } from "./notification";
 import magGlass from "./Images/magnifying-glass.jpg";
 import detective from "./Images/Detective.png";
+import { GptResponse } from "./gptResponse";
 
 interface HomeComponentProps {
   page: string;
@@ -10,6 +11,7 @@ interface HomeComponentProps {
   basicComplete: boolean;
   detailedComplete: boolean;
   isKeyEntered: boolean;
+  key: string;
 }
 
 export function MainPage({
@@ -18,6 +20,7 @@ export function MainPage({
   basicComplete,
   detailedComplete,
   isKeyEntered,
+  key,
 }: HomeComponentProps): JSX.Element {
   return (
     <div className="App">
@@ -154,6 +157,7 @@ export function MainPage({
             </Col>
           </Row>
         </Container>
+        <GptResponse apiKey={key}></GptResponse>
       </header>
     </div>
   );
