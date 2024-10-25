@@ -20,7 +20,16 @@ export const getChatGptResponse = async (message: string, apiKey: string) => {
     );
     return response.data;
   } catch (error) {
-    console.error('Error fetching response from ChatGPT API:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Error message:', error.message);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+      }
+    } else {
+      console.error('Unexpected error:', error);
+    }
     throw error;
   }
 };

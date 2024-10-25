@@ -11,7 +11,7 @@ interface HomeComponentProps {
   basicComplete: boolean;
   detailedComplete: boolean;
   isKeyEntered: boolean;
-  key: string;
+  apiKey: string;
 }
 
 export function MainPage({
@@ -20,7 +20,7 @@ export function MainPage({
   basicComplete,
   detailedComplete,
   isKeyEntered,
-  key,
+  apiKey,
 }: HomeComponentProps): JSX.Element {
   return (
     <div className="App">
@@ -157,7 +157,7 @@ export function MainPage({
             </Col>
           </Row>
         </Container>
-        <GptResponse apiKey={key}></GptResponse>
+        <GptResponse apiKey={apiKey}></GptResponse>
       </header>
     </div>
   );
