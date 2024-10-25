@@ -37,6 +37,12 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
   </div>)
 }
 
+interface Answer{
+  answer: string;
+  answerStatus: boolean;
+
+}
+
 // function DetailedSave({savedDetailedCareer, setDetailedCareer}: saveButton): JSX.Element 
 // {
 //   return(<div>
@@ -45,7 +51,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
 // }
 
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: submitButton): JSX.Element {
-  const [answer1,setAnswer1] = useState<string>("aaaaaa");
+  const [answer1,setAnswer1] = useState<string>("");
   const [answer2,setAnswer2] = useState<string>("");
   const [answer3,setAnswer3] = useState<string>("");
   const [answer4,setAnswer4] = useState<string>("");
@@ -54,19 +60,22 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
   const [answer7,setAnswer7] = useState<string>("");
   const [answer8,setAnswer8] = useState<string>("");
   const [answer9,setAnswer9] = useState<string>("");
+  const [progress,setProgress] = useState<number>(0);
   
   function updateAnswer1(event: React.ChangeEvent<HTMLInputElement>) {
     setAnswer1(event.target.value);
+    answer1.length > 20 ? setProgress(progress+1) : setProgress(progress) ;
   }
 
     function updateAnswer2(event: React.ChangeEvent<HTMLInputElement>) {
     setAnswer2(event.target.value);
+
   }
 
   return (
     <div className="Background">
       <div className="Body-Heading">
-        <h1>Here is the Detailed Career Page!</h1>
+        <h1>Here is the Detailed Career Page! {progress}</h1>
         <div></div>
         <h5>
           This assessment is designed to determine an appopriate career path going
@@ -92,7 +101,6 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
         </Form.Text>
     </Form.Group>
 
-    <div>{answer1}</div>
         <h3>Question 2.</h3>
         <Form.Group controlId="formQuest2">
         <Form.Control value={answer2} 
