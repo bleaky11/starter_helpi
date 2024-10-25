@@ -1,22 +1,30 @@
-import './CSS/Background.css';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 
-export interface SubmitButton { // Interface for keeping track of Basic Question Completion
+export interface SubmitButton {
   basicComplete: boolean;
   toggleBasic: (notBasic: boolean) => void;
 }
 
-export function Submit({ basicComplete, toggleBasic }: SubmitButton) {
-  toggleBasic(!basicComplete);
-  alert("Thanks for completing the Basic Career quiz!");
+export interface saveButton
+{
+  savedBasicCareer: string
+  setBasicCareer: (newState: string) => void;
 }
 
-export function BasicCareerComponent({ basicComplete, toggleBasic }: SubmitButton): JSX.Element {
+interface Question 
+{
+  text: string;
+  type: string;
+  choices: { id: number; label: string }[];
+  selected: boolean[];
+}
+
+export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer}: SubmitButton & saveButton): JSX.Element 
+{
   const [progress, setProgress] = useState<number>(0);
-  const [questions, setQuestions] = useState([
-    { text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "I don't mind any" }], selected: [false, false, false, false] },
+  const [questions, setQuestions] = useState<Question[]>([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "I don't mind any" }], selected: [false, false, false, false] },
     { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
     { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
     { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Some is fine" }, { id: 3, label: "More often than not" }, { id: 4, label: "Very comfortable" }], selected: [false, false, false, false] },
@@ -24,16 +32,91 @@ export function BasicCareerComponent({ basicComplete, toggleBasic }: SubmitButto
     { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
     { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
     { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "A fair amount" }, { id: 3, label: "A lot" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
-    { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false] }
-  ]);
+    { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}]);
 
-  function BasicSubmit(): JSX.Element {
-    return (
-      <div>
-        <Button style={{ height: "50px", width: "75px", borderRadius: "15px" }} disabled={progress < 100} onClick={() => Submit({ basicComplete, toggleBasic })}>Submit</Button>
-      </div>
-    );
+  function handleBasicSave()
+  {
+    localStorage.setItem("basicQuizProgress", JSON.stringify(progress)); //keep track of question and progress states
+    localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+    if(progress < 100)
+    {
+      alert("Quiz saved!");
+    }
   }
+
+  function handleClear(){
+    localStorage.removeItem("basicQuizProgress");
+    localStorage.removeItem("basicQuizAnswers");
+    const clearedQuestions = questions.map(question => ({
+      ...question,
+      selected: question.selected.map(() => false) // Reset all selected states to false
+    }));
+    setQuestions(clearedQuestions);
+    setProgress(0);
+  }
+
+  function handleSubmit({basicComplete, toggleBasic}: SubmitButton)
+  {
+    toggleBasic(!basicComplete);
+    handleBasicSave();
+    setBasicCareer("basicQuizAnswers");
+    alert("Thanks for completing the Basic Career quiz!");
+  }
+
+  const clearStorage = () => 
+    {
+      console.log("Clearing local storage");
+    
+      localStorage.removeItem("basicQuizProgress");
+      console.log("Removed basicQuizProgress:", localStorage);
+      
+      localStorage.removeItem("basicQuizAnswers");
+      console.log("Removed basicQuizAnswers:", localStorage);
+      
+      sessionStorage.removeItem("visited");
+      console.log("Cleared session storage:", sessionStorage);
+}
+
+useEffect(() => {
+  const savedBasicProgress = localStorage.getItem("basicQuizProgress");
+  const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
+
+  console.log(savedBasicProgress);
+  console.log(savedBasicAnswers);
+
+  if (!savedBasicProgress && !savedBasicAnswers) {
+      clearStorage(); // This will clear local storage and session storage
+      sessionStorage.setItem("visited", "true"); // Set the visited flag
+      console.log("Set visited to true:", sessionStorage.getItem("visited")); // Log the state after setting
+      console.log("CHILLIN IN THE WRONG SPOT"); // Expect this on the first visit
+  } 
+  else if (savedBasicProgress && savedBasicAnswers )
+  {
+      setProgress(JSON.parse(savedBasicProgress || "0")); // Load saved progress
+      setQuestions(JSON.parse(savedBasicAnswers || "[]")); // Load saved answers
+      console.log("HELLO CAN YOU HEAR ME"); // Expect this on subsequent visits
+  }
+}, []);
+
+  function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element {
+    return(<div>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => handleSubmit({basicComplete, toggleBasic})}>Submit</Button>
+    </div>)
+  }
+
+  function BasicSave({savedBasicCareer, setBasicCareer}: saveButton): JSX.Element 
+  {
+    return(<div>
+      <Button onClick = {handleBasicSave} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
+    </div>)
+  }
+
+  function BasicClear(){
+    return(<div>
+      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Clear</Button>
+    </div>)
+  }
+
 
   function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number, selectIndex: number) {
     const updatedQuestions = [...questions];
@@ -59,7 +142,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic }: SubmitButto
   }
 
   return (
-    <div className="Basic">
+    <div className="Background">
       <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
           <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>
@@ -104,10 +187,13 @@ export function BasicCareerComponent({ basicComplete, toggleBasic }: SubmitButto
             ))}
           </Row>
         </div>
-        <div style={{ marginLeft: "auto", marginRight: "auto", textAlign: "center" }}>
-          <Button style={{ height: "50px", width: "75px", marginRight: "2px", borderRadius: "15px" }}>Save</Button>
-          <BasicSubmit />
-        </div>
+        <div style={{ marginLeft: "1350px"}}>
+    <div style = {{display: "flex", float: "right"}}>
+    <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
+    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
+    <BasicClear/>
+    </div>
+</div>
       </div>
     </div>
   );

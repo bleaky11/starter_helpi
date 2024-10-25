@@ -10,19 +10,38 @@ export interface submitButton{ // Interface for keeping track of Basic Question 
 export function NotifBell({basicComplete, detailedComplete}: submitButton): JSX.Element{
     const [notifBar, toggleBar] = useState<boolean>(false);
     const [image, changeImage] = useState<boolean>(false);
+    const [notification, setNotification] = useState<boolean>(false);
 
     useEffect(() => {
-        if (basicComplete || detailedComplete) {
-            changeImage(true);
+        if (basicComplete && sessionStorage.getItem("basicCount") === null) {
+            setNotification(true);
+        } else if (detailedComplete && sessionStorage.getItem("detailedCount") === null){
+            setNotification(true);
         } else {
-            changeImage(false);
+            setNotification(false);
         }
     }, [basicComplete, detailedComplete]);
 
+    useEffect(() => {
+        if(notification){
+            changeImage(true);
+        }
+        else{
+            changeImage(false);
+        }
+    }, [notification])
+
     function basicToggle(): void{
         toggleBar(!notifBar);
-        if(image === true){
-            changeImage(false);
+        if(notification === true){
+            setNotification(false);
+            if(basicComplete){
+                sessionStorage.setItem("basicCount", "1")
+            }
+            
+            if(detailedComplete){
+                sessionStorage.setItem("detailedCount", "1")
+            }
         }
     }
     return (<div className="container">
