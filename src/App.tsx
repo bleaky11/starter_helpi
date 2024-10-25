@@ -23,6 +23,7 @@ function App() {
   const [savedBasicCareer, setBasicCareer] = useState<string>("");
   const [savedDetailedCareer, setDetailedCareer] = useState<string>("");
   const [isKeyEntered] = useState<boolean>(JSON.parse(sessionStorage.getItem('isKeyEntered') || 'false')); // To track if user has entered an API Key
+  const [question, setQuestion] = useState<string>('');
 
   function handleSubmit() {
     localStorage.setItem(saveKeyData, JSON.stringify(key));
@@ -48,6 +49,8 @@ function App() {
         savedBasicCareer={savedBasicCareer}
         setDetailedCareer={setDetailedCareer}
         savedDetailedCareer={savedDetailedCareer}
+        question={question}
+        setQuestion={setQuestion}
       />
       {page === "Home" && (
         <Form className='Header-footer'>
@@ -80,6 +83,8 @@ interface MainContentProps {
   savedDetailedCareer: string;
   setDetailedCareer: React.Dispatch<React.SetStateAction<string>>;
   apiKey:string;
+  question:string;
+  setQuestion: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered,

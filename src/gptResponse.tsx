@@ -24,7 +24,7 @@ export function GptResponse({apiKey}: api): JSX.Element {
         <Button onClick={handleSendMessage} disabled={isLoading}>GPT Test: {isLoading? "loading": "send"}</Button>
         <Button onClick={()=>console.log(message)}>test</Button>
         <div>
-            <h2>Response:</h2>
+            <h2>Results:</h2>
             <p>{message}</p>
         </div>
     </div>
