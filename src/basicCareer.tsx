@@ -54,36 +54,24 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
 
   const clearStorage = () => 
     {
-      console.log("Clearing local storage");
-    
       localStorage.removeItem("basicQuizProgress");
-      console.log("Removed basicQuizProgress:", localStorage);
-      
       localStorage.removeItem("basicQuizAnswers");
-      console.log("Removed basicQuizAnswers:", localStorage);
-      
       sessionStorage.removeItem("visited");
-      console.log("Cleared session storage:", sessionStorage);
 }
 
 useEffect(() => {
   const savedBasicProgress = localStorage.getItem("basicQuizProgress");
   const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
 
-  console.log(savedBasicProgress);
-  console.log(savedBasicAnswers);
-
   if (!savedBasicProgress && !savedBasicAnswers) {
       clearStorage(); // This will clear local storage and session storage
       sessionStorage.setItem("visited", "true"); // Set the visited flag
       console.log("Set visited to true:", sessionStorage.getItem("visited")); // Log the state after setting
-      console.log("CHILLIN IN THE WRONG SPOT"); // Expect this on the first visit
   } 
   else if (savedBasicProgress && savedBasicAnswers )
   {
       setProgress(JSON.parse(savedBasicProgress || "0")); // Load saved progress
       setQuestions(JSON.parse(savedBasicAnswers || "[]")); // Load saved answers
-      console.log("HELLO CAN YOU HEAR ME"); // Expect this on subsequent visits
   }
 }, []);
 
