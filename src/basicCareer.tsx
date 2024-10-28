@@ -53,6 +53,9 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     }));
     setQuestions(clearedQuestions);
     setProgress(0);
+    setTimeout(() => {
+      alert("Quiz Cleared!");
+  }, 0);
   }
 
   function handleSubmit({basicComplete, toggleBasic}: SubmitButton)
@@ -187,13 +190,11 @@ useEffect(() => {
             ))}
           </Row>
         </div>
-        <div style={{ marginLeft: "1350px"}}>
-    <div style = {{display: "flex", float: "right"}}>
+    <div style={{ display: "flex", justifyContent: "center", marginTop: "80px" }}>
     <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
     <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
     <BasicClear/>
     </div>
-</div>
       </div>
     </div>
   );
