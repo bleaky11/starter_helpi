@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 
 interface submitButton{ // Interface for keeping track of Basic Question Completion
@@ -52,6 +52,7 @@ interface Question
 
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
   const [questions, setQuestions] = useState<Question[]>([
     { text: "What did you always want to be when you grew up?", type: "text", answered: false, page: 0, answer: "" },
@@ -65,12 +66,31 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
 
   const currentQuestion = questions.find(q => q.page === questionPage);
 
+  useEffect(() => {
+    // Load saved answers from session storage when the component mounts
+    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+    const detailedQuizProgress = sessionStorage.getItem("detailedQuizProgress")
+    const updatedTempAnswers = new Array(7).fill("");
+
+    // Populate tempAnswers with saved answers
+    Object.keys(savedAnswers).forEach((key) => {
+      updatedTempAnswers[parseInt(key)] = savedAnswers[key];
+    });
+
+    setTempAnswers(updatedTempAnswers);
+    setProgress(JSON.parse(detailedQuizProgress || "0"));
+  }, []);
+
   function updateAnswered() {
     if(currentQuestion){
       const updatedQuestions = [...questions];
       updatedQuestions[questionPage].answered = true;
       updatedQuestions[questionPage].answer = tempAnswers[questionPage];
       setQuestions(updatedQuestions);
+      updateProgress(updatedQuestions);
+      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+      savedAnswers[questionPage] = tempAnswers[questionPage];
+      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
     }
   }
 
@@ -91,9 +111,29 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
       
     );
   }
+
+  function updateProgress(updatedQuestions: typeof questions): void {
+    const totalQuestions = updatedQuestions.length;
+    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
+    const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+    setProgress(progressPercentage);
+    sessionStorage.setItem("detailedQuizProgress", JSON.stringify(progressPercentage))
+  }
+
+  function getSavedAnswer(page: number) {
+    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+    return savedAnswers[page] || ""; // Return the saved answer or an empty string if not present
+  }
   
   return (
     <div className="Background">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
+          <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>
+            Percent Complete: {progress.toFixed(0)}%
+          </label>
+          <progress id="question" value={progress} max="100" style={{ height: "45px", width: "300px" }} />
+        </div>
       <div style={{textAlign: "center"}}>
         <h1>Here is the Detailed Career Page!</h1>
         <div></div>
@@ -115,7 +155,7 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
       )}
       <div style={{textAlign: "center"}}>
         {currentQuestion && (
-          <IsRecorded savedAnswer={currentQuestion.answer} currentText={tempAnswers[questionPage]} />
+          <IsRecorded savedAnswer={getSavedAnswer(questionPage)} currentText={tempAnswers[questionPage]} />
         )}
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px' }}>
