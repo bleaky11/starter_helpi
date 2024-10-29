@@ -69,16 +69,13 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
   useEffect(() => {
     // Load saved answers from session storage when the component mounts
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-    const detailedQuizProgress = sessionStorage.getItem("detailedQuizProgress")
     const updatedTempAnswers = new Array(7).fill("");
 
     // Populate tempAnswers with saved answers
     Object.keys(savedAnswers).forEach((key) => {
       updatedTempAnswers[parseInt(key)] = savedAnswers[key];
     });
-
     setTempAnswers(updatedTempAnswers);
-    setProgress(JSON.parse(detailedQuizProgress || "0"));
   }, []);
 
   function updateAnswered() {
@@ -118,7 +115,6 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
     const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
     const progressPercentage = (answeredQuestions / totalQuestions) * 100;
     setProgress(progressPercentage);
-    sessionStorage.setItem("detailedQuizProgress", JSON.stringify(progressPercentage))
   }
 
   function getSavedAnswer(page: number) {
