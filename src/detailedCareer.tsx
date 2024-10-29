@@ -28,7 +28,6 @@ function handleSubmit({detailedComplete, toggleDetailed}: submitButton)
   alert("Thanks for completing the Detailed Career quiz!");
 }
 
-
 function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element {
   return(<div>
     <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} onClick={() => handleSubmit({detailedComplete, toggleDetailed})}>Submit</Button>
@@ -46,27 +45,52 @@ interface Question
 {
   text: string;
   type: string;
-  answer: boolean;
+  answered: boolean;
   page: number;
+  answer: string;
 }
 
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
-  const [questions] = useState<Question[]>([
-    { text: "What did you always want to be when you grew up?", type: "text", answer: false, page: 0 },
-    { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answer: false, page: 1 },
-    { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answer: false, page: 2 },
-    { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answer: false, page: 3 },
-    { text: "What is a topic or subject that you could teach someone about?", type: "text", answer: false, page: 4 },
-    { text: "What are your favorite hobbies?", type: "text", answer: false, page: 5 },
-    { text: "What 3 words would others use to describe you?", type: "text", answer: false, page: 6 }
+  const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
+  const [questions, setQuestions] = useState<Question[]>([
+    { text: "What did you always want to be when you grew up?", type: "text", answered: false, page: 0, answer: "" },
+    { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: ""  },
+    { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: ""  },
+    { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: ""  },
+    { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: ""  },
+    { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: ""  },
+    { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: ""  }
   ]);
 
-  function updateAnswered(event: React.ChangeEvent<HTMLInputElement>) {
-    // Logic to handle answering the question
+  const currentQuestion = questions.find(q => q.page === questionPage);
+
+  function updateAnswered() {
+    if(currentQuestion){
+      const updatedQuestions = [...questions];
+      updatedQuestions[questionPage].answered = true;
+      updatedQuestions[questionPage].answer = tempAnswers[questionPage];
+      setQuestions(updatedQuestions);
+    }
   }
 
-  const currentQuestion = questions.find(q => q.page === questionPage);
+  function handleAnswerChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    const updatedTempAnswers = [...tempAnswers];
+    updatedTempAnswers[questionPage] = event.target.value;
+    setTempAnswers(updatedTempAnswers);
+  }
+
+  function IsRecorded({ savedAnswer, currentText }: { savedAnswer: string; currentText: string }) {
+    return (
+      <div>
+        Saved Answer: {savedAnswer}
+        <div>
+        {savedAnswer === currentText ? "Response Recorded!" : "Please Record Your Response!"}
+        </div>
+      </div>
+      
+    );
+  }
   
   return (
     <div className="Background">
@@ -85,12 +109,18 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
       <div>
       {currentQuestion && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <h2>{currentQuestion.text}</h2>
-          <textarea onChange={() => updateAnswered} style={{ width: '80%', height: '15em', marginTop: '10px', resize: 'none'  }}/>
+          <h2>{currentQuestion.text}</h2> 
+          <textarea value={tempAnswers[questionPage]} onChange={handleAnswerChange} style={{ width: '80%', height: '15em', marginTop: '10px', resize: 'none'  }}/>
         </div>
       )}
+      <div style={{textAlign: "center"}}>
+        {currentQuestion && (
+          <IsRecorded savedAnswer={currentQuestion.answer} currentText={tempAnswers[questionPage]} />
+        )}
+      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px' }}>
         <Button onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
+        <Button onClick={() => updateAnswered()} style={{width: "300px"}}>Record Answer</Button>
         <Button onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
       </div>
     </div>
