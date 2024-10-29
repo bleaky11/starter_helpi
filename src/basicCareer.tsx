@@ -44,6 +44,17 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     }
   }
 
+  function handleClear(){
+    localStorage.removeItem("basicQuizProgress");
+    localStorage.removeItem("basicQuizAnswers");
+    const clearedQuestions = questions.map(question => ({
+      ...question,
+      selected: question.selected.map(() => false) // Reset all selected states to false
+    }));
+    setQuestions(clearedQuestions);
+    setProgress(0);
+  }
+
   function handleSubmit({basicComplete, toggleBasic}: SubmitButton)
   {
     toggleBasic(!basicComplete);
@@ -85,6 +96,12 @@ useEffect(() => {
   {
     return(<div>
       <Button onClick = {handleBasicSave} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
+    </div>)
+  }
+
+  function BasicClear(){
+    return(<div>
+      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Clear</Button>
     </div>)
   }
 
@@ -162,6 +179,7 @@ useEffect(() => {
     <div style = {{display: "flex", float: "right"}}>
     <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
     <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
+    <BasicClear/>
     </div>
 </div>
       </div>

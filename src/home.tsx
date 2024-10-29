@@ -101,7 +101,7 @@ export function MainPage({
                 <h6 className="Body-Heading" style={{fontSize: "16px" }}>
                   You will be asked a series of elaborate questions that may
                   require some additional thought to answer. Your results will
-                  be more accurate and personable than the basic assessment.
+                  be more accurate and personable than your basic assessment results.
                   Before you begin, make sure you're in a comfortable
                   environment and answer each question to your best ability.
                 </h6>
