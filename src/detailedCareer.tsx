@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 
 interface submitButton{ // Interface for keeping track of Basic Question Completion
@@ -52,21 +52,42 @@ interface Question
 
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
-  const [progress, setProgress] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
-  const [questions, setQuestions] = useState<Question[]>([
-    { text: "What did you always want to be when you grew up?", type: "text", answered: false, page: 0, answer: "" },
-    { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: ""  },
-    { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: ""  },
-    { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: ""  },
-    { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: ""  },
-    { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: ""  },
-    { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: ""  }
-  ]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [progress, setProgress] = useState<number>(0);
 
   const currentQuestion = questions.find(q => q.page === questionPage);
+  if(sessionStorage.getItem("quizAnswers") === null){
+    sessionStorage.setItem("quizAnswers", JSON.stringify({}))
+  }
+
+  const updateProgress = useCallback(() => {
+    const totalQuestions = questions.length;
+    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+    sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
+    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
+    const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+    setProgress(progressPercentage);
+  }, [questions]);
 
   useEffect(() => {
+    const storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
+    if (storedQuestions.length > 0){
+      setQuestions(storedQuestions)
+    } else {
+      const defaultQuestions = [
+        { text: "What did you always want to be when you grew up?", type: "text", answered: false, page: 0, answer: "" },
+        { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: ""  },
+        { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: ""  },
+        { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: ""  },
+        { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: ""  },
+        { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: ""  },
+        { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: ""  }
+      ]
+      setQuestions(defaultQuestions)
+      sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
+    }
+
     // Load saved answers from session storage when the component mounts
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
     const updatedTempAnswers = new Array(7).fill("");
@@ -76,25 +97,34 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
       updatedTempAnswers[parseInt(key)] = savedAnswers[key];
     });
     setTempAnswers(updatedTempAnswers);
+  
+    // Calculate progress here after setting questions
+    const totalQuestions = storedQuestions.length;
+    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
+    const progressPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+    setProgress(progressPercentage);
+  
   }, []);
 
   function updateAnswered() {
-    if(currentQuestion){
+    if (currentQuestion) {
       const updatedQuestions = [...questions];
       updatedQuestions[questionPage].answered = true;
       updatedQuestions[questionPage].answer = tempAnswers[questionPage];
       setQuestions(updatedQuestions);
-      updateProgress(updatedQuestions);
       const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
       savedAnswers[questionPage] = tempAnswers[questionPage];
       sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
+      updateProgress();
     }
   }
 
   function handleAnswerChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    const updatedTempAnswers = [...tempAnswers];
-    updatedTempAnswers[questionPage] = event.target.value;
-    setTempAnswers(updatedTempAnswers);
+    setTempAnswers(prevAnswers => {
+      const updatedAnswers = [...prevAnswers];
+      updatedAnswers[questionPage] = event.target.value;
+      return updatedAnswers;
+    });
   }
 
   function IsRecorded({ savedAnswer, currentText }: { savedAnswer: string; currentText: string }) {
@@ -107,14 +137,6 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
       </div>
       
     );
-  }
-
-  function updateProgress(updatedQuestions: typeof questions): void {
-    const totalQuestions = updatedQuestions.length;
-    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
-    const progressPercentage = (answeredQuestions / totalQuestions) * 100;
-    setProgress(progressPercentage);
   }
 
   function getSavedAnswer(page: number) {
