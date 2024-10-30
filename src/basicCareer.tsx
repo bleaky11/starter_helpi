@@ -77,7 +77,6 @@ useEffect(() => {
   if (!savedBasicProgress && !savedBasicAnswers) {
       clearStorage(); // This will clear local storage and session storage
       sessionStorage.setItem("visited", "true"); // Set the visited flag
-      console.log("Set visited to true:", sessionStorage.getItem("visited")); // Log the state after setting
   } 
   else if (savedBasicProgress && savedBasicAnswers )
   {
