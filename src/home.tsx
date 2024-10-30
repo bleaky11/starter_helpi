@@ -42,6 +42,12 @@ export function MainPage({
                   best ability.
                 </h6>
               </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
               <img
                 src={magGlass}
                 alt="Magnifying Glass"
@@ -52,6 +58,7 @@ export function MainPage({
                   height: "230px",
                 }}
               />
+              </div>
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 <nav>
                   {/* Case 1: First visit (no progress saved, no API key entered) */}
@@ -110,7 +117,6 @@ export function MainPage({
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  marginBottom: "30px",
                 }}
               >
                 <img

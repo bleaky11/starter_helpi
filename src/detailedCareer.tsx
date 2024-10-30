@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
+import questionMarks from "./Images/Questions.png";
+import detective2 from "./Images/Detective2.png";
 
 interface submitButton{ // Interface for keeping track of Detailed Question Completion
   detailedComplete: boolean;
@@ -189,17 +191,26 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
               <p>{currentQuestion.tip}</p>
             </div>
           )}
-          <textarea value={tempAnswers[questionPage]} onChange={handleAnswerChange} style={{ width: '80%', height: '15em', marginTop: '10px', resize: 'none'  }}/>
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '10px' }}>
+            <img src={detective2} alt="Detective" style={{ width: '10%', height: '10%', marginRight: '10px' }} />
+              <textarea 
+                value={tempAnswers[questionPage]} 
+                onChange={handleAnswerChange} 
+                style={{ width: '25%', height: '5em', resize: 'none' }} 
+              />
+            <img src={questionMarks} alt="Question Marks" style={{ width: '10%', height: '10%', marginLeft: '10px' }} />
+          </div>
         </div>
       )}
       <div style={{textAlign: "center"}}>
-        {currentQuestion && (
-          <IsRecorded savedAnswer={getSavedAnswer(questionPage)} currentText={tempAnswers[questionPage]} />
+        {currentQuestion && (<div style={{marginTop: "20px"}}>
+          <IsRecorded savedAnswer={getSavedAnswer(questionPage)} currentText={tempAnswers[questionPage]} /></div>
         )}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px', padding: "0 37%" }}>
         <Button onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
-        <Button onClick={() => updateAnswered()} style={{width: "300px"}}>Record Answer</Button>
+        <Button onClick={() => updateAnswered()} style={{width: "200px"}}>Record Answer</Button>
         <Button onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
       </div>
     </div>
