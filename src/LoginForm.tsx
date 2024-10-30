@@ -23,8 +23,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   handleRemember,
   handleSubmit,
   closeForm,
-  formTitle
+  formTitle,
 }) => {
+ 
   return (
     <div className="form-popup" id="myForm">
       <form className="form-container" onSubmit={handleSubmit}>

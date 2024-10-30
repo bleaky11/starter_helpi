@@ -7,7 +7,7 @@ export const HomePage: React.FC = () => {
   const [userInfo, setInfo] = useState<{ username: string; password: string }>({ username: "", password: "" });
   const [remember, setRemember] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
+ 
   useEffect(() => {
     const savedUsername = localStorage.getItem("username") || "";
     const savedPassword = localStorage.getItem("password") || "";
@@ -38,20 +38,34 @@ export const HomePage: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    saveUser();
-    setIsLoggedIn(true);
+    if (checkInfo()) 
+    {
+      saveUser();
+      setIsLoggedIn(true);
+    } 
+    else if(!localStorage.getItem("username") && !localStorage.getItem("password"))
+    {
+      saveUser();
+      setIsLoggedIn(true);
+    }
+    else {
+      setIsLoggedIn(false);
+      alert("Wrong username or password!");
+    }
   };
 
-  const saveUser = () => 
-  {
-    if(remember)
-    {
+  const checkInfo = () => {
+    const savedUsername = localStorage.getItem("username");
+    const savedPassword = localStorage.getItem("password");
+    return userInfo.username === savedUsername && userInfo.password === savedPassword;
+  };
+
+  const saveUser = () => {
+    if (remember) {
       localStorage.setItem("username", userInfo.username);
       localStorage.setItem("password", userInfo.password);
       localStorage.setItem("remembered", "true");
-    }
-    else
-    {
+    } else {
       localStorage.setItem("username", userInfo.username);
       localStorage.setItem("password", userInfo.password);
       localStorage.removeItem("remembered");
@@ -60,10 +74,13 @@ export const HomePage: React.FC = () => {
 
   return (
     <div>
-      {(isLoggedIn && remember) ? (
-        <div style = {{float: "left"}}><h3>Signed in as: {userInfo.username}!</h3></div>
+      {isLoggedIn ? (
+        <div style={{position: "absolute", float: "left" }}>
+          <h3>Signed in as: {userInfo.username}!</h3>
+        </div>
       ) : (
         <div>
+          {/* Show the user image only when not logged in */}
           <img
             src={userProfile}
             alt="User Profile"
@@ -91,4 +108,5 @@ export const HomePage: React.FC = () => {
     </div>
   );
 };
+
 
