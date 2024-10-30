@@ -8,11 +8,10 @@ export interface LoginFormProps {
   setInfo: (value: React.SetStateAction<{ username: string; password: string }>) => void;
   remember: boolean;
   setRemember: React.Dispatch<React.SetStateAction<boolean>>;
-  isClicked: boolean;
-  setClicked: React.Dispatch<React.SetStateAction<boolean>>;
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void; 
   handleRemember: () => void;
+  formTitle: string;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -23,12 +22,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   updateStatus,
   handleRemember,
   handleSubmit,
-  closeForm
+  closeForm,
+  formTitle
 }) => {
   return (
     <div className="form-popup" id="myForm">
       <form className="form-container" onSubmit={handleSubmit}>
-        <h1>Create Account</h1>
+        <h1>{formTitle}</h1>
         <label htmlFor="username"><b>Username</b></label>
         <input
           type="text"
