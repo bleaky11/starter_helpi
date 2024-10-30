@@ -3,7 +3,7 @@
 > react-scripts test --coverage
 
 FAIL src/App.test.tsx
-  ✕ renders learn react link (88 ms)
+  ✕ renders learn react link (62 ms)
 
   ● renders learn react link
 
@@ -17,6 +17,13 @@ FAIL src/App.test.tsx
           [33mstyle[39m=[32m"text-align: center;"[39m
         [36m>[39m
           [36m<div>[39m
+            [36m<div>[39m
+              [36m<img[39m
+                [33malt[39m=[32m"User Profile"[39m
+                [33msrc[39m=[32m"user-profile.png"[39m
+                [33mstyle[39m=[32m"float: left; width: 50px; height: 55px; cursor: pointer;"[39m
+              [36m/>[39m
+            [36m</div>[39m
             [36m<a[39m
               [33mhref[39m=[32m"https://bleaky11.github.io/starter_helpi/"[39m
               [33mstyle[39m=[32m"color: black;"[39m
@@ -57,13 +64,12 @@ FAIL src/App.test.tsx
                   [36m<div[39m
                     [33mstyle[39m=[32m"flex: 1;"[39m
                   [36m>[39m
-                    [36m<h2>[39m
-                      [0mBasic Career Assessment[0m
-                    [36m</h2>[39m
-                    [36m<h6[39m
-                      [33mclass[39m=[32m"Body-Heading"[39m
-                      [33mstyle[39m=[32m"font-size: 16px;"[39m
-                    [36m>[39m
+                    [36m<div>[39m
+                      [36m<h2>[39m
+                        [0mBasic Career Assessment[0m
+                      [36m</h2>[39m
+                    [36m</div>[39m
+                    [36m<h6>[39m
                       [0mYou will be asked a series of multiple choice questions. If you're looking for more in-depth questions and results, go to the Detailed Career Page. Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.[0m
                     [36m</h6>[39m
                   [36m</div>[39m
@@ -82,7 +88,7 @@ FAIL src/App.test.tsx
                           [33mdisabled[39m=[32m""[39m
                           [33mtype[39m=[32m"button"[39m
                         [36m>[39m
-                          [0mBasic Questions[0m
+                          [0mBasic Career Questions[0m
                         [36m</button>[39m
                         [36m<h6>[39m
                           [0mPlease enter an API Key[0m
@@ -198,27 +204,28 @@ ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
 your devDependencies to work around this error. This will make this message
 go away.[0m
   
----------------------|---------|----------|---------|---------|-------------------
-File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
----------------------|---------|----------|---------|---------|-------------------
-All files            |   15.34 |    21.18 |   12.12 |   16.06 |                   
- src                 |   15.57 |    21.18 |   12.12 |   16.31 |                   
-  App.tsx            |      75 |       60 |      50 |      75 | 15,28-34          
-  basicCareer.tsx    |       0 |        0 |       0 |       0 | 26-184            
-  detailedCareer.tsx |       0 |        0 |       0 |       0 | 20-203            
-  header.tsx         |   33.33 |       50 |      20 |   33.33 | 12-19,26-33       
-  home.tsx           |      25 |    22.22 |      25 |      25 | 69-148            
-  homepagelogo.tsx   |     100 |      100 |     100 |     100 |                   
-  index.tsx          |       0 |      100 |     100 |       0 | 7-19              
-  notification.tsx   |   52.38 |    34.21 |      75 |   52.38 | 17,19,27,35-43    
-  reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10              
- src/CSS             |       0 |      100 |     100 |       0 |                   
-  Border.tsx         |       0 |      100 |     100 |       0 | 3                 
-  Center.tsx         |       0 |      100 |     100 |       0 | 3                 
-  Heading.tsx        |       0 |      100 |     100 |       0 | 3                 
----------------------|---------|----------|---------|---------|-------------------
+---------------------|---------|----------|---------|---------|----------------------------------------
+File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                      
+---------------------|---------|----------|---------|---------|----------------------------------------
+All files            |      20 |    22.85 |   11.68 |   20.96 |                                        
+ src                 |   20.25 |    22.85 |   11.68 |   21.23 |                                        
+  App.tsx            |      75 |       60 |      50 |      75 | 15,28-34                               
+  LoginForm.tsx      |      50 |      100 |       0 |      50 | 29                                     
+  basicCareer.tsx    |       0 |        0 |       0 |       0 | 26-171                                 
+  detailedCareer.tsx |       0 |        0 |       0 |       0 | 20-203                                 
+  header.tsx         |   33.33 |       50 |      20 |   33.33 | 12-19,26-33                            
+  home.tsx           |      25 |    22.22 |      25 |      25 | 69-148                                 
+  homepagelogo.tsx   |   36.95 |    31.81 |   18.18 |   38.63 | 17-19,24,28-29,36,40-53,58-60,64-71,99 
+  index.tsx          |       0 |      100 |     100 |       0 | 7-19                                   
+  notification.tsx   |   52.38 |    34.21 |      75 |   52.38 | 17,19,27,35-43                         
+  reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10                                   
+ src/CSS             |       0 |      100 |     100 |       0 |                                        
+  Border.tsx         |       0 |      100 |     100 |       0 | 3                                      
+  Center.tsx         |       0 |      100 |     100 |       0 | 3                                      
+  Heading.tsx        |       0 |      100 |     100 |       0 | 3                                      
+---------------------|---------|----------|---------|---------|----------------------------------------
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.366 s
+Time:        3.407 s
 Ran all test suites.
