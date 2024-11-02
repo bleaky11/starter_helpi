@@ -3,7 +3,7 @@
 > react-scripts test --coverage
 
 FAIL src/App.test.tsx
-  ✕ renders learn react link (62 ms)
+  ✕ renders learn react link (66 ms)
 
   ● renders learn react link
 
@@ -49,6 +49,37 @@ FAIL src/App.test.tsx
                   [33mclass[39m=[32m"notif-bell"[39m
                   [33msrc[39m=[32m"bell.png"[39m
                 [36m/>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"container"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ResultBorder col"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mstyle[39m=[32m"flex: 1;"[39m
+                [36m>[39m
+                  [36m<h2>[39m
+                    [0mResults Page[0m
+                  [36m</h2>[39m
+                  [36m<h6[39m
+                    [33mclass[39m=[32m"Body-Heading"[39m
+                    [33mstyle[39m=[32m"font-size: 16px;"[39m
+                  [36m>[39m
+                    [0mResults of the quiz will be displayed after completing basic and/or detailed question[0m
+                  [36m</h6>[39m
+                [36m</div>[39m
+                [36m<a[39m
+                  [33mhref[39m=[32m"#/results-page"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"btn btn-primary"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [0mResults Page[0m
+                  [36m</button>[39m
+                [36m</a>[39m
               [36m</div>[39m
             [36m</div>[39m
             [36m<div[39m
@@ -207,18 +238,21 @@ go away.[0m
 ---------------------|---------|----------|---------|---------|----------------------------------------
 File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                      
 ---------------------|---------|----------|---------|---------|----------------------------------------
-All files            |      20 |    22.85 |   11.68 |   20.96 |                                        
- src                 |   20.25 |    22.85 |   11.68 |   21.23 |                                        
-  App.tsx            |      75 |       60 |      50 |      75 | 15,28-34                               
+All files            |   18.42 |    21.05 |   10.97 |   19.21 |                                        
+ src                 |   18.63 |    21.05 |   10.97 |   19.44 |                                        
+  App.tsx            |   76.19 |       50 |      50 |   76.19 | 16,30-36                               
   LoginForm.tsx      |      50 |      100 |       0 |      50 | 29                                     
   basicCareer.tsx    |       0 |        0 |       0 |       0 | 26-171                                 
+  chatGpt.ts         |       0 |        0 |       0 |       0 | 3-33                                   
   detailedCareer.tsx |       0 |        0 |       0 |       0 | 20-203                                 
+  gptResponse.tsx    |       0 |        0 |       0 |       0 | 10-23                                  
   header.tsx         |   33.33 |       50 |      20 |   33.33 | 12-19,26-33                            
-  home.tsx           |      25 |    22.22 |      25 |      25 | 69-148                                 
+  home.tsx           |      20 |    22.22 |      20 |      20 | 41-165                                 
   homepagelogo.tsx   |   36.95 |    31.81 |   18.18 |   38.63 | 17-19,24,28-29,36,40-53,58-60,64-71,99 
   index.tsx          |       0 |      100 |     100 |       0 | 7-19                                   
   notification.tsx   |   52.38 |    34.21 |      75 |   52.38 | 17,19,27,35-43                         
   reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10                                   
+  resultPage.tsx     |       0 |        0 |       0 |       0 | 13                                     
  src/CSS             |       0 |      100 |     100 |       0 |                                        
   Border.tsx         |       0 |      100 |     100 |       0 | 3                                      
   Center.tsx         |       0 |      100 |     100 |       0 | 3                                      
@@ -227,5 +261,5 @@ All files            |      20 |    22.85 |   11.68 |   20.96 |
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.407 s
+Time:        3.66 s
 Ran all test suites.
