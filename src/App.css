@@ -24,6 +24,7 @@
   position: absolute;
 }
 
+
 .notif-bar {
   display: flex;
   justify-content: flex-end;
@@ -40,6 +41,7 @@
 .notif-bell{
   width: auto;
   height: 100px;
+  max-height: 15%;
   position: absolute;
 }
 
@@ -92,6 +94,16 @@
   flex: 1;
   background-color: #dda15e;
   height: 500px;
+}
+
+.ResultBorder {
+  border: 10px solid #bc6c25;
+  border-radius: 25px;
+  padding: 16px;
+  margin: 10px;
+  flex: 1;
+  background-color: #dda15e;
+  width: 400px;
 }
 
 .Body-Heading {

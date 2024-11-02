@@ -6,6 +6,7 @@ import { BasicCareerComponent } from './basicCareer';
 import { DetailedCareerComponent } from './detailedCareer';
 import { HeaderComponent } from './header';
 import { MainPage } from './home';
+import { ResultPage } from './resultPage';
 
 // Local storage and API Key
 let keyData = "";
@@ -90,7 +91,7 @@ interface MainContentProps {
 function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered,
    savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, apiKey }: MainContentProps) {
   const location = useLocation();
-  const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : "Detailed-Questions");
+  const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : (location.pathname === "/detailed-questions" ? "Detailed-Questions": "Results-Page"));
 
   return (
     <>
@@ -98,6 +99,7 @@ function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, to
       <Routes>
         <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}  savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} />} />
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed} />} />
+        <Route path="/results-page" element={<ResultPage basicComplete={basicComplete} detailedComplete={detailedComplete} apiKey={apiKey}></ResultPage>} />
         <Route path="/" element={<MainPage setPage={setPage} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} apiKey={apiKey}/>} />
         <Route path="*" element={<Navigate to="/" replace />} /> {/*Navigate to homepage if route is unrecognized*/}
       </Routes>

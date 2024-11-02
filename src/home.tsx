@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { NotifBell } from "./notification";
 import magGlass from "./Images/magnifying-glass.jpg";
 import detective from "./Images/Detective.png";
-import { GptResponse } from "./gptResponse";
 
 interface HomeComponentProps {
   page: string;
@@ -29,6 +28,21 @@ export function MainPage({
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
         ></NotifBell>
+        <Container>
+          <Col className="ResultBorder" >
+              <div style={{ flex: 1 }}>
+                <h2>Results Page</h2>
+                <h6 className="Body-Heading" style={{fontSize: "16px" }}>
+                  Results of the quiz will be displayed after completing basic and/or detailed question
+                </h6>
+              </div>
+              <Link
+                to="/results-page"
+                onClick={() => setPage("Results-Page")}>
+                  <Button>Results Page</Button>
+              </Link>
+            </Col>
+        </Container>
         <Container>
           <Row>
             <Col
@@ -157,7 +171,6 @@ export function MainPage({
             </Col>
           </Row>
         </Container>
-        <GptResponse apiKey={apiKey}></GptResponse>
       </header>
     </div>
   );
