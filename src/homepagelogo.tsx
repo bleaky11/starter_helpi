@@ -1,71 +1,97 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import { LoginForm } from './LoginForm';
 
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [userInfo, setInfo] = useState<{ username: string; password: string }>({ username: "", password: "" });
+  const [userInfo, setUserInfo] = useState<{ username: string; password: string }>({ username: "", password: "" });
   const [remember, setRemember] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [userID, setID] = useState<number>(1);
+  const [formTitle, setFormTitle] = useState<string>("Create Account");
 
-  const indexedDB = window.indexedDB;
+  useEffect(() => {
+    const initializeDB = () => {
+      const indexedDB = window.indexedDB;
+      const request = indexedDB.open("UserDatabase", 1);
 
-  const request = indexedDB.open("UserDatabase", 1);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        const store = db.createObjectStore("users", { autoIncrement: true });
+        store.createIndex("username", "username", { unique: true });
+      };
 
-  request.onerror = function(event){
-    console.error("Error occured accessing user database!");
-    console.error(event);
-  }
+      request.onsuccess = () => {
+        const db = request.result;
+        checkExistingUser(db);
+      };
 
-  request.onupgradeneeded = function()
-  {
-    const db = request.result;
-    const store = db.createObjectStore("users", {keyPath: "id"});
-    store.createIndex("username_and_password", ["username", "password"], {unique: false});
-  }
+      request.onerror = (event) => {
+        console.error("Error accessing user database!", event);
+      };
+    };
 
-  request.onsuccess = function()
-  {
-    const db = request.result;
-    const transaction = db.transaction("users", 'readwrite');
-    const store = transaction.objectStore("users");
-    const makeUserIndex = store.index("username_and_password");
-    if(isLoggedIn)
-    {
-      store.put({id: userID, username: userInfo.username, password: userInfo.password});
-      const userQuery = makeUserIndex.get(userID);
-      if(userQuery.onsuccess)
-      {
-        if(isFormOpen)
-          {
-            <LoginForm
-              userInfo={userInfo}
-              setInfo={setInfo}
-              remember={remember}
-              setRemember={setRemember}
-              handleRemember={handleRemember}
-              handleSubmit = {handleSubmit}
-              updateStatus={updateStatus}
-              closeForm={() => setIsFormOpen(false)}
-              formTitle={(userQuery.result === "username" && userQuery.result === "password") ? "Log In" : "Create Account"}
-               // Pass the title based on conditions
-            />
-          }
-      }
-      transaction.oncomplete = function()
-      {
-        setID(userID + 1); // set for next user
+    const checkExistingUser = (db: IDBDatabase) => {
+      const transaction = db.transaction("users", "readonly");
+      const store = transaction.objectStore("users");
+      const allUsers = store.getAll();
+
+      allUsers.onsuccess = () => {
+        setFormTitle(allUsers.result.length > 0 ? "Log In" : "Create Account");
+      };
+
+      transaction.oncomplete = () => {
         db.close();
-      }
-    }
-  }
+      };
+    };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) =>
-  {
+    initializeDB();
+  }, []);
+
+  const saveUser = () => {
+    if (!userInfo.username || !userInfo.password) {
+      console.error("Username or password is missing");
+      return;
+    }
+
+    const indexedDB = window.indexedDB;
+    const request = indexedDB.open("UserDatabase", 1);
+
+    request.onsuccess = () => {
+      const db = request.result;
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+
+      const userObject = {
+        username: userInfo.username,
+        password: userInfo.password,
+      };
+
+      const addRequest = store.add(userObject);
+
+      addRequest.onsuccess = () => {
+        console.log("User successfully added to database!");
+        setIsLoggedIn(true);
+        setIsFormOpen(false);
+      };
+
+      addRequest.onerror = (event) => {
+        console.error("Error adding user to database:", event);
+      };
+
+      transaction.oncomplete = () => {
+        db.close();
+      };
+    };
+
+    request.onerror = (event) => {
+      console.error("Error opening database for saving user:", event);
+    };
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoggedIn(true);
-  }
+    saveUser();
+  };
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
@@ -73,25 +99,24 @@ export const HomePage: React.FC = () => {
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setInfo((prevInfo) => ({
+    setUserInfo((prevInfo) => ({
       ...prevInfo,
       [name]: value,
     }));
   };
 
   const handleRemember = () => {
-    setRemember((prevRemember) => !prevRemember);
+    setRemember(!remember);
   };
 
   return (
     <div>
       {isLoggedIn ? (
-        <div style={{position: "absolute", float: "left" }}>
+        <div style={{ position: "absolute", float: "left" }}>
           <h3>Signed in as: {userInfo.username}!</h3>
         </div>
       ) : (
         <div>
-          {/* Show the user image only when not logged in */}
           <img
             src={userProfile}
             alt="User Profile"
@@ -103,8 +128,32 @@ export const HomePage: React.FC = () => {
       <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
         <h1>The Career Quiz</h1>
       </a>
+
+      {isFormOpen && !isLoggedIn && (
+        <LoginForm
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+          remember={remember}
+          setRemember={setRemember}
+          handleRemember={handleRemember}
+          handleSubmit={handleSubmit}
+          updateStatus={updateStatus}
+          closeForm={() => setIsFormOpen(false)}
+          formTitle={formTitle}
+        />
+      )}
     </div>
   );
 };
+
+
+
+
+
+
+
+
+
+
 
 

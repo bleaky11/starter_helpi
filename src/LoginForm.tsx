@@ -5,7 +5,7 @@ import './LoginForm.css';
 export interface LoginFormProps {
   closeForm: () => void;
   userInfo: { username: string; password: string };
-  setInfo: (value: React.SetStateAction<{ username: string; password: string }>) => void;
+  setUserInfo: (value: React.SetStateAction<{ username: string; password: string }>) => void;
   remember: boolean;
   setRemember: React.Dispatch<React.SetStateAction<boolean>>;
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -16,7 +16,7 @@ export interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   userInfo,
-  setInfo,
+  setUserInfo,
   remember,
   setRemember,
   updateStatus,
