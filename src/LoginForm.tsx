@@ -9,8 +9,8 @@ export interface LoginFormProps {
   remember: boolean;
   setRemember: React.Dispatch<React.SetStateAction<boolean>>;
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void; 
   handleRemember: () => void;
+  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void; 
   formTitle: string;
 }
 

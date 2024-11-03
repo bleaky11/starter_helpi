@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import userProfile from './Images/user-profile.png';
 import { LoginForm } from './LoginForm';
 
@@ -7,18 +7,65 @@ export const HomePage: React.FC = () => {
   const [userInfo, setInfo] = useState<{ username: string; password: string }>({ username: "", password: "" });
   const [remember, setRemember] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
- 
-  useEffect(() => {
-    const savedUsername = localStorage.getItem("username") || "";
-    const savedPassword = localStorage.getItem("password") || "";
-    const remembered = localStorage.getItem("remembered") === "true";
+  const [userID, setID] = useState<number>(1);
 
-    if (remembered) {
-      setInfo({ username: savedUsername, password: savedPassword });
-      setRemember(remembered);
-      setIsLoggedIn(true); // User is considered logged in
+  const indexedDB = window.indexedDB;
+
+  const request = indexedDB.open("UserDatabase", 1);
+
+  request.onerror = function(event){
+    console.error("Error occured accessing user database!");
+    console.error(event);
+  }
+
+  request.onupgradeneeded = function()
+  {
+    const db = request.result;
+    const store = db.createObjectStore("users", {keyPath: "id"});
+    store.createIndex("username_and_password", ["username", "password"], {unique: false});
+  }
+
+  request.onsuccess = function()
+  {
+    const db = request.result;
+    const transaction = db.transaction("users", 'readwrite');
+    const store = transaction.objectStore("users");
+    const makeUserIndex = store.index("username_and_password");
+    if(isLoggedIn)
+    {
+      store.put({id: userID, username: userInfo.username, password: userInfo.password});
+      const userQuery = makeUserIndex.get(userID);
+      if(userQuery.onsuccess)
+      {
+        if(isFormOpen)
+          {
+            <LoginForm
+              userInfo={userInfo}
+              setInfo={setInfo}
+              remember={remember}
+              setRemember={setRemember}
+              handleRemember={handleRemember}
+              handleSubmit = {handleSubmit}
+              updateStatus={updateStatus}
+              closeForm={() => setIsFormOpen(false)}
+              formTitle={(userQuery.result === "username" && userQuery.result === "password") ? "Log In" : "Create Account"}
+               // Pass the title based on conditions
+            />
+          }
+      }
+      transaction.oncomplete = function()
+      {
+        setID(userID + 1); // set for next user
+        db.close();
+      }
     }
-  }, []);
+  }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) =>
+  {
+    event.preventDefault();
+    setIsLoggedIn(true);
+  }
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
@@ -36,42 +83,6 @@ export const HomePage: React.FC = () => {
     setRemember((prevRemember) => !prevRemember);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (checkInfo()) 
-    {
-      saveUser();
-      setIsLoggedIn(true);
-    } 
-    else if(!localStorage.getItem("username") && !localStorage.getItem("password"))
-    {
-      saveUser();
-      setIsLoggedIn(true);
-    }
-    else {
-      setIsLoggedIn(false);
-      alert("Wrong username or password!");
-    }
-  };
-
-  const checkInfo = () => {
-    const savedUsername = localStorage.getItem("username");
-    const savedPassword = localStorage.getItem("password");
-    return userInfo.username === savedUsername && userInfo.password === savedPassword;
-  };
-
-  const saveUser = () => {
-    if (remember) {
-      localStorage.setItem("username", userInfo.username);
-      localStorage.setItem("password", userInfo.password);
-      localStorage.setItem("remembered", "true");
-    } else {
-      localStorage.setItem("username", userInfo.username);
-      localStorage.setItem("password", userInfo.password);
-      localStorage.removeItem("remembered");
-    }
-  };
-
   return (
     <div>
       {isLoggedIn ? (
@@ -87,19 +98,6 @@ export const HomePage: React.FC = () => {
             style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
             onClick={toggleForm}
           />
-          {isFormOpen && (
-            <LoginForm
-              userInfo={userInfo}
-              setInfo={setInfo}
-              remember={remember}
-              setRemember={setRemember}
-              handleRemember={handleRemember}
-              handleSubmit={handleSubmit}
-              updateStatus={updateStatus}
-              closeForm={() => setIsFormOpen(false)}
-              formTitle={localStorage.getItem("username") ? "Log In" : "Create Account"} // Pass the title based on conditions
-            />
-          )}
         </div>
       )}
       <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
