@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import { LoginForm } from './LoginForm';
+import { Button } from 'react-bootstrap';
 
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
@@ -21,12 +22,45 @@ export const HomePage: React.FC = () => {
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       db.createObjectStore("users", { keyPath: "username" });
+      console.log("Object store created.");
     };
 
     request.onsuccess = () => {
-      setDb(request.result);
+      const dbInstance = request.result;
+      setDb(dbInstance);
+      console.log("Database opened successfully.");
+
+      // Check if there's saved user data for "Remember Me"
+      const rememberMe = localStorage.getItem("rememberMe") === "true";
+      setRemember(rememberMe);
+
+      if (rememberMe) {
+        // Attempt to load saved user data
+        const savedUsername = localStorage.getItem("savedUsername");
+        if (savedUsername) {
+          const transaction = dbInstance.transaction("users", "readonly");
+          const store = transaction.objectStore("users");
+          const userQuery = store.get(savedUsername);
+
+          userQuery.onsuccess = () => {
+            if (userQuery.result) {
+              // Load saved user data
+              setUserInfo({ username: userQuery.result.username, password: userQuery.result.password });
+              setIsLoggedIn(true);
+              setFormTitle("Log In");
+              console.log("Loaded saved user data:", userQuery.result);
+            } else {
+              console.log("No saved user data found for username:", savedUsername);
+            }
+          };
+
+          userQuery.onerror = (event) => {
+            console.error("Error querying user data:", event);
+          };
+        }
+      }
     };
-  }, []);
+  }, []); // Run on component mount
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,13 +77,20 @@ export const HomePage: React.FC = () => {
       const userQuery = store.get(userInfo.username);
 
       userQuery.onsuccess = () => {
-        if (userQuery.result && !remember) {
-          console.log('User exists, logging in:', userInfo.username);
-          setFormTitle("Log In");
-          setIsLoggedIn(true);
-        } else if (userQuery.result && remember) {
-          setIsLoggedIn(true);
+        if (userQuery.result) {
+          // User exists
+          if (remember) {
+            // Update existing user's password if Remember Me is checked
+            console.log('User exists and Remember Me is checked, updating password:', userInfo.username);
+            const updatedUser = { username: userInfo.username, password: userInfo.password };
+            store.put(updatedUser);
+            setIsLoggedIn(true);
+          } else {
+            console.log('User exists, logging in without saving:', userInfo.username);
+            setIsLoggedIn(true);
+          }
         } else {
+          // User does not exist, create new user
           const newUser = { username: userInfo.username, password: userInfo.password };
           console.log('User does not exist, adding new user:', newUser);
 
@@ -62,10 +103,7 @@ export const HomePage: React.FC = () => {
           };
 
           addUserRequest.onerror = (event) => {
-            const error = (event.target as IDBRequest).error;
-            const errorMessage = error ? error.message : "Unknown error";
             console.error("Error adding user:", event);
-            console.error("IndexedDB error details:", errorMessage);
           };
         }
       };
@@ -75,11 +113,15 @@ export const HomePage: React.FC = () => {
       };
 
       transaction.onerror = (event) => {
-        const error = (event.target as IDBTransaction).error;
-        const errorMessage = error ? error.message : "Unknown error";
         console.error("Transaction failed:", event);
-        console.error("Transaction error details:", errorMessage);
       };
+
+      // Save the username for future logins if "Remember Me" is checked
+      if (remember) {
+        localStorage.setItem("savedUsername", userInfo.username);
+      } else {
+        localStorage.removeItem("savedUsername");
+      }
     } else {
       console.error("Database not initialized");
     }
@@ -98,7 +140,10 @@ export const HomePage: React.FC = () => {
   };
 
   const handleRemember = () => {
-    setRemember(!remember);
+    const newRememberState = !remember;
+    setRemember(newRememberState);
+    localStorage.setItem("rememberMe", newRememberState ? "true" : "false"); // Save remember me state
+    console.log("Remember Me state changed to:", newRememberState);
   };
 
   return (
@@ -115,6 +160,7 @@ export const HomePage: React.FC = () => {
             style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
             onClick={toggleForm}
           />
+          <Button style = {{float: "left", marginTop: "10px"}}>Log in</Button>
         </div>
       )}
       <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
@@ -137,6 +183,8 @@ export const HomePage: React.FC = () => {
     </div>
   );
 };
+
+
 
 
 
