@@ -18,10 +18,9 @@ export const HomePage: React.FC = () => {
       console.error("Error accessing user database!", event);
     };
 
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      const store = db.createObjectStore("users", { keyPath: "username" });
-      store.createIndex("username", "username", { unique: true });
+    request.onupgradeneeded = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+      db.createObjectStore("users", { keyPath: "username" });
     };
 
     request.onsuccess = () => {
@@ -44,9 +43,11 @@ export const HomePage: React.FC = () => {
       const userQuery = store.get(userInfo.username);
 
       userQuery.onsuccess = () => {
-        if (userQuery.result) {
+        if (userQuery.result && !remember) {
           console.log('User exists, logging in:', userInfo.username);
           setFormTitle("Log In");
+          setIsLoggedIn(true);
+        } else if (userQuery.result && remember) {
           setIsLoggedIn(true);
         } else {
           const newUser = { username: userInfo.username, password: userInfo.password };
@@ -136,7 +137,6 @@ export const HomePage: React.FC = () => {
     </div>
   );
 };
-
 
 
 
