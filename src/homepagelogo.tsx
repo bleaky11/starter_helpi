@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import { LoginForm } from './LoginForm';
 
@@ -8,10 +8,11 @@ export const HomePage: React.FC = () => {
   const [remember, setRemember] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [formTitle, setFormTitle] = useState<string>("Create Account");
+  const [db, setDb] = useState<IDBDatabase | null>(null); // Store db instance
 
   useEffect(() => {
     const indexedDB = window.indexedDB;
-    const request = indexedDB.open("UserDatabase", 1);
+    const request = indexedDB.open("UserDatabase", 2); // Increment version for schema changes
 
     request.onerror = (event) => {
       console.error("Error accessing user database!", event);
@@ -19,67 +20,69 @@ export const HomePage: React.FC = () => {
 
     request.onupgradeneeded = () => {
       const db = request.result;
-      const store = db.createObjectStore("users", { autoIncrement: true });
-      store.createIndex("username_and_password", ["username", "password"], { unique: false });
+      const store = db.createObjectStore("users", { keyPath: "username" });
+      store.createIndex("username", "username", { unique: true });
     };
 
     request.onsuccess = () => {
-      const db = request.result;
-      const transaction = db.transaction("users", "readonly");
-      const store = transaction.objectStore("users");
-
-      // Check if the user already exists
-      const userQuery = store.index("username_and_password").get([userInfo.username, userInfo.password]);
-      userQuery.onsuccess = () => {
-        if (userQuery.result) {
-          setFormTitle("Log In");
-        } else {
-          setFormTitle("Create Account");
-        }
-      };
-      transaction.oncomplete = () => {
-        db.close();
-      };
+      setDb(request.result);
     };
-  }, [userInfo.password, userInfo.username]);
+  }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     if (!userInfo.username || !userInfo.password) {
-      console.error("Username and password cannot be empty!");
-      return; // Early return if validation fails
+      console.error("Username and password must be provided.");
+      return;
     }
-    
-    const request = indexedDB.open("UserDatabase", 1);
-    
-    request.onsuccess = () => {
-      const db = request.result;
+
+    if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
-    
-      // Add or update user data
-      const userRecord = {
-        username: userInfo.username,
-        password: userInfo.password
+
+      const userQuery = store.get(userInfo.username);
+
+      userQuery.onsuccess = () => {
+        if (userQuery.result) {
+          console.log('User exists, logging in:', userInfo.username);
+          setFormTitle("Log In");
+          setIsLoggedIn(true);
+        } else {
+          const newUser = { username: userInfo.username, password: userInfo.password };
+          console.log('User does not exist, adding new user:', newUser);
+
+          const addUserRequest = store.put(newUser);
+
+          addUserRequest.onsuccess = () => {
+            console.log("User added successfully!");
+            setFormTitle("Create Account");
+            setIsLoggedIn(true);
+          };
+
+          addUserRequest.onerror = (event) => {
+            const error = (event.target as IDBRequest).error;
+            const errorMessage = error ? error.message : "Unknown error";
+            console.error("Error adding user:", event);
+            console.error("IndexedDB error details:", errorMessage);
+          };
+        }
       };
-      
-      const putRequest = store.put(userRecord);
-      putRequest.onsuccess = () => {
-        console.log("User data added/updated successfully");
+
+      userQuery.onerror = (event) => {
+        console.error("Error querying user data");
       };
-      
-      putRequest.onerror = () => {
-        console.error("Error adding/updating user data");
+
+      transaction.onerror = (event) => {
+        const error = (event.target as IDBTransaction).error;
+        const errorMessage = error ? error.message : "Unknown error";
+        console.error("Transaction failed:", event);
+        console.error("Transaction error details:", errorMessage);
       };
-      
-      transaction.oncomplete = () => {
-        db.close();
-        setIsLoggedIn(true);
-      };
-    };
+    } else {
+      console.error("Database not initialized");
+    }
   };
-  
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
@@ -105,7 +108,6 @@ export const HomePage: React.FC = () => {
         </div>
       ) : (
         <div>
-          {/* Show the user image only when not logged in */}
           <img
             src={userProfile}
             alt="User Profile"
@@ -118,7 +120,6 @@ export const HomePage: React.FC = () => {
         <h1>The Career Quiz</h1>
       </a>
 
-      {/* Conditionally render the LoginForm */}
       {isFormOpen && !isLoggedIn && (
         <LoginForm
           userInfo={userInfo}
@@ -135,6 +136,15 @@ export const HomePage: React.FC = () => {
     </div>
   );
 };
+
+
+
+
+
+
+
+
+
 
 
 
