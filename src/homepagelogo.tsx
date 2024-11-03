@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import userProfile from './Images/user-profile.png';
 import { LoginForm } from './LoginForm';
 
@@ -10,88 +10,76 @@ export const HomePage: React.FC = () => {
   const [formTitle, setFormTitle] = useState<string>("Create Account");
 
   useEffect(() => {
-    const initializeDB = () => {
-      const indexedDB = window.indexedDB;
-      const request = indexedDB.open("UserDatabase", 1);
+    const indexedDB = window.indexedDB;
+    const request = indexedDB.open("UserDatabase", 1);
 
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        const store = db.createObjectStore("users", { autoIncrement: true });
-        store.createIndex("username", "username", { unique: true });
-      };
-
-      request.onsuccess = () => {
-        const db = request.result;
-        checkExistingUser(db);
-      };
-
-      request.onerror = (event) => {
-        console.error("Error accessing user database!", event);
-      };
+    request.onerror = (event) => {
+      console.error("Error accessing user database!", event);
     };
 
-    const checkExistingUser = (db: IDBDatabase) => {
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      const store = db.createObjectStore("users", { autoIncrement: true });
+      store.createIndex("username_and_password", ["username", "password"], { unique: false });
+    };
+
+    request.onsuccess = () => {
+      const db = request.result;
       const transaction = db.transaction("users", "readonly");
       const store = transaction.objectStore("users");
-      const allUsers = store.getAll();
 
-      allUsers.onsuccess = () => {
-        setFormTitle(allUsers.result.length > 0 ? "Log In" : "Create Account");
+      // Check if the user already exists
+      const userQuery = store.index("username_and_password").get([userInfo.username, userInfo.password]);
+      userQuery.onsuccess = () => {
+        if (userQuery.result) {
+          setFormTitle("Log In");
+        } else {
+          setFormTitle("Create Account");
+        }
       };
-
       transaction.oncomplete = () => {
         db.close();
       };
     };
+  }, [userInfo.password, userInfo.username]);
 
-    initializeDB();
-  }, []);
-
-  const saveUser = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
     if (!userInfo.username || !userInfo.password) {
-      console.error("Username or password is missing");
-      return;
+      console.error("Username and password cannot be empty!");
+      return; // Early return if validation fails
     }
-
-    const indexedDB = window.indexedDB;
+    
     const request = indexedDB.open("UserDatabase", 1);
-
+    
     request.onsuccess = () => {
       const db = request.result;
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
-
-      const userObject = {
+    
+      // Add or update user data
+      const userRecord = {
         username: userInfo.username,
-        password: userInfo.password,
+        password: userInfo.password
       };
-
-      const addRequest = store.add(userObject);
-
-      addRequest.onsuccess = () => {
-        console.log("User successfully added to database!");
-        setIsLoggedIn(true);
-        setIsFormOpen(false);
+      
+      const putRequest = store.put(userRecord);
+      putRequest.onsuccess = () => {
+        console.log("User data added/updated successfully");
       };
-
-      addRequest.onerror = (event) => {
-        console.error("Error adding user to database:", event);
+      
+      putRequest.onerror = () => {
+        console.error("Error adding/updating user data");
       };
-
+      
       transaction.oncomplete = () => {
         db.close();
+        setIsLoggedIn(true);
       };
     };
-
-    request.onerror = (event) => {
-      console.error("Error opening database for saving user:", event);
-    };
   };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    saveUser();
-  };
+  
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
@@ -117,6 +105,7 @@ export const HomePage: React.FC = () => {
         </div>
       ) : (
         <div>
+          {/* Show the user image only when not logged in */}
           <img
             src={userProfile}
             alt="User Profile"
@@ -129,6 +118,7 @@ export const HomePage: React.FC = () => {
         <h1>The Career Quiz</h1>
       </a>
 
+      {/* Conditionally render the LoginForm */}
       {isFormOpen && !isLoggedIn && (
         <LoginForm
           userInfo={userInfo}
@@ -145,6 +135,9 @@ export const HomePage: React.FC = () => {
     </div>
   );
 };
+
+
+
 
 
 
