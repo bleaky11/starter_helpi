@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
-import jerboa from './Images/Four-toes-jerboa-modified.png';
 import { LoginForm } from './LoginForm';
 import { Button} from 'react-bootstrap';
 
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [userInfo, setUserInfo] = useState<{ username: string; password: string }>({ username: "Guest", password: "" });
+  const [userInfo, setUserInfo] = useState<{ username: string; password: string }>({ username: "", password: "" });
   const [remember, setRemember] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [formTitle, setFormTitle] = useState<string>("Create Account");
   const [accounts, setAccounts] = useState<string[]>([]);
-  const [savedUser, setSavedUser] = useState<string>(accounts[0]);
   const [db, setDb] = useState<IDBDatabase | null>(null); // Store db instance
-
-  const checkInfo = (savedUsername: string, savedPassword: string, userInput: string, passInput: string) => {
-    return userInput === savedUsername && passInput === savedPassword;
-  };
 
   useEffect(() => {
     // Load accounts from localStorage
@@ -55,6 +49,8 @@ export const HomePage: React.FC = () => {
             if (userQuery.result) {
               setUserInfo({ username: userQuery.result.username, password: userQuery.result.password });
               setIsLoggedIn(true);
+              setFormTitle("Log In");
+              console.log("Loaded saved user data:", userQuery.result);
             } else {
               console.log("No saved user data found for username:", savedUsername);
             }
@@ -70,17 +66,28 @@ export const HomePage: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!userInfo.username || !userInfo.password) {
+      console.error("Username and password must be provided.");
+      return;
+    }
+
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
       const userQuery = store.get(userInfo.username);
 
       userQuery.onsuccess = () => {
-        const savedUsername = userQuery.result?.username;
-        const savedPassword = userQuery.result?.password;
-
         if (userQuery.result) {
-          if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
+          // User exists
+          if (remember) {
+            // Update existing user's password if Remember Me is checked
+            console.log('User exists and Remember Me is checked, updating password:', userInfo.username);
+            const updatedUser = { username: userInfo.username, password: userInfo.password };
+            store.put(updatedUser);
+            setIsLoggedIn(true);
+          } else {
+            console.log('User exists, logging in without saving:', userInfo.username);
             setIsLoggedIn(true);
           }
         } else if (formTitle === "Create Account") {
@@ -92,7 +99,21 @@ export const HomePage: React.FC = () => {
           setAccounts(updatedAccounts);
           localStorage.setItem("savedAccounts", JSON.stringify(updatedAccounts));
         } else {
-          alert("User does not exist. Please create an account first.");
+          // User does not exist, create new user
+          const newUser = { username: userInfo.username, password: userInfo.password };
+          console.log('User does not exist, adding new user:', newUser);
+
+          const addUserRequest = store.put(newUser);
+
+          addUserRequest.onsuccess = () => {
+            console.log("User added successfully!");
+            setFormTitle("Create Account");
+            setIsLoggedIn(true);
+          };
+
+          addUserRequest.onerror = (event) => {
+            console.error("Error adding user:", event);
+          };
         }
       };
 
@@ -104,7 +125,17 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => setIsLoggedIn(false);
+  const toggleForm = () => {
+    setIsFormOpen(!isFormOpen);
+  };
+
+  const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setUserInfo((prevInfo) => ({
+      ...prevInfo,
+      [name]: value,
+    }));
+  };
 
   const handleRemember = () => {
     const newRememberState = !remember;
@@ -112,35 +143,45 @@ export const HomePage: React.FC = () => {
     localStorage.setItem("rememberMe", newRememberState ? "true" : "false");
   };
 
-  const showForm = (title: string) => {
-    setFormTitle(title);
-    setIsFormOpen(!isFormOpen);
-  };
-
   return (
     <div>
       {isLoggedIn ? (
-        <div>
-          <img src={jerboa} alt="Four-Toed Jerboa" style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }} onClick={() => showForm("Create Account")} title={userInfo.username} />
-          <Button onClick={handleLogout} style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "darkred" }}>Log out</Button>
+        <div style={{ position: "absolute", float: "left" }}>
+          <h3>Signed in as: {userInfo.username}!</h3>
         </div>
       ) : (
         <div>
-          <img src={userProfile} alt="User Profile" style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }} onClick={() => showForm("Create Account")} title="Guest" />
-          <Button onClick={() => showForm("Log in")} style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "darkblue" }}>Log in</Button>
+          <img
+            src={userProfile}
+            alt="User Profile"
+            style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
+            onClick={toggleForm}
+          />
+          <Button style = {{float: "left", marginTop: "10px"}}>Log in</Button>
         </div>
       )}
+      <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
+        <h1>The Career Quiz</h1>
+      </a>
+
       {isFormOpen && !isLoggedIn && (
-        <LoginForm userInfo={userInfo} setUserInfo={setUserInfo} remember={remember} setRemember={setRemember} handleRemember={handleRemember} handleSubmit={handleSubmit} accounts={accounts} savedUser={savedUser} setSavedUser={setSavedUser} updateStatus={(event) => setUserInfo({ ...userInfo, [event.target.name]: event.target.value })} closeForm={() => setIsFormOpen(false)} formTitle={formTitle} />
+        <LoginForm
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+          remember={remember}
+          setRemember={setRemember}
+          handleRemember={handleRemember}
+          handleSubmit={handleSubmit}
+          updateStatus={updateStatus}
+          closeForm={() => setIsFormOpen(false)}
+          formTitle={formTitle} accounts={[]} savedUser={''} setSavedUser={function (value: React.SetStateAction<string>): void {
+            throw new Error('Function not implemented.');
+          } }        />
       )}
-      <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}><h1>The Career Quiz</h1></a>
     </div>
   );
 };
 
-
-
-  
 
 
 
