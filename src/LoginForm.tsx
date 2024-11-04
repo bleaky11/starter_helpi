@@ -10,7 +10,10 @@ export interface LoginFormProps {
   setRemember: React.Dispatch<React.SetStateAction<boolean>>;
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemember: () => void;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void; 
+  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  accounts: string[];
+  savedUser: string;
+  setSavedUser: (value: React.SetStateAction<string>) => void;
   formTitle: string;
 }
 
@@ -23,13 +26,49 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   handleRemember,
   handleSubmit,
   closeForm,
+  accounts,
+  savedUser,
+  setSavedUser,
   formTitle,
 }) => {
  
+  const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSavedUser(event.target.value);
+    setUserInfo(prev => ({ ...prev, username: event.target.value })); // Update username input with selected user
+  };
+
+
   return (
     <div className="form-popup" id="myForm">
+
+
       <form className="form-container" onSubmit={handleSubmit}>
         <h1>{formTitle}</h1>
+        <div style = {{marginBottom: "25px"}}>
+        {accounts.length === 0 ?
+          <Form.Group controlId="savedUsers">
+          <Form.Label>No Saved Usernames</Form.Label>
+          <Form.Select value={savedUser} onChange={handleUserSelect}>
+            {accounts.map((user) => (
+              <option key={user} value={user}>
+                {user}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>:
+         <Form.Group controlId="savedUsers">
+         <Form.Label>Saved Usernames</Form.Label>
+         <Form.Select value={savedUser} onChange={handleUserSelect}>
+           {accounts.map((user) => (
+             <option key={user} value={user}>
+               {user}
+             </option>
+           ))}
+         </Form.Select>
+       </Form.Group>
+      }
+      </div>
+
         <label htmlFor="username"><b>Username</b></label>
         <input
           type="text"

@@ -11,6 +11,8 @@ export const HomePage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [formTitle, setFormTitle] = useState<string>("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null); // Store db instance
+  const [accounts, setAccounts] = useState<string[]>([]);
+  const [savedUser, setSavedUser] = useState<string>(accounts[0]);
 
   const checkInfo = (savedUsername: string, savedPassword: string, userInput: string, passInput: string) => {
     let userAccess: boolean = false;
@@ -25,6 +27,9 @@ export const HomePage: React.FC = () => {
   }
 
   useEffect(() => {
+
+    const savedAccounts = JSON.parse(localStorage.getItem("savedAccounts") || "[]");
+    setAccounts(savedAccounts);
     const indexedDB = window.indexedDB;
     const request = indexedDB.open("UserDatabase", 2); // Increment version for schema changes
 
@@ -89,41 +94,26 @@ export const HomePage: React.FC = () => {
       const userQuery = store.get(userInfo.username);
 
       userQuery.onsuccess = () => {
-        if (userQuery.result) {
-          // User exists, check credentials
-          if (checkInfo(userQuery.result.username, userQuery.result.password, userInfo.username, userInfo.password)) {
-            if (remember) {
-              // Update existing user's password if Remember Me is checked
-              console.log('User exists and Remember Me is checked, updating password:', userInfo.username);
-              const updatedUser = { username: userInfo.username, password: userInfo.password };
-              store.put(updatedUser);
+        if (userQuery.result) { // Check that the result is not null or undefined
+            const savedUsername = userQuery.result.username;
+            const savedPassword = userQuery.result.password;
+    
+            if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
+                setIsLoggedIn(true);
             }
-            setIsLoggedIn(true);
-            console.log('User logged in successfully:', userInfo.username);
-          }
-        } else {
-          // User does not exist, create new user only if form title indicates "Create Account"
-          if (formTitle === "Create Account") {
+        } else if (formTitle === "Create Account") {
             const newUser = { username: userInfo.username, password: userInfo.password };
-            console.log('User does not exist, adding new user:', newUser);
-
-            const addUserRequest = store.put(newUser);
-
-            addUserRequest.onsuccess = () => {
-              console.log("User added successfully!");
-              setFormTitle("Create Account");
-              setIsLoggedIn(true);
-            };
-
-            addUserRequest.onerror = (event) => {
-              console.error("Error adding user:", event);
-            };
-          } else {
+            store.put(newUser).onsuccess = () => setIsLoggedIn(true);
+    
+            // Update accounts array and localStorage
+            const updatedAccounts = [...accounts, userInfo.username];
+            setAccounts(updatedAccounts);
+            localStorage.setItem("savedAccounts", JSON.stringify(updatedAccounts));
+        } else {
             alert("User does not exist. Please create an account first.");
-          }
         }
-      };
-
+    };
+    
       userQuery.onerror = (event) => {
         console.error("Error querying user data");
       };
@@ -219,6 +209,9 @@ export const HomePage: React.FC = () => {
           handleRemember={handleRemember}
           handleSubmit={handleSubmit}
           updateStatus={updateStatus}
+          savedUser={savedUser}
+          setSavedUser={setSavedUser}
+          accounts={accounts}
           closeForm={toggleForm} // Use toggleForm to close the form
           formTitle={formTitle} // Pass the form title to LoginForm
         />
@@ -229,8 +222,6 @@ export const HomePage: React.FC = () => {
       </a>
     </div>
   );
-  
-  
 };
 
 
