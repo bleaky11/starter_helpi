@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
+import jerboa from './Images/Four-toes-jerboa-modified.png';
 import { LoginForm } from './LoginForm';
 import { Button } from 'react-bootstrap';
 
@@ -90,16 +91,16 @@ export const HomePage: React.FC = () => {
       userQuery.onsuccess = () => {
         if (userQuery.result) {
           // User exists, check credentials
-          // if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
-          //   if (remember) {
-          //     // Update existing user's password if Remember Me is checked
-          //     console.log('User exists and Remember Me is checked, updating password:', userInfo.username);
-          //     const updatedUser = { username: userInfo.username, password: userInfo.password };
-          //     store.put(updatedUser);
-          //   }
-          //   setIsLoggedIn(true);
-          //   console.log('User logged in successfully:', userInfo.username);
-          // }
+          if (checkInfo(userQuery.result.username, userQuery.result.password, userInfo.username, userInfo.password)) {
+            if (remember) {
+              // Update existing user's password if Remember Me is checked
+              console.log('User exists and Remember Me is checked, updating password:', userInfo.username);
+              const updatedUser = { username: userInfo.username, password: userInfo.password };
+              store.put(updatedUser);
+            }
+            setIsLoggedIn(true);
+            console.log('User logged in successfully:', userInfo.username);
+          }
         } else {
           // User does not exist, create new user only if form title indicates "Create Account"
           if (formTitle === "Create Account") {
@@ -177,13 +178,13 @@ export const HomePage: React.FC = () => {
      {isLoggedIn ? (
   // If the user is logged in, show the jerboa image and a log out button
   <div>
-    {/* <img
+    <img
       src={jerboa}
       alt="Four-Toed Jerboa"
       style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
       onClick={() => showForm("Create Account")}
       title={userInfo.username} // Tooltip with the username
-    /> */}
+    />
     <Button
       onClick={handleLogout} // Define this function to handle logout
       style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "darkred" }}
