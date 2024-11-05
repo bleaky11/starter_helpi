@@ -37,7 +37,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     setUserInfo(prev => ({ ...prev, username: event.target.value })); // Update username input with selected user
   };
 
-
   return (
     <div className="form-popup" id="myForm">
 
