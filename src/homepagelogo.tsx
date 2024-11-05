@@ -12,7 +12,7 @@ export const HomePage: React.FC = () => {
   const [formTitle, setFormTitle] = useState<string>("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null);
   const [accounts, setAccounts] = useState<string[]>([]);
-  const [savedUser, setSavedUser] = useState<string>(accounts[0]);
+  const [savedUser, setSavedUser] = useState<string>(""); // Initialize as empty
 
   const checkInfo = (savedUsername: string, savedPassword: string, userInput: string, passInput: string) => {
     if (userInput === savedUsername && passInput === savedPassword) {
@@ -52,6 +52,11 @@ export const HomePage: React.FC = () => {
             .filter(user => user.remembered)
             .map(user => user.username);
           setAccounts(rememberedUsernames);
+          // Set savedUser to the first remembered username if available
+          if (rememberedUsernames.length > 0) {
+            setSavedUser(rememberedUsernames[0]);
+            setUserInfo(prev => ({ ...prev, username: rememberedUsernames[0] })); // Set the username in userInfo
+          }
         };
 
         getAllRequest.onerror = (event) => {
@@ -90,14 +95,22 @@ export const HomePage: React.FC = () => {
           const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
           store.put(newUser).onsuccess = () => {
             if (remember) {
-              setAccounts(prevAccounts => [...prevAccounts, userInfo.username]);
-              localStorage.setItem("savedAccounts", JSON.stringify([...accounts, userInfo.username]));
+              // Update accounts state after adding a new user
+              setAccounts(prevAccounts => {
+                const updatedAccounts = [...prevAccounts, userInfo.username];
+                localStorage.setItem("savedAccounts", JSON.stringify(updatedAccounts)); // Save updated accounts to localStorage
+                return updatedAccounts; // Return the updated accounts array
+              });
+              // Set savedUser to the newly added username
+              setSavedUser(userInfo.username);
+              setUserInfo(prev => ({ ...prev, username: userInfo.username })); // Set the username in userInfo
             }
             setIsLoggedIn(true);
             clearForm(); // Clear form after successful account creation
           };
         } else {
           alert("User does not exist. Please create an account first.");
+          clearForm();
         }
       };
 
@@ -133,7 +146,7 @@ export const HomePage: React.FC = () => {
       ...prevInfo,
       [name]: value,
     }));
-  };
+  }; 
 
   const handleLogout = () => {
     setIsLoggedIn(false);
