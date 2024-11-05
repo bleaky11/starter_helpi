@@ -27,102 +27,87 @@ export const HomePage: React.FC = () => {
   }
 
   useEffect(() => {
-
-    const savedAccounts = JSON.parse(localStorage.getItem("savedAccounts") || "[]");
-    setAccounts(savedAccounts);
     const indexedDB = window.indexedDB;
-    const request = indexedDB.open("UserDatabase", 2); // Increment version for schema changes
-
+    const request = indexedDB.open("UserDatabase", 2); // Open the database with version 2
+  
     request.onerror = (event) => {
-      console.error("Error accessing user database!", event);
+      console.error("Error opening user database!", event);
     };
-
+  
     request.onupgradeneeded = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      db.createObjectStore("users", { keyPath: "username" });
+      const dbInstance = (event.target as IDBOpenDBRequest).result;
+      dbInstance.createObjectStore("users", { keyPath: "username" });
       console.log("Object store created.");
     };
-
+  
     request.onsuccess = () => {
       const dbInstance = request.result;
-      setDb(dbInstance);
-      console.log("Database opened successfully.");
-
-      // Check if there's saved user data for "Remember Me"
-      const rememberMe = localStorage.getItem("rememberMe") === "true";
-      setRemember(rememberMe);
-
-      if (rememberMe) {
-        // Attempt to load saved user data
-        const savedUsername = localStorage.getItem("savedUsername");
-        if (savedUsername) {
-          const transaction = dbInstance.transaction("users", "readonly");
-          const store = transaction.objectStore("users");
-          const userQuery = store.get(savedUsername);
-
-          userQuery.onsuccess = () => {
-            if (userQuery.result) {
-              // Load saved user data
-              setUserInfo({ username: userQuery.result.username, password: userQuery.result.password });
-              setIsLoggedIn(true);
-              console.log("Loaded saved user data:", userQuery.result);
-            } else {
-              console.log("No saved user data found for username:", savedUsername);
-            }
-          };
-
-          userQuery.onerror = (event) => {
-            console.error("Error querying user data:", event);
-          };
-        }
+      setDb(dbInstance); // Set the db instance after successfully opening
+  
+      // Ensure db is not null before starting the transaction
+      if (dbInstance) {
+        const transaction = dbInstance.transaction("users", "readonly");
+        const store = transaction.objectStore("users");
+        const getAllKeysRequest = store.getAllKeys();
+  
+        getAllKeysRequest.onsuccess = () => {
+          const allUsernames = getAllKeysRequest.result as IDBValidKey[]; // Get the keys
+          const usernames = allUsernames.filter((key) => typeof key === "string") as string[]; // Filter for strings only
+          setAccounts(usernames); // Update accounts with the filtered string array
+        };
+  
+        getAllKeysRequest.onerror = (event) => {
+          console.error("Error retrieving keys from the users object store:", event);
+        };
+      } else {
+        console.error("Database is not initialized.");
       }
     };
   }, []); // Run on component mount
-
+  
+  
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     if (!userInfo.username || !userInfo.password) {
       console.error("Username and password must be provided.");
       return;
     }
-
+  
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
-
+  
       const userQuery = store.get(userInfo.username);
-
+  
       userQuery.onsuccess = () => {
-        if (userQuery.result) { // Check that the result is not null or undefined
-            const savedUsername = userQuery.result.username;
-            const savedPassword = userQuery.result.password;
-    
-            if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
-                setIsLoggedIn(true);
-            }
+        if (userQuery.result) {
+          const savedUsername = userQuery.result.username;
+          const savedPassword = userQuery.result.password;
+  
+          if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
+            setIsLoggedIn(true);
+          }
         } else if (formTitle === "Create Account") {
-            const newUser = { username: userInfo.username, password: userInfo.password };
-            store.put(newUser).onsuccess = () => setIsLoggedIn(true);
-    
-            // Update accounts array and localStorage
-            const updatedAccounts = [...accounts, userInfo.username];
-            setAccounts(updatedAccounts);
-            localStorage.setItem("savedAccounts", JSON.stringify(updatedAccounts));
+          const newUser = { username: userInfo.username, password: userInfo.password };
+          store.put(newUser).onsuccess = () => setIsLoggedIn(true);
+  
+          const updatedAccounts = [...accounts, userInfo.username];
+          setAccounts(updatedAccounts);
+          localStorage.setItem("savedAccounts", JSON.stringify(updatedAccounts));
         } else {
-            alert("User does not exist. Please create an account first.");
+          alert("User does not exist. Please create an account first.");
         }
-    };
-    
+      };
+  
       userQuery.onerror = (event) => {
         console.error("Error querying user data");
       };
-
+  
       transaction.onerror = (event) => {
         console.error("Transaction failed:", event);
       };
-
-      // Save the username for future logins if "Remember Me" is checked
+  
       if (remember) {
         localStorage.setItem("savedUsername", userInfo.username);
       } else {
@@ -132,7 +117,7 @@ export const HomePage: React.FC = () => {
       console.error("Database not initialized");
     }
   };
-
+  
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
   };
