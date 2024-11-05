@@ -11,7 +11,7 @@ export interface LoginFormProps {
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemember: () => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  accounts: string[];
+  accounts: { username: string; password: string }[]; // Fix the type here
   savedUser: string;
   setSavedUser: (value: React.SetStateAction<string>) => void;
   formTitle: string;
@@ -33,40 +33,43 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
  
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSavedUser(event.target.value);
-    setUserInfo(prev => ({ ...prev, username: event.target.value })); // Update username input with selected user
+    const selectedUsername = event.target.value;
+    setSavedUser(selectedUsername);
+  
+    const selectedAccount = accounts.find(account => account.username === selectedUsername);
+    if (selectedAccount) {
+      setUserInfo({
+        username: selectedAccount.username,
+        password: selectedAccount.password,
+      });
+    }
   };
-
+  
   return (
     <div className="form-popup" id="myForm">
-
-
       <form className="form-container" onSubmit={handleSubmit}>
         <h1>{formTitle}</h1>
-        <div style = {{marginBottom: "25px"}}>
-        {accounts.length === 0 ?
-          <Form.Group controlId="savedUsers">
-          <Form.Label>No Saved Usernames</Form.Label>
-          <Form.Select value={savedUser} onChange={handleUserSelect}>
-            {accounts.map((user) => (
-              <option key={user} value={user}>
-                {user}
-              </option>
-            ))}
-          </Form.Select>
-        </Form.Group>:
-         <Form.Group controlId="savedUsers">
-         <Form.Label>Saved Usernames</Form.Label>
-         <Form.Select value={savedUser} onChange={handleUserSelect}>
-           {accounts.map((user) => (
-             <option key={user} value={user}>
-               {user}
-             </option>
-           ))}
-         </Form.Select>
-       </Form.Group>
-      }
-      </div>
+        <div style={{ marginBottom: "25px" }}>
+          {accounts.length === 0 ? (
+            <Form.Group controlId="savedUsers">
+              <Form.Label>No Saved Usernames</Form.Label>
+              <Form.Select value={savedUser} onChange={handleUserSelect} disabled>
+                <option>No saved users</option>
+              </Form.Select>
+            </Form.Group>
+          ) : (
+            <Form.Group controlId="savedUsers">
+              <Form.Label>Saved Usernames</Form.Label>
+              <Form.Select value={savedUser} onChange={handleUserSelect}>
+                {accounts.map((user) => (
+                  <option key={user.username} value={user.username}>
+                    {user.username}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          )}
+        </div>
 
         <label htmlFor="username"><b>Username</b></label>
         <input
@@ -102,3 +105,4 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     </div>
   );
 };
+
