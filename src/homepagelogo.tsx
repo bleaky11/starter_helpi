@@ -12,7 +12,7 @@ export const HomePage: React.FC = () => {
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null);
   const [accounts, setAccounts] = useState<{ username: string; password: string }[]>([]);
-  const [savedUser, setSavedUser] = useState("");
+  const [selectedUser, setSelect] = useState("");
 
   const checkInfo = (savedUsername: string, savedPassword: string, userInput: string, passInput: string) => {
     if (userInput === savedUsername && passInput === savedPassword) {
@@ -55,7 +55,7 @@ export const HomePage: React.FC = () => {
 
             if (rememberedAccounts.length > 0) {
               const firstUser = rememberedAccounts[0];
-              setSavedUser(firstUser.username);
+              setSelect(firstUser.username);
               setUserInfo({ username: firstUser.username, password: firstUser.password });
             }
           };
@@ -68,7 +68,6 @@ export const HomePage: React.FC = () => {
         }
       };
     };
-
     initializeDatabase();
   }, []);
 
@@ -92,19 +91,14 @@ export const HomePage: React.FC = () => {
 
           if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
             setIsLoggedIn(true);
-            clearForm();
+            updateSavedUsers()
           }
         } else if (formTitle === "Create Account") {
           const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
           store.put(newUser).onsuccess = () => {
-            if (remember) {
-              setAccounts(prevAccounts => [...prevAccounts, { username: userInfo.username, password: userInfo.password }]);
-              setSavedUser(userInfo.username);
-              setUserInfo(prev => ({ ...prev, username: userInfo.username }));
-            }
             setIsLoggedIn(true);
+            updateSavedUsers();
             alert("Account creation success!");
-            clearForm();
           };
         } else {
           alert("User does not exist. Please create an account first.");
@@ -119,24 +113,27 @@ export const HomePage: React.FC = () => {
       transaction.onerror = (event) => {
         console.error("Transaction failed:", event);
       };
-
-      if (remember) {
-        localStorage.setItem("savedUsername", userInfo.username);
-      } else {
-        localStorage.removeItem("savedUsername");
-      }
-    } else {
-      console.error("Database not initialized");
-    }
+    } 
   };
+
+  const updateSavedUsers = () =>
+  {
+    const checkAccount = accounts.some((account => account.username));
+    if (!checkAccount && remember) {
+      setAccounts(prevAccounts => [...prevAccounts, { username: userInfo.username, password: userInfo.password }]);
+      setSelect(userInfo.username);
+      setUserInfo(prev => ({ ...prev, username: userInfo.username }));
+    }
+  }
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
   };
 
-  const clearForm = () => {
-    setUserInfo({ username: "", password: "" });
-  };
+  const clearForm = () => 
+  {
+    setUserInfo({username: "", password: ""});
+  }
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -153,12 +150,15 @@ export const HomePage: React.FC = () => {
   const handleRemember = () => {
     const newRememberState = !remember;
     setRemember(newRememberState);
-    localStorage.setItem("rememberMe", newRememberState ? "true" : "false");
-    console.log("Remember Me state changed to:", newRememberState);
   };
 
   const showForm = (title: string) => {
     setFormTitle(title);
+    if(title === "Create Account")
+    {
+      setRemember(false);
+      clearForm();
+    }
     toggleForm();
   };
 
@@ -207,8 +207,8 @@ export const HomePage: React.FC = () => {
           handleRemember={handleRemember}
           handleSubmit={handleSubmit}
           updateStatus={updateStatus}
-          savedUser={savedUser}
-          setSavedUser={setSavedUser}
+          selectedUser={selectedUser}
+          setSelect={setSelect}
           accounts={accounts}
           closeForm={toggleForm}
           formTitle={formTitle}
