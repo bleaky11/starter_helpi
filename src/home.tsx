@@ -10,6 +10,7 @@ interface HomeComponentProps {
   basicComplete: boolean;
   detailedComplete: boolean;
   isKeyEntered: boolean;
+  apiKey: string;
 }
 
 export function MainPage({
@@ -18,6 +19,7 @@ export function MainPage({
   basicComplete,
   detailedComplete,
   isKeyEntered,
+  apiKey,
 }: HomeComponentProps): JSX.Element {
   return (
     <div className="App">
@@ -27,14 +29,29 @@ export function MainPage({
           detailedComplete={detailedComplete}
         ></NotifBell>
         <Container>
+          <Col className="ResultBorder" >
+              <div style={{ flex: 1 }}>
+                <h2>Results Page</h2>
+                <h6 className="Body-Heading" style={{fontSize: "16px" }}>
+                  Results of the quiz will be displayed after completing basic and/or detailed question
+                </h6>
+              </div>
+              <Link
+                to="/results-page"
+                onClick={() => setPage("Results-Page")}>
+                  <Button>Results Page</Button>
+              </Link>
+            </Col>
+        </Container>
+        <Container>
           <Row>
             <Col
               className="Bordered"
               style={{ display: "flex", flexDirection: "column" }}
             >
               <div style={{ flex: 1 }}>
-                <h2>Basic Career Assessment</h2>
-                <h6 className="Body-Heading" style={{fontSize: "16px" }}>
+                <div><h2>Basic Career Assessment</h2></div>
+                <h6>
                   You will be asked a series of multiple choice questions. If
                   you're looking for more in-depth questions and results, go to
                   the Detailed Career Page. Before you begin, make sure you're
@@ -65,7 +82,7 @@ export function MainPage({
                   {!localStorage.getItem("quizProgress") &&
                   !sessionStorage.getItem("isKeyEntered") ? (
                     <div>
-                      <Button disabled={true}>Basic Questions</Button>
+                      <Button disabled={true}>Basic Career Questions</Button>
                       <h6>Please enter an API Key</h6>
                     </div>
                   ) : /* Case 2: First visit, API key entered but no saved progress */
