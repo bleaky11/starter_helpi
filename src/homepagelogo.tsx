@@ -27,45 +27,45 @@ export const HomePage: React.FC = () => {
     const initializeDatabase = async () => {
       const indexedDB = window.indexedDB;
       const request = indexedDB.open("UserDatabase", 2);
-
+  
       request.onerror = (event) => {
         console.error("Error opening user database!", event);
       };
-
+  
       request.onupgradeneeded = (event) => {
         const dbInstance = (event.target as IDBOpenDBRequest).result;
         dbInstance.createObjectStore("users", { keyPath: "username" });
         console.log("Object store created.");
       };
-
+  
       request.onsuccess = () => {
         const dbInstance = request.result;
         setDb(dbInstance);
-
-        if (dbInstance) 
-        {
+  
+        if (dbInstance) {
           const transaction = dbInstance.transaction("users", "readonly");
           const store = transaction.objectStore("users");
           const getAllRequest = store.getAll();
-
+  
           getAllRequest.onsuccess = () => {
             const allUsers = getAllRequest.result as { username: string; password: string; remembered: boolean }[];
+            console.log("All users retrieved:", allUsers); // Check if data is retrieved here
+            
             const rememberedAccounts = allUsers.filter(user => user.remembered);
-
-          setAccounts(rememberedAccounts);
-          }
-
+            setAccounts(rememberedAccounts);
+            console.log("Remembered accounts:", rememberedAccounts);
+          };
+            
           getAllRequest.onerror = (event) => {
             console.error("Error retrieving users from the users object store:", event);
           };
-        }
-        else {
+        } else {
           console.error("Database is not initialized.");
         }
       };
     };
     initializeDatabase();
-  }, []);
+  }, []); // Empty dependency array to avoid infinite loop  
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -89,11 +89,12 @@ export const HomePage: React.FC = () => {
             setIsLoggedIn(true);
             //updateSavedUsers()
           }
-        } else if (formTitle === "Create Account") {
-          const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
-          store.put(newUser).onsuccess = () => {
+        } else if (formTitle === "Create Account") 
+          {
+            const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
+            store.put(newUser).onsuccess = () => {
             setIsLoggedIn(true);
-            //updateSavedUsers();
+            clearForm();
             alert("Account creation success!");
           };
         } else {

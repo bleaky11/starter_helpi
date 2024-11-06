@@ -39,14 +39,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   useEffect(() => {
     const selectedAccount = accounts.find(account => account.username === selectedUser);
-    if (selectedAccount) {
+    if (selectedAccount && formTitle === "Log in") {
       setUserInfo({
         username: selectedAccount.username,
         password: selectedAccount.password,
       });
+      console.log("User info updated:", selectedAccount); // Confirm if this runs and what it logs
     }
-  }, [accounts, selectedUser, setUserInfo]);
-
+  }, [accounts, formTitle, selectedUser, setUserInfo]);
+  
   return (
     <div className="form-popup" id="myForm">
       <form className="form-container" onSubmit={handleSubmit}>
