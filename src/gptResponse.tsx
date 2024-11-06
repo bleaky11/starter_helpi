@@ -7,6 +7,7 @@ interface api {
 }
 
 export function GptResponse({apiKey}: api): JSX.Element {
+    const [prompt, setPrompt] = useState<string>("")
     const [message, setMessage] = useState<string>("Default");
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const handleSendMessage = async () => {
