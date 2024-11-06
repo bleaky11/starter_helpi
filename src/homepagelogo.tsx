@@ -5,14 +5,14 @@ import { LoginForm } from './LoginForm';
 import { Button } from 'react-bootstrap';
 
 export const HomePage: React.FC = () => {
-  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [userInfo, setUserInfo] = useState<{ username: string; password: string }>({ username: "", password: "" });
-  const [remember, setRemember] = useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [formTitle, setFormTitle] = useState<string>("Create Account");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState({ username: "", password: "" });
+  const [remember, setRemember] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null);
   const [accounts, setAccounts] = useState<{ username: string; password: string }[]>([]);
-  const [savedUser, setSavedUser] = useState<string>("");
+  const [savedUser, setSavedUser] = useState("");
 
   const checkInfo = (savedUsername: string, savedPassword: string, userInput: string, passInput: string) => {
     if (userInput === savedUsername && passInput === savedPassword) {
@@ -24,48 +24,52 @@ export const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    const indexedDB = window.indexedDB;
-    const request = indexedDB.open("UserDatabase", 2);
+    const initializeDatabase = async () => {
+      const indexedDB = window.indexedDB;
+      const request = indexedDB.open("UserDatabase", 2);
 
-    request.onerror = (event) => {
-      console.error("Error opening user database!", event);
+      request.onerror = (event) => {
+        console.error("Error opening user database!", event);
+      };
+
+      request.onupgradeneeded = (event) => {
+        const dbInstance = (event.target as IDBOpenDBRequest).result;
+        dbInstance.createObjectStore("users", { keyPath: "username" });
+        console.log("Object store created.");
+      };
+
+      request.onsuccess = () => {
+        const dbInstance = request.result;
+        setDb(dbInstance);
+
+        if (dbInstance) {
+          const transaction = dbInstance.transaction("users", "readonly");
+          const store = transaction.objectStore("users");
+          const getAllRequest = store.getAll();
+
+          getAllRequest.onsuccess = () => {
+            const allUsers = getAllRequest.result as { username: string; password: string; remembered: boolean }[];
+            const rememberedAccounts = allUsers.filter(user => user.remembered);
+
+            setAccounts(rememberedAccounts);
+
+            if (rememberedAccounts.length > 0) {
+              const firstUser = rememberedAccounts[0];
+              setSavedUser(firstUser.username);
+              setUserInfo({ username: firstUser.username, password: firstUser.password });
+            }
+          };
+
+          getAllRequest.onerror = (event) => {
+            console.error("Error retrieving users from the users object store:", event);
+          };
+        } else {
+          console.error("Database is not initialized.");
+        }
+      };
     };
 
-    request.onupgradeneeded = (event) => {
-      const dbInstance = (event.target as IDBOpenDBRequest).result;
-      dbInstance.createObjectStore("users", { keyPath: "username" });
-      console.log("Object store created.");
-    };
-
-    request.onsuccess = () => {
-      const dbInstance = request.result;
-      setDb(dbInstance);
-
-      if (dbInstance) {
-        const transaction = dbInstance.transaction("users", "readonly");
-        const store = transaction.objectStore("users");
-        const getAllRequest = store.getAll();
-
-        getAllRequest.onsuccess = () => {
-          const allUsers = getAllRequest.result as { username: string; password: string; remembered: boolean }[];
-          const rememberedAccounts = allUsers.filter(user => user.remembered);
-
-          setAccounts(rememberedAccounts);
-
-          if (rememberedAccounts.length > 0) {
-            const firstUser = rememberedAccounts[0];
-            setSavedUser(firstUser.username);
-            setUserInfo({ username: firstUser.username, password: firstUser.password });
-          }
-        };
-
-        getAllRequest.onerror = (event) => {
-          console.error("Error retrieving users from the users object store:", event);
-        };
-      } else {
-        console.error("Database is not initialized.");
-      }
-    };
+    initializeDatabase();
   }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -94,11 +98,7 @@ export const HomePage: React.FC = () => {
           const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
           store.put(newUser).onsuccess = () => {
             if (remember) {
-              setAccounts(prevAccounts => {
-                const updatedAccounts = [...prevAccounts, { username: userInfo.username, password: userInfo.password }];
-                localStorage.setItem("savedAccounts", JSON.stringify(updatedAccounts));
-                return updatedAccounts;
-              });
+              setAccounts(prevAccounts => [...prevAccounts, { username: userInfo.username, password: userInfo.password }]);
               setSavedUser(userInfo.username);
               setUserInfo(prev => ({ ...prev, username: userInfo.username }));
             }

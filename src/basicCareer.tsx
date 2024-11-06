@@ -78,8 +78,8 @@ useEffect(() => {
   const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
 
   if (!savedBasicProgress && !savedBasicAnswers) {
-      clearStorage(); // This will clear local storage and session storage
-      sessionStorage.setItem("visited", "true"); // Set the visited flag
+      clearStorage(); 
+      sessionStorage.setItem("visited", "true"); 
   } 
   else if (savedBasicProgress && savedBasicAnswers )
   {
@@ -112,8 +112,7 @@ useEffect(() => {
     const updatedQuestions = [...questions];
 
     if (updatedQuestions[index].type === "radio") {
-      // Set all to false and only mark the selected index as true
-      updatedQuestions[index].selected = updatedQuestions[index].selected.map((_, i) => i === selectIndex);
+      updatedQuestions[index].selected = updatedQuestions[index].selected.map((_, i) => i === selectIndex); // line written by ChatGPT
     } else {
       // Checkbox logic
       updatedQuestions[index].selected[selectIndex] = event.target.checked;
