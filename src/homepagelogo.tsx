@@ -69,63 +69,70 @@ export const HomePage: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     if (!userInfo.username || !userInfo.password) {
       console.error("Username and password must be provided.");
       return;
     }
-
+  
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
       const userQuery = store.get(userInfo.username);
-
+  
       userQuery.onsuccess = () => {
         if (userQuery.result) {
           const savedUsername = userQuery.result.username;
           const savedPassword = userQuery.result.password;
-
+  
           if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
             setIsLoggedIn(true);
-            //updateSavedUsers()
+            updateSavedUsers(); // Update saved users on successful login
           }
-        } else if (formTitle === "Create Account") 
-          {
-            const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
-            store.put(newUser).onsuccess = () => {
+        } else if (formTitle === "Create Account") {
+          const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
+          store.put(newUser).onsuccess = () => {
             setIsLoggedIn(true);
             clearForm();
             alert("Account creation success!");
+            updateSavedUsers(); // Update saved users on successful account creation
           };
         } else {
           alert("User does not exist. Please create an account first.");
           clearForm();
         }
       };
-
+  
       userQuery.onerror = () => {
         console.error("Error querying user data");
       };
-
+  
       transaction.onerror = (event) => {
         console.error("Transaction failed:", event);
       };
-    } 
+    }
   };
-
-  // const updateSavedUsers = () => {
-  //   // Check if the current username is already saved in accounts and if "remember me" is checked
-  //   const accountExists = accounts.some(account => account.username === userInfo.username);
   
-  //   if (!accountExists && remember) 
-  //   {
-  //     // setAccounts(prevAccounts => [
-  //     //   ...prevAccounts,
-  //     //   { username: userInfo.username, password: userInfo.password }
-  //     // ]);
-  //     setSelect(userInfo.username); // Set the selected user to the newly created account
-  //   } 
-  // };  
+  const updateSavedUsers = () => {
+    if (db) {
+      const transaction = db.transaction("users", "readonly");
+      const store = transaction.objectStore("users");
+      const request = store.getAll();
+  
+      request.onsuccess = () => {
+        const allAccounts = request.result || [];
+        setAccounts(allAccounts); // Update accounts with the latest data
+        if (remember) {
+          setSelect(userInfo.username); // Optionally set the selected user
+        }
+      };
+  
+      request.onerror = () => {
+        console.error("Error fetching users");
+      };
+    }
+  };
+  
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
