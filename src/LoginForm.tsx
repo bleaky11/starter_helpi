@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
 import { Form } from 'react-bootstrap';
+import { useEffect } from 'react';
 import './LoginForm.css';
+import React from 'react';
 
 export interface LoginFormProps {
   closeForm: () => void;
@@ -31,25 +32,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   setSelect,
   formTitle,
 }) => {
-
-  useEffect(() => {
-    if (formTitle === "Create Account") {
-      setUserInfo({ username: "", password: "" });
-    }
-  }, [formTitle, setUserInfo, setSelect]); // Ensure this runs when formTitle changes
-
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
     setSelect(selectedUsername);
+  };
 
-    const selectedAccount = accounts.find(account => account.username === selectedUsername);
+  useEffect(() => {
+    const selectedAccount = accounts.find(account => account.username === selectedUser);
     if (selectedAccount) {
       setUserInfo({
         username: selectedAccount.username,
         password: selectedAccount.password,
       });
     }
-  };
+  }, [accounts, selectedUser, setUserInfo]);
 
   return (
     <div className="form-popup" id="myForm">

@@ -42,7 +42,8 @@ export const HomePage: React.FC = () => {
         const dbInstance = request.result;
         setDb(dbInstance);
 
-        if (dbInstance) {
+        if (dbInstance) 
+        {
           const transaction = dbInstance.transaction("users", "readonly");
           const store = transaction.objectStore("users");
           const getAllRequest = store.getAll();
@@ -51,19 +52,14 @@ export const HomePage: React.FC = () => {
             const allUsers = getAllRequest.result as { username: string; password: string; remembered: boolean }[];
             const rememberedAccounts = allUsers.filter(user => user.remembered);
 
-            setAccounts(rememberedAccounts);
-
-            if (rememberedAccounts.length > 0) {
-              const firstUser = rememberedAccounts[0];
-              setSelect(firstUser.username);
-              setUserInfo({ username: firstUser.username, password: firstUser.password });
-            }
-          };
+          setAccounts(rememberedAccounts);
+          }
 
           getAllRequest.onerror = (event) => {
             console.error("Error retrieving users from the users object store:", event);
           };
-        } else {
+        }
+        else {
           console.error("Database is not initialized.");
         }
       };
@@ -91,13 +87,13 @@ export const HomePage: React.FC = () => {
 
           if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
             setIsLoggedIn(true);
-            updateSavedUsers()
+            //updateSavedUsers()
           }
         } else if (formTitle === "Create Account") {
           const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
           store.put(newUser).onsuccess = () => {
             setIsLoggedIn(true);
-            updateSavedUsers();
+            //updateSavedUsers();
             alert("Account creation success!");
           };
         } else {
@@ -116,15 +112,19 @@ export const HomePage: React.FC = () => {
     } 
   };
 
-  const updateSavedUsers = () =>
-  {
-    const checkAccount = accounts.some((account => account.username));
-    if (!checkAccount && remember) {
-      setAccounts(prevAccounts => [...prevAccounts, { username: userInfo.username, password: userInfo.password }]);
-      setSelect(userInfo.username);
-      setUserInfo(prev => ({ ...prev, username: userInfo.username }));
-    }
-  }
+  // const updateSavedUsers = () => {
+  //   // Check if the current username is already saved in accounts and if "remember me" is checked
+  //   const accountExists = accounts.some(account => account.username === userInfo.username);
+  
+  //   if (!accountExists && remember) 
+  //   {
+  //     // setAccounts(prevAccounts => [
+  //     //   ...prevAccounts,
+  //     //   { username: userInfo.username, password: userInfo.password }
+  //     // ]);
+  //     setSelect(userInfo.username); // Set the selected user to the newly created account
+  //   } 
+  // };  
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
