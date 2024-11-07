@@ -92,7 +92,7 @@ export const HomePage: React.FC = () => {
   
               // If "Remember me" is unchecked, delete the account from saved list
               if (!remember) {
-                deleteAccount(userInfo.username); // Remove from IndexedDB if "Remember me" is unchecked
+                removeFromDropdown(userInfo.username); // Remove from IndexedDB if "Remember me" is unchecked
               }
             }
           } else {
@@ -111,11 +111,47 @@ export const HomePage: React.FC = () => {
     }
   };  
 
+  const removeFromDropdown = (username: string) => {
+    if (db) {
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+      
+      // Get the user data by username
+      const getUserRequest = store.get(username);
+  
+      getUserRequest.onsuccess = () => {
+        const user = getUserRequest.result;
+        
+        if (user) {
+          // Update the remembered flag to false, so it won't show in the dropdown
+          user.remembered = false;
+  
+          // Put the updated user back in the database
+          const updateRequest = store.put(user);
+  
+          updateRequest.onsuccess = () => {
+            console.log(`Account for ${username} updated to no longer be remembered.`);
+            updateSavedUsers(); // Refresh the accounts list after updating
+          };
+  
+          updateRequest.onerror = (event) => {
+            console.error("Error updating account:", event);
+          };
+        }
+      };
+  
+      transaction.onerror = (event) => {
+        console.error("Error accessing the user store:", event);
+      };
+    }
+  };
+  
   const deleteAccount = (username: string) => {
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
       store.delete(username);
+      setIsLoggedIn(false); // Log the user out after deleting the account
   
       transaction.oncomplete = () => {
         console.log(`Account for ${username} deleted successfully.`);
@@ -126,7 +162,7 @@ export const HomePage: React.FC = () => {
         console.error("Error deleting account:", event);
       };
     }
-  };
+  };  
   
   const updateSavedUsers = () => {
     if (db) {
@@ -154,8 +190,7 @@ export const HomePage: React.FC = () => {
         console.error("Error fetching users");
       };
     }
-  };
-  
+  };  
   
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
@@ -172,7 +207,7 @@ export const HomePage: React.FC = () => {
       ...prevInfo,
       [name]: type === "checkbox" ? checked : value,
     }));
-  };  
+  };   
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -187,10 +222,12 @@ export const HomePage: React.FC = () => {
   const showForm = (title: string) => {
     setFormTitle(title);
     clearForm();
-    if (title === "Log in") setRemember(true); 
+    if (title === "Log in") 
+    {
+      setRemember(true); 
+    }
     toggleForm();
   };  
-
   return (
     <div>
       {isLoggedIn ? (
@@ -202,12 +239,26 @@ export const HomePage: React.FC = () => {
             onClick={() => showForm("Create Account")}
             title={userInfo.username || "Logged-in User"} 
           />
-          <Button
-            onClick={handleLogout}
-            style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "darkred" }}
-          >
-            Log out
-          </Button>
+          <div>
+            <Button 
+              style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "salmon" }}
+              onClick={handleLogout}
+            >
+              Log out
+            </Button>
+  
+            <Button 
+              onClick={() => deleteAccount(userInfo.username)} // Ensure the username is passed correctly here
+              style={{
+                float: "left", 
+                marginTop: "10px", 
+                borderRadius: "20px", 
+                backgroundColor: "darkred"
+              }}
+            >
+              Delete Account
+            </Button>
+          </div>
         </div>
       ) : (
         <div>
@@ -218,35 +269,34 @@ export const HomePage: React.FC = () => {
             onClick={() => showForm("Create Account")}
             title="Guest"
           />
-          <Button
-            onClick={() => showForm("Log in")}
+          <Button 
             style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "darkblue" }}
+            onClick={() => showForm("Log in")}
           >
             Log in
           </Button>
         </div>
       )}
-
+  
       {isFormOpen && !isLoggedIn && (
-       <LoginForm
-       userInfo={userInfo}
-       setUserInfo={setUserInfo}
-       remember={remember}
-       setRemember={setRemember}
-       handleRemember={handleRemember}
-       handleSubmit={handleSubmit}
-       updateStatus={updateStatus}
-       selectedUser={selectedUser}
-       setSelect={setSelect}
-       accounts={accounts}
-       closeForm={toggleForm}
-       formTitle={formTitle}
-     />
+        <LoginForm
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+          remember={remember}
+          setRemember={setRemember}
+          handleRemember={handleRemember}
+          handleSubmit={handleSubmit}
+          updateStatus={updateStatus}
+          selectedUser={selectedUser}
+          setSelect={setSelect}
+          accounts={accounts}
+          closeForm={toggleForm}
+          formTitle={formTitle}
+        />
       )}
-
+  
       <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
         <h1>The Career Quiz</h1>
       </a>
     </div>
-  );
-}
+  )};
