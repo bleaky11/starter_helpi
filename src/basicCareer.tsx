@@ -21,7 +21,13 @@ interface Question
   selected: boolean[];
 }
 
-export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer}: SubmitButton & saveButton): JSX.Element 
+interface Answers
+{
+  answers: {answer: string, tag: string}[];
+  setAnswerVals: (newState: {answer: string, tag: string}[]) => void;
+}
+
+export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals }: SubmitButton & saveButton & Answers): JSX.Element 
 {
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
@@ -113,7 +119,9 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     handleBasicSave();
     setBasicCareer("basicQuizAnswers");
     handleUpdateValues();
+    console.log(promptValues);
     const taggedAnswers = assignTagsToAnswers(promptValues);
+    setAnswerVals(taggedAnswers);
     alert("Thanks for completing the Basic Career quiz!");
   }
 
