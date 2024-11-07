@@ -92,8 +92,9 @@ export const HomePage: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!userInfo.username || !userInfo.password) 
-    {
+  
+    // Ensure both username and password are provided
+    if (!userInfo.username || !userInfo.password) {
       alert("Username and password are required.");
       return;
     }
@@ -108,10 +109,10 @@ export const HomePage: React.FC = () => {
         const existingUser = userQuery.result;
   
         if (existingUser) {
-          // If user exists and form is for logging in, verify credentials
           if (formTitle === "Log in") {
             const { username, password, remembered } = existingUser;
   
+            // Verify credentials
             if (checkInfo(username, password, userInfo.username, userInfo.password)) {
               setIsLoggedIn(true);
   
@@ -124,24 +125,22 @@ export const HomePage: React.FC = () => {
               } else {
                 updateSavedUsers(); // Refresh accounts if no change
               }
-              
-              // If "Remember me" is unchecked, delete the account from the saved accounts
+  
+              // If "Remember me" is unchecked, remove from saved accounts
               if (!remember) {
                 removeFromDropdown(userInfo.username);
               }
             }
           } else {
-            // If account exists, prompt user to log in
             alert("Account already exists. Please log in.");
-            clearForm();
+            clearForm(); // Clear form inputs for a fresh login attempt
           }
         } else if (formTitle === "Create Account") {
-          // If user does not exist, create a new account
           const newUser = { ...userInfo, remembered: remember };
           store.put(newUser).onsuccess = () => {
             alert("Account created successfully!");
             setIsLoggedIn(true);
-            updateSavedUsers(); // Refresh accounts after new account creation
+            updateSavedUsers(); // Refresh accounts after account creation
           };
         }
       };
@@ -149,9 +148,9 @@ export const HomePage: React.FC = () => {
       userQuery.onerror = (event) => {
         console.error("Error retrieving user:", event);
       };
-    }  
-  };  
-
+    }
+  };
+  
   const removeFromDropdown = (username: string) => {
     if (db) {
       const transaction = db.transaction("users", "readwrite");
@@ -191,9 +190,10 @@ export const HomePage: React.FC = () => {
         const deleteRequest = store.delete(username);
   
         deleteRequest.onsuccess = () => {
-          setIsLoggedIn(false); // Log the user out after deleting the account
-          setUserInfo({username: userInfo.username, password: userInfo.password, remembered: false}); // make it false by default to clear accounts in update function
-          updateSavedUsers();   // Refresh the accounts list after deletion
+          console.log(`Account ${username} deleted successfully.`);
+          setUserInfo({username: "", password: "", remembered: false});
+          clearForm(); 
+          handleLogout(); // Ensure the user is logged out after deletion
         };
   
         deleteRequest.onerror = (event) => {
@@ -202,15 +202,15 @@ export const HomePage: React.FC = () => {
       }
   
       transaction.oncomplete = () => {
-        console.log("Transaction completed successfully");
+        console.log("Delete transaction completed.");
       };
   
       transaction.onerror = (event) => {
-        console.error("Error deleting account transaction:", event);
+        console.error("Error in transaction while deleting account:", event);
       };
     }
   };  
-  
+    
   const updateSavedUsers = () => {
     if (db) {
       const transaction = db.transaction("users", "readonly");
@@ -219,6 +219,8 @@ export const HomePage: React.FC = () => {
   
       request.onsuccess = () => {
         const rememberedAccounts = request.result.filter((account: { remembered: boolean }) => account.remembered);
+        console.log("Remembered accounts:", rememberedAccounts);
+  
         setAccounts(rememberedAccounts); // Update dropdown with remembered users only
   
         if (rememberedAccounts.length > 0) {
@@ -228,13 +230,11 @@ export const HomePage: React.FC = () => {
             remembered: rememberedAccounts[0].remembered,
           });
           setSelect(rememberedAccounts[0].username);
-        } else {
-          clearForm(); // If no remembered accounts left, clear form
-        }
+        } 
       };
   
       request.onerror = () => {
-        console.error("Error fetching users");
+        console.error("Error fetching users.");
       };
     }
   };  
@@ -258,8 +258,9 @@ export const HomePage: React.FC = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    updateSavedUsers();
-  };
+    setIsFormOpen(true);  // Ensure the form opens after logout
+    updateSavedUsers(); 
+  };   
   
   const handleRemember = () => {
     const newRememberState = !remember;
