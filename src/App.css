@@ -16,10 +16,9 @@
 .container {
   display: flex;
   justify-content: flex-end;  /* Pushes the image to the right */
-  align-items: center;        /* Optional: vertically center the image */
-  height: 10%;              /* Full viewport height */
-  padding-right: 10px;        /* Adjust space between the image and screen edge */
+  float: left;
 }
+
 .testing{
   position: absolute;
 }
@@ -36,12 +35,13 @@
   border-style: solid;
   border-radius: 25px;
   padding: 10px;
+  font-size: calc(10px + 2vmin);
+  color: black;
+  position: fixed;
 }
 
 .notif-bell{
-  width: auto;
-  height: 100px;
-  max-height: 15%;
+  height: 10%;
   position: absolute;
 }
 
@@ -116,4 +116,5 @@
   justify-content: center;
   align-items: center;
   height: 65px;
+  position: absolute;
 }
