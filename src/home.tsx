@@ -40,7 +40,7 @@ export function MainPage({
                 {!basicComplete && !detailedComplete ? (
                   <div>
                     <Button disabled={true}>Results</Button>
-                    <h6>Complete a Quiz!</h6>
+                    <h6>Please complete a Quiz!</h6>
                   </div>
                 ) : (
                   <Link
@@ -173,7 +173,7 @@ export function MainPage({
                 {!isKeyEntered ? (
                   <div>
                     <Button disabled={true}>Detailed Questions</Button>
-                    <h6>Please enter An API Key</h6>
+                    <h6>Please enter an API Key</h6>
                   </div>
                 ) : (
                   <Link
