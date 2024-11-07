@@ -120,8 +120,8 @@ export const HomePage: React.FC = () => {
       const request = store.getAll();
   
       request.onsuccess = () => {
-        const allAccounts = request.result || [];
-        setAccounts(allAccounts); // Update accounts with the latest data
+        const rememberedAccounts = request.result.filter((account) => account.remembered);
+        setAccounts(rememberedAccounts); // Update accounts with the latest data
         if (remember) {
           setSelect(userInfo.username); // Optionally set the selected user
         }
@@ -133,7 +133,6 @@ export const HomePage: React.FC = () => {
     }
   };
   
-
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
   };
@@ -141,6 +140,7 @@ export const HomePage: React.FC = () => {
   const clearForm = () => 
   {
     setUserInfo({username: "", password: ""});
+    setRemember(false);
   }
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,7 +164,6 @@ export const HomePage: React.FC = () => {
     setFormTitle(title);
     if(title === "Create Account")
     {
-      setRemember(false);
       clearForm();
     }
     toggleForm();
