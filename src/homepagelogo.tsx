@@ -186,15 +186,27 @@ export const HomePage: React.FC = () => {
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
-      store.delete(username);
-      setIsLoggedIn(false); // Log the user out after deleting the account
+  
+      if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
+        const deleteRequest = store.delete(username);
+  
+        deleteRequest.onsuccess = () => {
+          setIsLoggedIn(false); // Log the user out after deleting the account
+          setUserInfo({username: userInfo.username, password: userInfo.password, remembered: false}); // make it false by default to clear accounts in update function
+          updateSavedUsers();   // Refresh the accounts list after deletion
+        };
+  
+        deleteRequest.onerror = (event) => {
+          console.error("Error deleting account:", event);
+        };
+      }
   
       transaction.oncomplete = () => {
-        updateSavedUsers(); // Refresh the accounts list after deletion
+        console.log("Transaction completed successfully");
       };
   
       transaction.onerror = (event) => {
-        console.error("Error deleting account:", event);
+        console.error("Error deleting account transaction:", event);
       };
     }
   };  
