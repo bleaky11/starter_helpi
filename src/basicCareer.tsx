@@ -23,15 +23,16 @@ interface Question
 
 export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer}: SubmitButton & saveButton): JSX.Element 
 {
+  const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
-  const [questions, setQuestions] = useState<Question[]>([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "I don't mind any" }], selected: [false, false, false, false] },
+  const [questions, setQuestions] = useState<Question[]>([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
     { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
     { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
-    { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Some is fine" }, { id: 3, label: "More often than not" }, { id: 4, label: "Very comfortable" }], selected: [false, false, false, false] },
-    { text: "How much would you like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasional interaction" }, { id: 4, label: "Fairly often" }, { id: 5, label: "All the time" }], selected: [false, false, false, false, false] },
+    { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Somewhat" }, { id: 3, label: "More often than not" }, { id: 4, label: "Extremely" }], selected: [false, false, false, false] },
+    { text: "How much would you like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasionally" }, { id: 4, label: "Fairly often" }, { id: 5, label: "All the time" }], selected: [false, false, false, false, false] },
     { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
     { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
-    { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "A fair amount" }, { id: 3, label: "A lot" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
+    { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}]);
 
   function handleBasicSave()
@@ -58,11 +59,61 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
   }, 0);
   }
 
+  const getSelectedAnswer = (questions: Question[]) => {
+    return questions.map((question) => {
+      const selectedChoiceIndex = question.selected.findIndex((selected) => selected === true);
+      
+      if (selectedChoiceIndex !== -1) {
+        return {
+          selectedAnswer: question.choices[selectedChoiceIndex].label,
+        };
+      } else {
+        return {
+          selectedAnswer: ""
+        };
+      }
+    });
+  };
+  
+
+  const handleUpdateValues = () => {
+    const selectedAnswers = getSelectedAnswer(questions);
+    const selectedAnswerLabels = selectedAnswers.map((answer) => answer.selectedAnswer);
+    setValues(selectedAnswerLabels);
+  };
+
+  type AnswerTagMap = {
+    [key: number]: string;
+  };
+
+  const answerTags: AnswerTagMap = { //Assigns a tag to each answer using the index of the answerVals array
+    0: 'noise',
+    1: 'environment',
+    2: 'STEM',
+    3: 'manualLabor',
+    4: 'interaction',
+    5: 'techComfort',
+    6: 'salary',
+    7: 'communication',
+    8: 'education'
+  };
+
+  function assignTagsToAnswers(answers: string[]): { answer: string, tag: string }[] {
+    return answers.map((answer, index) => ({
+      answer,
+      tag: answerTags[index] || 'unknown',
+    }));
+  }
+
+
+
   function handleSubmit({basicComplete, toggleBasic}: SubmitButton)
   {
     toggleBasic(!basicComplete);
     handleBasicSave();
     setBasicCareer("basicQuizAnswers");
+    handleUpdateValues();
+    const taggedAnswers = assignTagsToAnswers(promptValues);
     alert("Thanks for completing the Basic Career quiz!");
   }
 
@@ -90,7 +141,7 @@ useEffect(() => {
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element {
     return(<div>
-      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => handleSubmit({basicComplete, toggleBasic})}>Submit</Button>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), ]}>Submit</Button>
     </div>)
   }
 
