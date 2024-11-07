@@ -36,11 +36,21 @@ export function MainPage({
                   Results of the quiz will be displayed after completing basic and/or detailed question
                 </h6>
               </div>
-              <Link
-                to="/results-page"
-                onClick={() => setPage("Results-Page")}>
-                  <Button>Results Page</Button>
-              </Link>
+              <nav style={{ marginTop: "auto", textAlign: "center" }}>
+                {!basicComplete && !detailedComplete ? (
+                  <div>
+                    <Button disabled={true}>Results</Button>
+                    <h6>Complete a Quiz!</h6>
+                  </div>
+                ) : (
+                  <Link
+                    to="/results-page"
+                    onClick={() => setPage("Results-Page")}
+                  >
+                    <Button>Results</Button>
+                  </Link>
+                )}
+              </nav>
             </Col>
         </Container>
         <Container>

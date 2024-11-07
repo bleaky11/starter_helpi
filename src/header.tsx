@@ -36,6 +36,23 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
             </div>
         )
     }
+    else if(page === "Results-Page"){
+        return(
+            <div className="Header-footer">
+                <nav className="Centered">
+                    <Link to="/basic-questions">
+                        <Button onClick={() => setPage("Basic-Questions")}>Basic Questions</Button>
+                    </Link>
+                    <Link to="/">
+                        <Button onClick={() => setPage("Home")}>Home</Button>
+                    </Link>
+                    <Link to="/detailed-questions">
+                        <Button onClick={() => setPage("Detailed-Questions")}>Detailed Questions</Button>
+                    </Link>
+                </nav>
+            </div>
+        )
+    }
     else{
         return(
         <div className='Header-footer' style={{textAlign: "center"}}>

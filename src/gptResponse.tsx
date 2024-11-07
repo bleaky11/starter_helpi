@@ -2,10 +2,6 @@ import { useState } from "react";
 import { getChatGptResponse } from "./chatGpt"
 import { Button } from "react-bootstrap";
 
-interface api {
-    apiKey: string;
-}
-
 interface taggedAnswer {
   answer: string;
   tag: string;
@@ -40,8 +36,6 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
     try {
       console.log(taggedAnswers);
       const prompt = generatePrompt(taggedAnswers); // Generate prompt
-      console.log(taggedAnswers);
-      console.log('Generated prompt:', prompt); // Check prompt by printing
       const data = await getChatGptResponse(prompt, apiKey); // Send prompt to ChatGPT
       setMessage(data.choices[0].message.content); // Get the first response from ChatGPT
     } catch (error) {

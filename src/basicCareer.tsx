@@ -104,6 +104,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     8: 'education'
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function assignTagsToAnswers(answers: string[]): { answer: string, tag: string }[] {
     return answers.map((answer, index) => ({
       answer,
@@ -115,13 +116,10 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
 
   function handleSubmit({basicComplete, toggleBasic}: SubmitButton)
   {
-    toggleBasic(!basicComplete);
+    toggleBasic(true);
     handleBasicSave();
     setBasicCareer("basicQuizAnswers");
     handleUpdateValues();
-    console.log(promptValues);
-    const taggedAnswers = assignTagsToAnswers(promptValues);
-    setAnswerVals(taggedAnswers);
     alert("Thanks for completing the Basic Career quiz!");
   }
 
@@ -146,6 +144,13 @@ useEffect(() => {
       setQuestions(JSON.parse(savedBasicAnswers || "[]")); // Load saved answers
   }
 }, []);
+
+useEffect(() => {
+  if (promptValues.length > 0) {
+    const taggedAnswers = assignTagsToAnswers(promptValues);
+    setAnswerVals(taggedAnswers);
+  }
+}, [assignTagsToAnswers, promptValues, setAnswerVals]);
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element {
     return(<div>
