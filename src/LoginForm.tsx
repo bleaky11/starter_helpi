@@ -38,22 +38,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   };
 
   useEffect(() => {
-    const selectedAccount = accounts.find(account => account.username === selectedUser);
-    if (selectedAccount && formTitle === "Log in") {
-      setUserInfo({
-        username: selectedAccount.username,
-        password: selectedAccount.password,
-        remembered: selectedAccount.remembered ?? false, // Default to false if remembered is undefined
-      });
-      console.log("Updated userInfo:", selectedAccount); // Check that this logs correctly
-    } else if (formTitle === "Log in") {
-      setUserInfo({
-        username: "",
-        password: "",
-        remembered: false
-      });
+    if (formTitle === "Log in" && selectedUser) {
+      const selectedAccount = accounts.find(account => account.username === selectedUser);
+      if (selectedAccount) {
+        setUserInfo({
+          username: selectedAccount.username,
+          password: selectedAccount.password,
+          remembered: selectedAccount.remembered ?? false,
+        });
+        console.log("LoginForm updated userInfo:", selectedAccount); // Debugging log
+      }
     }
   }, [accounts, formTitle, selectedUser, setUserInfo]);  
+  
+  console.log("Current userInfo:", userInfo); // Log to see current state of userInfo  
   
   return (
     <div className="form-popup" id="myForm">

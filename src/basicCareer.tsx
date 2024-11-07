@@ -70,7 +70,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     {
       localStorage.removeItem("basicQuizProgress");
       localStorage.removeItem("basicQuizAnswers");
-      sessionStorage.removeItem("visited");
+      sessionStorage.removeItem("quizAttempt");
 }
 
 useEffect(() => {
@@ -79,7 +79,7 @@ useEffect(() => {
 
   if (!savedBasicProgress && !savedBasicAnswers) {
       clearStorage(); 
-      sessionStorage.setItem("visited", "true"); 
+      sessionStorage.setItem("quizAttempt", "true"); // track if the user has a saved quiz for next visit
   } 
   else if (savedBasicProgress && savedBasicAnswers )
   {

@@ -27,42 +27,57 @@ export const HomePage: React.FC = () => {
     const initializeDatabase = async () => {
       const indexedDB = window.indexedDB;
       const request = indexedDB.open("UserDatabase", 2);
-
+  
       request.onerror = (event) => {
         console.error("Error opening user database!", event);
       };
-
+  
       request.onupgradeneeded = (event) => {
         const dbInstance = (event.target as IDBOpenDBRequest).result;
         dbInstance.createObjectStore("users", { keyPath: "username" });
-        console.log("Object store created.");
       };
-
+  
       request.onsuccess = () => {
         const dbInstance = request.result;
-        setDb(dbInstance);
-
-        if (dbInstance) {
+        if (dbInstance) 
+        {
+          setDb(dbInstance);
           const transaction = dbInstance.transaction("users", "readonly");
           const store = transaction.objectStore("users");
           const getAllRequest = store.getAll();
-
+  
           getAllRequest.onsuccess = () => {
             const allUsers = getAllRequest.result as { username: string; password: string; remembered: boolean }[];
-            console.log("All users retrieved:", allUsers); // Check if data is retrieved here
-            
             const rememberedAccounts = allUsers.filter(user => user.remembered);
             setAccounts(rememberedAccounts);
-            if(sessionStorage.getItem("visited") && rememberedAccounts)
-            {
-              rememberedAccounts.forEach((account) => 
-              {
-                setUserInfo({username: store.get(userInfo.username).result.username, password: store.get(userInfo.username).result.password, remembered: true});
-              })
+
+            if (localStorage.getItem("homeVisit") && rememberedAccounts.length > 0) {
+              const firstAccount = rememberedAccounts[0];
+              const getRequest = store.get(firstAccount.username);
+              getRequest.onsuccess = () => {
+                const rememberedUser = getRequest.result;
+                if (rememberedUser) {
+                  setUserInfo({
+                    username: rememberedUser.username,
+                    password: rememberedUser.password,
+                    remembered: true,
+                  });
+                  setSelect(rememberedUser.username); 
+                } else {
+                  console.error("No user found for the remembered account:", firstAccount.username);
+                }
+              };
+              getRequest.onerror = (event) => {
+                console.error("Error retrieving remembered user:", event);
+              };
+            } else {
+              // If this is the first visit, set homeVisit for future checks
+              if (!localStorage.getItem("homeVisit")) {
+                localStorage.setItem("homeVisit", "true");
+              }
             }
-            console.log("Remembered accounts:", rememberedAccounts);
           };
-            
+  
           getAllRequest.onerror = (event) => {
             console.error("Error retrieving users from the users object store:", event);
           };
@@ -71,14 +86,14 @@ export const HomePage: React.FC = () => {
         }
       };
     };
+  
     initializeDatabase();
-  }, [userInfo.username]); // Empty dependency array to avoid infinite loop  
+  }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
-    // Check if username and password are entered
-    if (!userInfo.username || !userInfo.password) {
+    if (!userInfo.username || !userInfo.password) 
+    {
       alert("Username and password are required.");
       return;
     }
@@ -97,22 +112,19 @@ export const HomePage: React.FC = () => {
           if (formTitle === "Log in") {
             const { username, password, remembered } = existingUser;
   
-            // Check if the entered credentials match
             if (checkInfo(username, password, userInfo.username, userInfo.password)) {
               setIsLoggedIn(true);
   
-              // Update the remembered flag in the database if it changed
               if (remember !== remembered) {
                 existingUser.remembered = remember;
                 const updateRequest = store.put(existingUser);
                 updateRequest.onsuccess = () => {
-                  console.log(`Updated remembered flag for ${username}`);
-                  updateSavedUsers(); // Refresh accounts after update
+                  updateSavedUsers(); 
                 };
               } else {
                 updateSavedUsers(); // Refresh accounts if no change
               }
-  
+              
               // If "Remember me" is unchecked, delete the account from the saved accounts
               if (!remember) {
                 removeFromDropdown(userInfo.username);
@@ -144,22 +156,17 @@ export const HomePage: React.FC = () => {
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
-      
-      // Get the user data by username
       const getUserRequest = store.get(username);
   
       getUserRequest.onsuccess = () => {
         const user = getUserRequest.result;
         
         if (user) {
-          // Update the remembered flag to false, so it won't show in the dropdown
           user.remembered = false;
   
-          // Put the updated user back in the database
           const updateRequest = store.put(user);
   
           updateRequest.onsuccess = () => {
-            console.log(`Account for ${username} updated to no longer be remembered.`);
             updateSavedUsers(); // Refresh the accounts list after updating
           };
   
@@ -183,7 +190,6 @@ export const HomePage: React.FC = () => {
       setIsLoggedIn(false); // Log the user out after deleting the account
   
       transaction.oncomplete = () => {
-        console.log(`Account for ${username} deleted successfully.`);
         updateSavedUsers(); // Refresh the accounts list after deletion
       };
   
