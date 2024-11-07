@@ -27,26 +27,26 @@ export const HomePage: React.FC = () => {
     const initializeDatabase = async () => {
       const indexedDB = window.indexedDB;
       const request = indexedDB.open("UserDatabase", 2);
-  
+
       request.onerror = (event) => {
         console.error("Error opening user database!", event);
       };
-  
+
       request.onupgradeneeded = (event) => {
         const dbInstance = (event.target as IDBOpenDBRequest).result;
         dbInstance.createObjectStore("users", { keyPath: "username" });
         console.log("Object store created.");
       };
-  
+
       request.onsuccess = () => {
         const dbInstance = request.result;
         setDb(dbInstance);
-  
+
         if (dbInstance) {
           const transaction = dbInstance.transaction("users", "readonly");
           const store = transaction.objectStore("users");
           const getAllRequest = store.getAll();
-  
+
           getAllRequest.onsuccess = () => {
             const allUsers = getAllRequest.result as { username: string; password: string; remembered: boolean }[];
             console.log("All users retrieved:", allUsers); // Check if data is retrieved here
@@ -82,6 +82,7 @@ export const HomePage: React.FC = () => {
   
       userQuery.onsuccess = () => {
         const existingUser = userQuery.result;
+  
         if (existingUser) {
           const { username, password, remembered } = existingUser;
   
@@ -98,19 +99,15 @@ export const HomePage: React.FC = () => {
               updateSavedUsers(); // Update saved users even if "Remember me" is unchanged
             }
           }
-        } else if (formTitle === "Create Account") 
-        {
+        } else if (formTitle === "Create Account") {
           const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
           store.put(newUser).onsuccess = () => {
             // Update saved users first to ensure the data is fresh
             updateSavedUsers(); // This ensures the account is updated in the list
-            
             alert("Account creation success!");
-        
-            // Clear the form fields and reset the remember state
             clearForm(); // Clears the form fields visually and resets the UI
             setIsLoggedIn(true); // Now set the login state as successful
-          };        
+          };
         } else {
           alert("User does not exist. Please create an account first.");
           clearForm();
@@ -125,8 +122,8 @@ export const HomePage: React.FC = () => {
         console.error("Transaction failed:", event);
       };
     }
-  };  
-  
+  };
+
   const updateSavedUsers = () => {
     if (db) {
       const transaction = db.transaction("users", "readonly");
@@ -135,9 +132,9 @@ export const HomePage: React.FC = () => {
   
       request.onsuccess = () => {
         const rememberedAccounts = request.result.filter((account) => account.remembered);
-        setAccounts(rememberedAccounts); // Update accounts with the latest data
+        setAccounts(rememberedAccounts); // Update the accounts state with remembered users
         if (remember) {
-          setSelect(userInfo.username); // Optionally set the selected user
+          setSelect(userInfo.username); // Optionally set the selected user (if logged in and remember is true)
         }
       };
   
@@ -147,14 +144,13 @@ export const HomePage: React.FC = () => {
     }
   };
   
+
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
   };
 
-  const clearForm = () => 
-  {
-    setUserInfo({username: "", password: ""});
-    setRemember(false);
+  const clearForm = () => {
+    setUserInfo({ username: "", password: "" });
   }
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,6 +164,7 @@ export const HomePage: React.FC = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
+  
 
   const handleRemember = () => {
     const newRememberState = !remember;
@@ -176,8 +173,7 @@ export const HomePage: React.FC = () => {
 
   const showForm = (title: string) => {
     setFormTitle(title);
-    if(title === "Create Account")
-    {
+    if(title === "Create Account") {
       clearForm();
     }
     toggleForm();
@@ -192,7 +188,7 @@ export const HomePage: React.FC = () => {
             alt="Four-Toed Jerboa"
             style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
             onClick={() => showForm("Create Account")}
-            title={"Logged-in User"} 
+            title={userInfo.username || "Logged-in User"} 
           />
           <Button
             onClick={handleLogout}
@@ -218,7 +214,6 @@ export const HomePage: React.FC = () => {
           </Button>
         </div>
       )}
-  
 
       {isFormOpen && !isLoggedIn && (
         <LoginForm
