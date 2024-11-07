@@ -53,6 +53,13 @@ export const HomePage: React.FC = () => {
             
             const rememberedAccounts = allUsers.filter(user => user.remembered);
             setAccounts(rememberedAccounts);
+            if(sessionStorage.getItem("visited") && rememberedAccounts)
+            {
+              rememberedAccounts.forEach((account) => 
+              {
+                setUserInfo({username: store.get(userInfo.username).result.username, password: store.get(userInfo.username).result.password, remembered: true});
+              })
+            }
             console.log("Remembered accounts:", rememberedAccounts);
           };
             
@@ -65,11 +72,12 @@ export const HomePage: React.FC = () => {
       };
     };
     initializeDatabase();
-  }, []); // Empty dependency array to avoid infinite loop  
+  }, [userInfo.username]); // Empty dependency array to avoid infinite loop  
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   
+    // Check if username and password are entered
     if (!userInfo.username || !userInfo.password) {
       alert("Username and password are required.");
       return;
@@ -78,37 +86,58 @@ export const HomePage: React.FC = () => {
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
+  
       const userQuery = store.get(userInfo.username);
   
       userQuery.onsuccess = () => {
         const existingUser = userQuery.result;
   
         if (existingUser) {
+          // If user exists and form is for logging in, verify credentials
           if (formTitle === "Log in") {
-            const { username, password } = existingUser;
+            const { username, password, remembered } = existingUser;
+  
+            // Check if the entered credentials match
             if (checkInfo(username, password, userInfo.username, userInfo.password)) {
               setIsLoggedIn(true);
-              updateSavedUsers();
   
-              // If "Remember me" is unchecked, delete the account from saved list
+              // Update the remembered flag in the database if it changed
+              if (remember !== remembered) {
+                existingUser.remembered = remember;
+                const updateRequest = store.put(existingUser);
+                updateRequest.onsuccess = () => {
+                  console.log(`Updated remembered flag for ${username}`);
+                  updateSavedUsers(); // Refresh accounts after update
+                };
+              } else {
+                updateSavedUsers(); // Refresh accounts if no change
+              }
+  
+              // If "Remember me" is unchecked, delete the account from the saved accounts
               if (!remember) {
-                removeFromDropdown(userInfo.username); // Remove from IndexedDB if "Remember me" is unchecked
+                removeFromDropdown(userInfo.username);
               }
             }
           } else {
+            // If account exists, prompt user to log in
             alert("Account already exists. Please log in.");
             clearForm();
           }
         } else if (formTitle === "Create Account") {
+          // If user does not exist, create a new account
           const newUser = { ...userInfo, remembered: remember };
           store.put(newUser).onsuccess = () => {
             alert("Account created successfully!");
             setIsLoggedIn(true);
-            updateSavedUsers();
+            updateSavedUsers(); // Refresh accounts after new account creation
           };
         }
       };
-    }
+  
+      userQuery.onerror = (event) => {
+        console.error("Error retrieving user:", event);
+      };
+    }  
   };  
 
   const removeFromDropdown = (username: string) => {
