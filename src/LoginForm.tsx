@@ -5,14 +5,14 @@ import React from 'react';
 
 export interface LoginFormProps {
   closeForm: () => void;
-  userInfo: { username: string; password: string };
-  setUserInfo: (value: React.SetStateAction<{ username: string; password: string }>) => void;
+  userInfo: { username: string; password: string, remembered: boolean };
+  setUserInfo: (value: React.SetStateAction<{ username: string; password: string, remembered: boolean }>) => void;
   remember: boolean;
   setRemember: React.Dispatch<React.SetStateAction<boolean>>;
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemember: () => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  accounts: { username: string; password: string }[];
+  accounts: { username: string; password: string, remembered: boolean}[];
   selectedUser: string;
   setSelect: (value: React.SetStateAction<string>) => void;
   formTitle: string;
@@ -43,10 +43,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       setUserInfo({
         username: selectedAccount.username,
         password: selectedAccount.password,
+        remembered: selectedAccount.remembered ?? false, // Default to false if remembered is undefined
       });
       console.log("Updated userInfo:", selectedAccount); // Check that this logs correctly
+    } else if (formTitle === "Log in") {
+      setUserInfo({
+        username: "",
+        password: "",
+        remembered: false
+      });
     }
-  }, [accounts, formTitle, selectedUser, setUserInfo]);
+  }, [accounts, formTitle, selectedUser, setUserInfo]);  
   
   return (
     <div className="form-popup" id="myForm">

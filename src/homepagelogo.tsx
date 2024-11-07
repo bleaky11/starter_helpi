@@ -6,12 +6,12 @@ import { Button } from 'react-bootstrap';
 
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState({ username: "", password: "" });
+  const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: true});
   const [remember, setRemember] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null);
-  const [accounts, setAccounts] = useState<{ username: string; password: string }[]>([]);
+  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean }[]>([]);
   const [selectedUser, setSelect] = useState("");
 
   const checkInfo = (savedUsername: string, savedPassword: string, userInput: string, passInput: string) => {
@@ -71,7 +71,7 @@ export const HomePage: React.FC = () => {
     event.preventDefault();
   
     if (!userInfo.username || !userInfo.password) {
-      console.error("Username and password must be provided.");
+      alert("Username and password are required.");
       return;
     }
   
@@ -84,47 +84,50 @@ export const HomePage: React.FC = () => {
         const existingUser = userQuery.result;
   
         if (existingUser) {
-          const { username, password, remembered } = existingUser;
+          if (formTitle === "Log in") {
+            const { username, password } = existingUser;
+            if (checkInfo(username, password, userInfo.username, userInfo.password)) {
+              setIsLoggedIn(true);
+              updateSavedUsers();
   
-          if (checkInfo(username, password, userInfo.username, userInfo.password)) 
-          {
-            setIsLoggedIn(true);
-  
-            // Update "remembered" status if it has changed
-            if (remembered !== remember) {
-              const updatedUser = { ...existingUser, remembered: remember };
-              store.put(updatedUser).onsuccess = () => {
-                updateSavedUsers(); // Update saved users with the latest data
-              };
-            } else {
-              updateSavedUsers(); // Update saved users even if "Remember me" is unchanged
+              // If "Remember me" is unchecked, delete the account from saved list
+              if (!remember) {
+                deleteAccount(userInfo.username); // Remove from IndexedDB if "Remember me" is unchecked
+              }
             }
+          } else {
+            alert("Account already exists. Please log in.");
+            clearForm();
           }
         } else if (formTitle === "Create Account") {
-          const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
+          const newUser = { ...userInfo, remembered: remember };
           store.put(newUser).onsuccess = () => {
-            // Update saved users first to ensure the data is fresh
-            updateSavedUsers(); // This ensures the account is updated in the list
-            alert("Account creation success!");
-            clearForm(); // Clears the form fields visually and resets the UI
-            setIsLoggedIn(true); // Now set the login state as successful
+            alert("Account created successfully!");
+            setIsLoggedIn(true);
+            updateSavedUsers();
           };
-        } else {
-          alert("User does not exist. Please create an account first.");
-          clearForm();
         }
       };
+    }
+  };  
+
+  const deleteAccount = (username: string) => {
+    if (db) {
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+      store.delete(username);
   
-      userQuery.onerror = () => {
-        console.error("Error querying user data");
+      transaction.oncomplete = () => {
+        console.log(`Account for ${username} deleted successfully.`);
+        updateSavedUsers(); // Refresh the accounts list after deletion
       };
   
       transaction.onerror = (event) => {
-        console.error("Transaction failed:", event);
+        console.error("Error deleting account:", event);
       };
     }
   };
-
+  
   const updateSavedUsers = () => {
     if (db) {
       const transaction = db.transaction("users", "readonly");
@@ -132,10 +135,18 @@ export const HomePage: React.FC = () => {
       const request = store.getAll();
   
       request.onsuccess = () => {
-        const rememberedAccounts = request.result.filter((account) => account.remembered);
-        setAccounts(rememberedAccounts); // Update the accounts state with remembered users
-        if (remember) {
-          setSelect(userInfo.username); // Optionally set the selected user (if logged in and remember is true)
+        const rememberedAccounts = request.result.filter((account: { remembered: boolean }) => account.remembered);
+        setAccounts(rememberedAccounts); // Update dropdown with remembered users only
+  
+        if (rememberedAccounts.length > 0) {
+          setUserInfo({
+            username: rememberedAccounts[0].username,
+            password: rememberedAccounts[0].password,
+            remembered: rememberedAccounts[0].remembered,
+          });
+          setSelect(rememberedAccounts[0].username);
+        } else {
+          clearForm(); // If no remembered accounts left, clear form
         }
       };
   
@@ -145,44 +156,40 @@ export const HomePage: React.FC = () => {
     }
   };
   
-
+  
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
   };
 
   const clearForm = () => {
-    setUserInfo({ username: "", password: "" });
-  }
+    setUserInfo({ username: "", password: "", remembered: false });
+    setRemember(false);
+  };  
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setUserInfo((prevInfo) => ({
       ...prevInfo,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
-  };
+  };  
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    updateSavedUsers();
   };
   
-
   const handleRemember = () => {
     const newRememberState = !remember;
-    setRemember(newRememberState);
-  };
-
+    setRemember(newRememberState); // Toggle remember state
+  };  
+  
   const showForm = (title: string) => {
     setFormTitle(title);
-    if(title === "Create Account") {
-      clearForm();
-    }
-    else
-    {
-      setRemember(true);
-    }
+    clearForm();
+    if (title === "Log in") setRemember(true); 
     toggleForm();
-  };
+  };  
 
   return (
     <div>
@@ -221,20 +228,20 @@ export const HomePage: React.FC = () => {
       )}
 
       {isFormOpen && !isLoggedIn && (
-        <LoginForm
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-          remember={remember}
-          setRemember={setRemember}
-          handleRemember={handleRemember}
-          handleSubmit={handleSubmit}
-          updateStatus={updateStatus}
-          selectedUser={selectedUser}
-          setSelect={setSelect}
-          accounts={accounts}
-          closeForm={toggleForm}
-          formTitle={formTitle}
-        />
+       <LoginForm
+       userInfo={userInfo}
+       setUserInfo={setUserInfo}
+       remember={remember}
+       setRemember={setRemember}
+       handleRemember={handleRemember}
+       handleSubmit={handleSubmit}
+       updateStatus={updateStatus}
+       selectedUser={selectedUser}
+       setSelect={setSelect}
+       accounts={accounts}
+       closeForm={toggleForm}
+       formTitle={formTitle}
+     />
       )}
 
       <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
@@ -242,4 +249,4 @@ export const HomePage: React.FC = () => {
       </a>
     </div>
   );
-};
+}
