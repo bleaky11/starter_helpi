@@ -7,7 +7,7 @@ import { Button } from 'react-bootstrap';
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ username: "", password: "" });
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null);
@@ -86,7 +86,8 @@ export const HomePage: React.FC = () => {
         if (existingUser) {
           const { username, password, remembered } = existingUser;
   
-          if (checkInfo(username, password, userInfo.username, userInfo.password)) {
+          if (checkInfo(username, password, userInfo.username, userInfo.password)) 
+          {
             setIsLoggedIn(true);
   
             // Update "remembered" status if it has changed
@@ -175,6 +176,10 @@ export const HomePage: React.FC = () => {
     setFormTitle(title);
     if(title === "Create Account") {
       clearForm();
+    }
+    else
+    {
+      setRemember(true);
     }
     toggleForm();
   };
