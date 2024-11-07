@@ -21,11 +21,11 @@ function App() {
   const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
   const [basicComplete, toggleBasic] = useState<boolean>(false)// To track basic question completion
   const [detailedComplete, toggleDetailed] = useState<boolean>(false) // To track detailed question completion
-  const [savedBasicCareer, setBasicCareer] = useState<string>("");
+  const [savedBasicCareer, setBasicCareer] = useState<string>(""); //To track saved quiz data
   const [savedDetailedCareer, setDetailedCareer] = useState<string>("");
   const [isKeyEntered] = useState<boolean>(JSON.parse(sessionStorage.getItem('isKeyEntered') || 'false')); // To track if user has entered an API Key
   const [question, setQuestion] = useState<string>('');
-  const [answerVals, setAnswerVals] = useState<{answer: string, tag: string}[]>([]);
+  const [answerVals, setAnswerVals] = useState<{answer: string, tag: string}[]>([]); // To track user's quiz responses
 
   function handleSubmit() {
     localStorage.setItem(saveKeyData, JSON.stringify(key));

@@ -41,7 +41,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}]);
 
-  function handleBasicSave()
+  function handleBasicSave() //Saves user's progress to local storage
   {
     localStorage.setItem("basicQuizProgress", JSON.stringify(progress)); //keep track of question and progress states
     localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
@@ -51,7 +51,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     }
   }
 
-  function handleClear(){
+  function handleClear(){ //Clears user's saved progress and resets quiz
     localStorage.removeItem("basicQuizProgress");
     localStorage.removeItem("basicQuizAnswers");
     const clearedQuestions = questions.map(question => ({
@@ -65,7 +65,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
   }, 0);
   }
 
-  const getSelectedAnswer = (questions: Question[]) => {
+  const getSelectedAnswer = (questions: Question[]) => { // Helper function to grab the user's selected answer string from each question
     return questions.map((question) => {
       const selectedChoiceIndex = question.selected.findIndex((selected) => selected === true);
       
@@ -82,17 +82,17 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
   };
   
 
-  const handleUpdateValues = () => {
+  const handleUpdateValues = () => { // Helper function to populate array with user's answers
     const selectedAnswers = getSelectedAnswer(questions);
     const selectedAnswerLabels = selectedAnswers.map((answer) => answer.selectedAnswer);
     setValues(selectedAnswerLabels);
   };
 
-  type AnswerTagMap = {
+  type AnswerTagMap = { // Initalize a key:value pair in order to assign an identifier for each question's answer
     [key: number]: string;
   };
 
-  const answerTags: AnswerTagMap = { //Assigns a tag to each answer using the index of the answerVals array
+  const answerTags: AnswerTagMap = { //Assigns a tag to identify each index of the answerVals array
     0: 'noise',
     1: 'environment',
     2: 'STEM',
@@ -105,7 +105,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  function assignTagsToAnswers(answers: string[]): { answer: string, tag: string }[] {
+  function assignTagsToAnswers(answers: string[]): { answer: string, tag: string }[] { //Assigns initialized tags to each answer
     return answers.map((answer, index) => ({
       answer,
       tag: answerTags[index] || 'unknown',
@@ -114,12 +114,12 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
 
 
 
-  function handleSubmit({basicComplete, toggleBasic}: SubmitButton)
+  function handleSubmit({basicComplete, toggleBasic}: SubmitButton) //Handles user submission of quiz
   {
-    toggleBasic(true);
-    handleBasicSave();
-    setBasicCareer("basicQuizAnswers");
-    handleUpdateValues();
+    toggleBasic(true); //Sets state that tracks basic quiz completion to true
+    handleBasicSave(); //Saves user's progress
+    setBasicCareer("basicQuizAnswers"); //Sets state that tracks user's saved answers
+    handleUpdateValues(); //Populates array to track user's answers to each question
     alert("Thanks for completing the Basic Career quiz!");
   }
 
@@ -130,7 +130,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
       sessionStorage.removeItem("visited");
 }
 
-useEffect(() => {
+useEffect(() => { //Loads saved quiz data
   const savedBasicProgress = localStorage.getItem("basicQuizProgress");
   const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
 
@@ -145,34 +145,34 @@ useEffect(() => {
   }
 }, []);
 
-useEffect(() => {
+useEffect(() => { //Populates and tags array of answers each time an answer is selected
   if (promptValues.length > 0) {
     const taggedAnswers = assignTagsToAnswers(promptValues);
     setAnswerVals(taggedAnswers);
   }
 }, [assignTagsToAnswers, promptValues, setAnswerVals]);
 
-  function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element {
+  function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element { //Submit button - Disabled if progress is less than 100%
     return(<div>
       <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), ]}>Submit</Button>
     </div>)
   }
 
-  function BasicSave({savedBasicCareer, setBasicCareer}: saveButton): JSX.Element 
+  function BasicSave({savedBasicCareer, setBasicCareer}: saveButton): JSX.Element  //Save button
   {
     return(<div>
       <Button onClick = {handleBasicSave} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
     </div>)
   }
 
-  function BasicClear(){
+  function BasicClear(){ //Clear button
     return(<div>
       <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Clear</Button>
     </div>)
   }
 
 
-  function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number, selectIndex: number) {
+  function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number, selectIndex: number) { //Function to accurately update progress - sets "answered" to true if question is answered, updates progress
     const updatedQuestions = [...questions];
 
     if (updatedQuestions[index].type === "radio") {
@@ -186,7 +186,7 @@ useEffect(() => {
     updateProgress(updatedQuestions);
   }
 
-  function updateProgress(updatedQuestions: typeof questions): void {
+  function updateProgress(updatedQuestions: typeof questions): void { //Function to handle progress bar updates
     const totalQuestions = updatedQuestions.length;
     const answeredQuestions = updatedQuestions.filter((question) =>
       question.selected.some((isSelected) => isSelected)
