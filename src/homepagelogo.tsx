@@ -81,22 +81,36 @@ export const HomePage: React.FC = () => {
       const userQuery = store.get(userInfo.username);
   
       userQuery.onsuccess = () => {
-        if (userQuery.result) {
-          const savedUsername = userQuery.result.username;
-          const savedPassword = userQuery.result.password;
+        const existingUser = userQuery.result;
+        if (existingUser) {
+          const { username, password, remembered } = existingUser;
   
-          if (checkInfo(savedUsername, savedPassword, userInfo.username, userInfo.password)) {
+          if (checkInfo(username, password, userInfo.username, userInfo.password)) {
             setIsLoggedIn(true);
-            updateSavedUsers(); // Update saved users on successful login
+  
+            // Update "remembered" status if it has changed
+            if (remembered !== remember) {
+              const updatedUser = { ...existingUser, remembered: remember };
+              store.put(updatedUser).onsuccess = () => {
+                updateSavedUsers(); // Update saved users with the latest data
+              };
+            } else {
+              updateSavedUsers(); // Update saved users even if "Remember me" is unchanged
+            }
           }
-        } else if (formTitle === "Create Account") {
+        } else if (formTitle === "Create Account") 
+        {
           const newUser = { username: userInfo.username, password: userInfo.password, remembered: remember };
           store.put(newUser).onsuccess = () => {
-            setIsLoggedIn(true);
-            clearForm();
+            // Update saved users first to ensure the data is fresh
+            updateSavedUsers(); // This ensures the account is updated in the list
+            
             alert("Account creation success!");
-            updateSavedUsers(); // Update saved users on successful account creation
-          };
+        
+            // Clear the form fields and reset the remember state
+            clearForm(); // Clears the form fields visually and resets the UI
+            setIsLoggedIn(true); // Now set the login state as successful
+          };        
         } else {
           alert("User does not exist. Please create an account first.");
           clearForm();
@@ -111,7 +125,7 @@ export const HomePage: React.FC = () => {
         console.error("Transaction failed:", event);
       };
     }
-  };
+  };  
   
   const updateSavedUsers = () => {
     if (db) {
@@ -178,7 +192,7 @@ export const HomePage: React.FC = () => {
             alt="Four-Toed Jerboa"
             style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
             onClick={() => showForm("Create Account")}
-            title={userInfo.username}
+            title={"Logged-in User"} 
           />
           <Button
             onClick={handleLogout}
@@ -204,6 +218,7 @@ export const HomePage: React.FC = () => {
           </Button>
         </div>
       )}
+  
 
       {isFormOpen && !isLoggedIn && (
         <LoginForm

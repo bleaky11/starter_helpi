@@ -44,7 +44,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         username: selectedAccount.username,
         password: selectedAccount.password,
       });
-      console.log("User info updated:", selectedAccount); // Confirm if this runs and what it logs
+      console.log("Updated userInfo:", selectedAccount); // Check that this logs correctly
     }
   }, [accounts, formTitle, selectedUser, setUserInfo]);
   
@@ -52,8 +52,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     <div className="form-popup" id="myForm">
       <form className="form-container" onSubmit={handleSubmit}>
         <h1>{formTitle}</h1>
-        
-        {/* Only show dropdown in "Log in" mode */}
         {formTitle === "Log in" && (
           <div style={{ marginBottom: "25px" }}>
             {accounts.length === 0 ? (
