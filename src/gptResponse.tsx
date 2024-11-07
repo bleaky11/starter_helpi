@@ -2,16 +2,19 @@ import { useState } from "react";
 import { getChatGptResponse } from "./chatGpt";
 import { Button } from "react-bootstrap";
 
-interface taggedAnswer {
+interface taggedAnswer { //Interface to provide an array of key:value pairs for user's answers
   answer: string;
   tag: string;
 }
 
+
+// Function that takes in an API key (entered on homepage) and an array of key:value paired answers (provided by basic quiz), then
+// places the answers into a prompt. Prompt is sent to chatGPT and first response is returned.
 export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedAnswers: taggedAnswer[] }): JSX.Element {
   const [message, setMessage] = useState<string>("Default");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const generatePrompt = (taggedAnswers: taggedAnswer[]): string => {
+  const generatePrompt = (taggedAnswers: taggedAnswer[]): string => { //Helper function that takes in the array of key:value paired answers and replaces each key in the template with the correlated value.
     const tagsMap: { [key: string]: string } = {};
     taggedAnswers.forEach(({ answer, tag }) => {
       tagsMap[tag] = answer;
@@ -25,15 +28,14 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
     What would be some ideal career paths for me and why? Give me 5 careers including career name, salary, how to get started, and why it would appeal to me based on my responses.
     `;
 
-    return basicPromptTemplate.replace(/{(.*?)}/g, (match, tag) => {
+    return basicPromptTemplate.replace(/{(.*?)}/g, (match, tag) => { //Returns above template with user's answers in place of placeholders.
       return tagsMap[tag] || match;
     });
   };
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async () => { //Handles sending and receiving response from chatGPT
     setIsLoading(true);
     try {
-      console.log(taggedAnswers);
       const prompt = generatePrompt(taggedAnswers); // Generate prompt
       const data = await getChatGptResponse(prompt, apiKey); // Send prompt to ChatGPT
       const formattedResponse = formatResponse(data.choices[0].message.content); // Format response
@@ -45,26 +47,26 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
     }
   };
 
-  const formatResponse = (response: string): string => {
+  const formatResponse = (response: string): string => { //Helper function to format ChatGPT response. Removes asterisks and adds line breaks for readability.
     // 1. Remove asterisks
     const boldText = response.replace(/\*(.*?)\*/g, (match, p1) => {
       return ``;
     });
 
-    // 2. Add line break after numbered items like 1., 2., etc.
+    // 2. Add double line break after numbered items like 1., 2., etc.
     const formattedResponse = boldText.replace(/(\d+\.)/g, (match) => {
-      return `<br /><br />${match}`; // Insert a double line break before the number and dot
+      return `<br /><br />${match}`;
     });
 
     // 3. Add line breaks after each highlight
     const fullyFormatted = formattedResponse.replace(/( - S| - H| - W)/g, (match) => {
-      return `<br />${match}`; // Insert a line break before each highlight
+      return `<br />${match}`;
     });
 
     return fullyFormatted;
   };
 
-  return (
+  return ( //Returns a button which does all of the above on click: Generates a prompt template, replaces placeholders with user's answers, sends prompt to ChatGPT, formats and displays received message.
     <div>
       <Button onClick={handleSendMessage} disabled={isLoading}>
         GPT Test: {isLoading ? "loading" : "send"}
@@ -73,7 +75,7 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
         <h2>Results:</h2>
         <div
           dangerouslySetInnerHTML={{
-            __html: message, // Use dangerouslySetInnerHTML to render HTML tags
+            __html: message,
           }}
         />
       </div>
