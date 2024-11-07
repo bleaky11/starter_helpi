@@ -16,7 +16,6 @@
 .container {
   display: flex;
   justify-content: flex-end;  /* Pushes the image to the right */
-  float: left;
 }
 
 .testing{
