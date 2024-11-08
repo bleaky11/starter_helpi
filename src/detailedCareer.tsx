@@ -143,6 +143,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
     setTimeout(() => {
       alert("Quiz Cleared!");
   }, 0);
+    setQuestionPage(prev => Math.min(questions.length - 1, 0))
   }
 
   function DetailedClear(){
