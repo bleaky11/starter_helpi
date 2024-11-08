@@ -50,11 +50,21 @@ export function MainPage({
                   Results of the quiz will be displayed after completing basic and/or detailed question
                 </h6>
               </div>
-              <Link
-                to="/results-page"
-                onClick={() => setPage("Results-Page")}>
-                  <Button>Results Page</Button>
-              </Link>
+              <nav style={{ marginTop: "auto", textAlign: "center" }}>
+                {!basicComplete && !detailedComplete ? (
+                  <div>
+                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Results</Button>
+                    <h6>Please complete a Quiz!</h6>
+                  </div>
+                ) : (
+                  <Link
+                    to="/results-page"
+                    onClick={() => setPage("Results-Page")}
+                  >
+                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Results</Button>
+                  </Link>
+                )}
+              </nav>
             </Col>
         </Container>
         <Container>
@@ -73,6 +83,12 @@ export function MainPage({
                   best ability.
                 </h6>
               </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
               <img
                 src={magGlass}
                 alt="Magnifying Glass"
@@ -83,13 +99,14 @@ export function MainPage({
                   height: "230px",
                 }}
               />
-              <nav style={{ marginTop: "auto", textAlign: "center"}}>
+              </div>
+              <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 <nav>
                   {/* Case 1: First visit (no progress saved, no API key entered) */}
                   {!localStorage.getItem("quizProgress") &&
                   !sessionStorage.getItem("isKeyEntered") ? (
                     <div>
-                      <Button disabled={true}>Basic Career Questions</Button>
+                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Basic Career Questions</Button>
                       <h6>Please enter an API Key</h6>
                     </div>
                   ) : /* Case 2: First visit, API key entered but no saved progress */
@@ -99,13 +116,13 @@ export function MainPage({
                       to="/basic-questions"
                       onClick={() => setPage("Basic-Questions")}
                     >
-                      <Button>Basic Questions</Button>
+                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions</Button>
                     </Link>
                   ) : /* Case 3: Returning visit with saved progress but no API key entered */
                   localStorage.getItem("quizProgress") &&
                     !sessionStorage.getItem("isKeyEntered") ? (
                     <div>
-                      <Button disabled={true}>
+                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>
                         Basic Questions (Last Save)
                       </Button>
                       <h6>Please enter an API Key</h6>
@@ -117,7 +134,7 @@ export function MainPage({
                       to="/basic-questions"
                       onClick={() => setPage("Basic-Questions")}
                     >
-                      <Button>Basic Questions (Last Save)</Button>
+                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions (Last Save)</Button>
                     </Link>
                   ) : null}
                 </nav>
@@ -141,7 +158,6 @@ export function MainPage({
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  marginBottom: "30px",
                 }}
               >
                 <img
@@ -170,15 +186,15 @@ export function MainPage({
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 {!isKeyEntered ? (
                   <div>
-                    <Button disabled={true}>Detailed Questions</Button>
-                    <h6>Please enter An API Key</h6>
+                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Detailed Questions</Button>
+                    <h6>Please enter an API Key</h6>
                   </div>
                 ) : (
                   <Link
                     to="/detailed-questions"
                     onClick={() => setPage("Detailed-Questions")}
                   >
-                    <Button>Detailed Questions</Button>
+                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Detailed Questions</Button>
                   </Link>
                 )}
               </nav>
