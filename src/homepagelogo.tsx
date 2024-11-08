@@ -160,11 +160,9 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         if (formTitle === "Log in") {
           const { username, password: encryptedPassword, iv, remembered } = existingUser;
 
-          // Call checkInfo to verify the username and decrypted password
           if (checkInfo(username, encryptedPassword, iv, userInfo.username, userInfo.password)) {
             setIsLoggedIn(true);
 
-            // Update the remembered status if necessary
             if (remember !== remembered) {
               existingUser.remembered = remember;
               const updateRequest = store.put(existingUser);
@@ -176,6 +174,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
             }
 
             if (!remember) {
+              // Remove from dropdown if the user doesn't want to be remembered
               removeFromDropdown(userInfo.username);
             }
           } else {
@@ -194,9 +193,8 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           updateSavedUsers();
         };
       }
-      else
-      {
-        alert("Username doesn't exist!")
+      else {
+        alert("Username doesn't exist!");
         clearForm();
       }
     };
@@ -262,7 +260,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     }
   };  
     
-  const updateSavedUsers = () => {
+  const updateSavedUsers = () => { 
     if (db) {
       const transaction = db.transaction("users", "readonly");
       const store = transaction.objectStore("users");
@@ -270,7 +268,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   
       request.onsuccess = () => {
         const rememberedAccounts = request.result.filter(
-          (account: { remembered: boolean }) => account.remembered
+          (account) => account.remembered
         );
         setAccounts(rememberedAccounts); // Update dropdown with remembered users only
   
@@ -279,12 +277,12 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           const decryptedPassword = decryptPassword(account.password, account.iv); // Decrypt the password
           console.log("Decrypted password for saved user: ", decryptedPassword);
   
+          // Use a useEffect to trigger component re-render with updated password
           setUserInfo({
             username: account.username,
-            password: decryptedPassword, // Set decrypted password
+            password: decryptedPassword,
             remembered: account.remembered,
           });
-          console.log("Decrypted password after setInfo:", userInfo.password);
           setSelect(account.username);
         }
       };
@@ -292,7 +290,12 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         console.error("Error fetching users.");
       };
     }
-  };    
+  };
+  
+  // Effect to confirm userInfo is updated
+  useEffect(() => {
+    console.log("Updated userInfo:", userInfo);
+  }, [userInfo]);  
   
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
