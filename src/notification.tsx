@@ -44,7 +44,9 @@ export function NotifBell({basicComplete, detailedComplete}: submitButton): JSX.
             }
         }
     }
-    return (<div className="container">
+    return (<div className="container" style={{width: "10%", margin: "0px", backgroundColor: "#FDF6C3", borderRadius: "7px", right: "2%",
+        top:"5px",
+        position:"absolute"}}>
         <div>
             <img src={image === true ? notificationBell : bell} onClick={basicToggle} alt="Bell here" className="notif-bell"></img>
         </div>

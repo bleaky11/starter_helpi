@@ -23,11 +23,25 @@ export function MainPage({
 }: HomeComponentProps): JSX.Element {
   return (
     <div className="App">
-      <header className="App-header">
-        <NotifBell
+                  <div className='Header-footer'>
+                <nav className="Centered">
+                    <Link to="/">
+                        <Button onClick={() => setPage("Home")}>Home</Button>
+                    </Link>
+                    <Link to="/basic-questions">
+                        <Button onClick={() => setPage("Basic-Questions")}>Basic Questions</Button>
+                    </Link>
+                    <Link to="/detailed-questions">
+                        <Button onClick={() => setPage("Detailed-Questions")}>Detailed Questions</Button>
+                    </Link>
+                    <NotifBell
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
         ></NotifBell>
+                </nav>
+            </div>
+      <header className="App-header">
+        
         <Container>
           <Col className="ResultBorder" >
               <div style={{ flex: 1 }}>
