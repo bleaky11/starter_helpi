@@ -15,21 +15,33 @@ export const HomePage: React.FC = () => {
   const [selectedUser, setSelect] = useState("");
   const [newPassword, setNewPassword] = useState<string>("");
 
-const CryptoJS = require("crypto-js");
+  const CryptoJS = require("crypto-js");
 
-const secretKey = CryptoJS.lib.WordArray.random(32); // 256-bit random key
+  const secretKey = process.env.REACT_APP_SECRET_KEY;
 
-const encryptPassword = (password: string) => {
-  const iv = CryptoJS.lib.WordArray.random(16); // Generate a random 128-bit IV
-  const encrypted = CryptoJS.AES.encrypt(password, secretKey, { iv });
-  return { encryptedPassword: encrypted.toString(), iv: iv.toString(CryptoJS.enc.Hex) };
-};
+  useEffect(() => {
+    if (!secretKey) {
+      console.error("Missing secret key in environment variables");
+    }
+  }, [secretKey]);
 
-const decryptPassword = (encryptedPassword: string, iv: string) => {
-  const ivWordArray = CryptoJS.enc.Hex.parse(iv); // Convert hex back to WordArray
-  const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey, { iv: ivWordArray });
-  return bytes.toString(CryptoJS.enc.Utf8); // Decrypt and return as string
-};
+  const encryptPassword = (password: string) => {
+    if (!secretKey) {
+      throw new Error("Secret key is missing. Please check environment variables.");
+    }
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(password, CryptoJS.enc.Hex.parse(secretKey), { iv });
+    return { encryptedPassword: encrypted.toString(), iv: iv.toString(CryptoJS.enc.Hex) };
+  };
+
+  const decryptPassword = (encryptedPassword: string, iv: string) => {
+    if (!secretKey) {
+      throw new Error("Secret key is missing. Please check environment variables.");
+    }
+    const ivWordArray = CryptoJS.enc.Hex.parse(iv);
+    const bytes = CryptoJS.AES.decrypt(encryptedPassword, CryptoJS.enc.Hex.parse(secretKey), { iv: ivWordArray });
+    return bytes.toString(CryptoJS.enc.Utf8);
+  };
 
 function updatePassword(event: React.ChangeEvent<HTMLInputElement>)
 {
@@ -60,7 +72,10 @@ const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedI
   if (userInput === savedUsername) {
     try {
       const decryptedPassword = decryptPassword(savedEncryptedPassword, savedIV);
-      if (decryptedPassword === passInput) {
+      console.log("Decrypted Password:", decryptedPassword);
+      console.log("User Input Password:", passInput);
+
+      if (decryptedPassword.trim() === passInput.trim()) {
         console.log("Login successful");
         return true;
       } else {
