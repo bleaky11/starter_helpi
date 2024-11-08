@@ -39,7 +39,7 @@ export function MainPage({
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 {!basicComplete && !detailedComplete ? (
                   <div>
-                    <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Results</Button>
+                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Results</Button>
                     <h6>Please complete a Quiz!</h6>
                   </div>
                 ) : (
@@ -47,7 +47,7 @@ export function MainPage({
                     to="/results-page"
                     onClick={() => setPage("Results-Page")}
                   >
-                    <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Results</Button>
+                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Results</Button>
                   </Link>
                 )}
               </nav>
@@ -92,7 +92,7 @@ export function MainPage({
                   {!localStorage.getItem("quizProgress") &&
                   !sessionStorage.getItem("isKeyEntered") ? (
                     <div>
-                      <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Basic Career Questions</Button>
+                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Basic Career Questions</Button>
                       <h6>Please enter an API Key</h6>
                     </div>
                   ) : /* Case 2: First visit, API key entered but no saved progress */
@@ -102,13 +102,13 @@ export function MainPage({
                       to="/basic-questions"
                       onClick={() => setPage("Basic-Questions")}
                     >
-                      <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions</Button>
+                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions</Button>
                     </Link>
                   ) : /* Case 3: Returning visit with saved progress but no API key entered */
                   localStorage.getItem("quizProgress") &&
                     !sessionStorage.getItem("isKeyEntered") ? (
                     <div>
-                      <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>
+                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>
                         Basic Questions (Last Save)
                       </Button>
                       <h6>Please enter an API Key</h6>
@@ -120,7 +120,7 @@ export function MainPage({
                       to="/basic-questions"
                       onClick={() => setPage("Basic-Questions")}
                     >
-                      <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions (Last Save)</Button>
+                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions (Last Save)</Button>
                     </Link>
                   ) : null}
                 </nav>
@@ -172,7 +172,7 @@ export function MainPage({
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 {!isKeyEntered ? (
                   <div>
-                    <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Detailed Questions</Button>
+                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Detailed Questions</Button>
                     <h6>Please enter an API Key</h6>
                   </div>
                 ) : (
@@ -180,7 +180,7 @@ export function MainPage({
                     to="/detailed-questions"
                     onClick={() => setPage("Detailed-Questions")}
                   >
-                    <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Detailed Questions</Button>
+                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Detailed Questions</Button>
                   </Link>
                 )}
               </nav>
