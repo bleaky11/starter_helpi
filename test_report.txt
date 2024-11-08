@@ -3,221 +3,48 @@
 > react-scripts test --coverage
 
 FAIL src/App.test.tsx
-  ✕ renders learn react link (72 ms)
+  ● Test suite failed to run
 
-  ● renders learn react link
+    Jest encountered an unexpected token
 
-    TestingLibraryElementError: Unable to find an element with the text: /learn react/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
-    Ignored nodes: comments, script, style
-    [36m<body>[39m
-      [36m<div>[39m
-        [36m<div[39m
-          [33mclass[39m=[32m"Header-footer"[39m
-          [33mstyle[39m=[32m"text-align: center;"[39m
-        [36m>[39m
-          [36m<div>[39m
-            [36m<div>[39m
-              [36m<img[39m
-                [33malt[39m=[32m"User Profile"[39m
-                [33msrc[39m=[32m"user-profile.png"[39m
-                [33mstyle[39m=[32m"float: left; width: 50px; height: 55px; cursor: pointer;"[39m
-              [36m/>[39m
-            [36m</div>[39m
-            [36m<a[39m
-              [33mhref[39m=[32m"https://bleaky11.github.io/starter_helpi/"[39m
-              [33mstyle[39m=[32m"color: black;"[39m
-            [36m>[39m
-              [36m<h1>[39m
-                [0mThe Career Quiz[0m
-              [36m</h1>[39m
-            [36m</a>[39m
-          [36m</div>[39m
-        [36m</div>[39m
-        [36m<div[39m
-          [33mclass[39m=[32m"App"[39m
-        [36m>[39m
-          [36m<header[39m
-            [33mclass[39m=[32m"App-header"[39m
-          [36m>[39m
-            [36m<div[39m
-              [33mclass[39m=[32m"container"[39m
-            [36m>[39m
-              [36m<div>[39m
-                [36m<img[39m
-                  [33malt[39m=[32m"Bell here"[39m
-                  [33mclass[39m=[32m"notif-bell"[39m
-                  [33msrc[39m=[32m"bell.png"[39m
-                [36m/>[39m
-              [36m</div>[39m
-            [36m</div>[39m
-            [36m<div[39m
-              [33mclass[39m=[32m"container"[39m
-            [36m>[39m
-              [36m<div[39m
-                [33mclass[39m=[32m"ResultBorder col"[39m
-              [36m>[39m
-                [36m<div[39m
-                  [33mstyle[39m=[32m"flex: 1;"[39m
-                [36m>[39m
-                  [36m<h2>[39m
-                    [0mResults Page[0m
-                  [36m</h2>[39m
-                  [36m<h6[39m
-                    [33mclass[39m=[32m"Body-Heading"[39m
-                    [33mstyle[39m=[32m"font-size: 16px;"[39m
-                  [36m>[39m
-                    [0mResults of the quiz will be displayed after completing basic and/or detailed question[0m
-                  [36m</h6>[39m
-                [36m</div>[39m
-                [36m<a[39m
-                  [33mhref[39m=[32m"#/results-page"[39m
-                [36m>[39m
-                  [36m<button[39m
-                    [33mclass[39m=[32m"btn btn-primary"[39m
-                    [33mtype[39m=[32m"button"[39m
-                  [36m>[39m
-                    [0mResults Page[0m
-                  [36m</button>[39m
-                [36m</a>[39m
-              [36m</div>[39m
-            [36m</div>[39m
-            [36m<div[39m
-              [33mclass[39m=[32m"container"[39m
-            [36m>[39m
-              [36m<div[39m
-                [33mclass[39m=[32m"row"[39m
-              [36m>[39m
-                [36m<div[39m
-                  [33mclass[39m=[32m"Bordered col"[39m
-                  [33mstyle[39m=[32m"display: flex; flex-direction: column;"[39m
-                [36m>[39m
-                  [36m<div[39m
-                    [33mstyle[39m=[32m"flex: 1;"[39m
-                  [36m>[39m
-                    [36m<div>[39m
-                      [36m<h2>[39m
-                        [0mBasic Career Assessment[0m
-                      [36m</h2>[39m
-                    [36m</div>[39m
-                    [36m<h6>[39m
-                      [0mYou will be asked a series of multiple choice questions. If you're looking for more in-depth questions and results, go to the Detailed Career Page. Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.[0m
-                    [36m</h6>[39m
-                  [36m</div>[39m
-                  [36m<img[39m
-                    [33malt[39m=[32m"Magnifying Glass"[39m
-                    [33msrc[39m=[32m"magnifying-glass.jpg"[39m
-                    [33mstyle[39m=[32m"margin: 0px auto; padding-bottom: 30px; width: 200px; height: 230px;"[39m
-                  [36m/>[39m
-                  [36m<nav[39m
-                    [33mstyle[39m=[32m"margin-top: auto; text-align: center;"[39m
-                  [36m>[39m
-                    [36m<nav>[39m
-                      [36m<div>[39m
-                        [36m<button[39m
-                          [33mclass[39m=[32m"btn btn-primary"[39m
-                          [33mdisabled[39m=[32m""[39m
-                          [33mtype[39m=[32m"button"[39m
-                        [36m>[39m
-                          [0mBasic Career Questions[0m
-                        [36m</button>[39m
-                        [36m<h6>[39m
-                          [0mPlease enter an API Key[0m
-                        [36m</h6>[39m
-                      [36m</div>[39m
-                    [36m</nav>[39m
-                  [36m</nav>[39m
-                [36m</div>[39m
-                [36m<div[39m
-                  [33mclass[39m=[32m"Bordered col"[39m
-                  [33mstyle[39m=[32m"display: flex; flex-direction: column;"[39m
-                [36m>[39m
-                  [36m<div[39m
-                    [33mstyle[39m=[32m"flex: 1;"[39m
-                  [36m>[39m
-                    [36m<h2>[39m
-                      [0mDetailed Career Assessment[0m
-                    [36m</h2>[39m
-                    [36m<h6[39m
-                      [33mclass[39m=[32m"Body-Heading"[39m
-                      [33mstyle[39m=[32m"font-size: 16px;"[39m
-                    [36m>[39m
-                      [0mYou will be asked a series of elaborate questions that may require some additional thought to answer. Your results will be more accurate and personable than your basic assessment results. Before you begin, make sure you're in a comfortable environment and answer each question to your best ability.[0m
-                    [36m</h6>[39m
-                  [36m</div>[39m
-                  [36m<div[39m
-                    [33mstyle[39m=[32m"display: flex; justify-content: center; margin-bottom: 30px;"[39m
-                  [36m>[39m
-                    [36m<img[39m
-                      [33malt[39m=[32m"Detective"[39m
-                      [33msrc[39m=[32m"Detective.png"[39m
-                      [33mstyle[39m=[32m"margin: 0px 10px 0px auto; padding-bottom: 30px; width: 200px; height: 230px;"[39m
-                    [36m/>[39m
-                    [36m<img[39m
-                      [33malt[39m=[32m"Detective"[39m
-                      [33msrc[39m=[32m"Detective.png"[39m
-                      [33mstyle[39m=[32m"margin: 0px 40px 0px auto; padding-bottom: 30px; width: 200px; height: 230px;"[39m
-                    [36m/>[39m
-                  [36m</div>[39m
-                  [36m<nav[39m
-                    [33mstyle[39m=[32m"margin-top: auto; text-align: center;"[39m
-                  [36m>[39m
-                    [36m<div>[39m
-                      [36m<button[39m
-                        [33mclass[39m=[32m"btn btn-primary"[39m
-                        [33mdisabled[39m=[32m""[39m
-                        [33mtype[39m=[32m"button"[39m
-                      [36m>[39m
-                        [0mDetailed Questions[0m
-                      [36m</button>[39m
-                      [36m<h6>[39m
-                        [0mPlease enter An API Key[0m
-                      [36m</h6>[39m
-                    [36m</div>[39m
-                  [36m</nav>[39m
-                [36m</div>[39m
-              [36m</div>[39m
-            [36m</div>[39m
-          [36m</header>[39m
-        [36m</div>[39m
-        [36m<form[39m
-          [33mclass[39m=[32m"Header-footer"[39m
-        [36m>[39m
-          [36m<label[39m
-            [33mclass[39m=[32m"form-label"[39m
-            [33mstyle[39m=[32m"color: white;"[39m
-          [36m>[39m
-            [0mAPI Key:[0m
-          [36m</label>[39m
-          [36m<input[39m
-            [33mclass[39m=[32m"form-control"[39m
-            [33mplaceholder[39m=[32m"Insert API Key Here"[39m
-            [33mtype[39m=[32m"password"[39m
-          [36m/>[39m
-          [36m<br />[39m
-          [36m<button[39m
-            [33mclass[39m=[32m"Submit-Button btn btn-primary"[39m
-            [33mtype[39m=[32m"button"[39m
-          [36m>[39m
-            [0mSubmit[0m
-          [36m</button>[39m
-        [36m</form>[39m
-      [36m</div>[39m
-    [36m</body>[39m
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
 
-       5 | test('renders learn react link', () => {
-       6 |   render(<App />);
-    >  7 |   const linkElement = screen.getByText(/learn react/i);
-         |                              ^
-       8 |   expect(linkElement).toBeInTheDocument();
-       9 | });
-      10 |
+    By default "node_modules" folder is ignored by transformers.
 
-      at Object.getElementError (node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/config.js:37:19)
-      at node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
-      at node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
-      at getByText (node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/query-helpers.js:95:19)
-      at Object.<anonymous> (src/App.test.tsx:7:30)
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/work/starter_helpi/starter_helpi/node_modules/axios/index.js:1
+    ({"Object.<anonymous>":function(module,exports,require,__dirname,__filename,jest){import axios from './lib/axios.js';
+                                                                                      ^^^^^^
+
+    SyntaxError: Cannot use import statement outside a module
+
+    > 1 | import axios from "axios";
+        | ^
+      2 |
+      3 | const API_URL = 'https://api.openai.com/v1/chat/completions';
+      4 |
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1728:14)
+      at Object.<anonymous> (src/chatGpt.ts:1:1)
+      at Object.<anonymous> (src/gptResponse.tsx:2:1)
+      at Object.<anonymous> (src/resultPage.tsx:3:1)
+      at Object.<anonymous> (src/App.tsx:9:1)
+      at Object.<anonymous> (src/App.test.tsx:3:1)
       at TestScheduler.scheduleTests (node_modules/@jest/core/build/TestScheduler.js:333:13)
       at runJest (node_modules/@jest/core/build/runJest.js:404:19)
       at _run10000 (node_modules/@jest/core/build/cli/index.js:320:7)
@@ -235,31 +62,31 @@ ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
 your devDependencies to work around this error. This will make this message
 go away.[0m
   
----------------------|---------|----------|---------|---------|----------------------------------------
-File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                      
----------------------|---------|----------|---------|---------|----------------------------------------
-All files            |   18.42 |    21.05 |   10.97 |   19.21 |                                        
- src                 |   18.63 |    21.05 |   10.97 |   19.44 |                                        
-  App.tsx            |   76.19 |       50 |      50 |   76.19 | 16,30-36                               
-  LoginForm.tsx      |      50 |      100 |       0 |      50 | 29                                     
-  basicCareer.tsx    |       0 |        0 |       0 |       0 | 26-171                                 
-  chatGpt.ts         |       0 |        0 |       0 |       0 | 3-33                                   
-  detailedCareer.tsx |       0 |        0 |       0 |       0 | 20-203                                 
-  gptResponse.tsx    |       0 |        0 |       0 |       0 | 10-23                                  
-  header.tsx         |   33.33 |       50 |      20 |   33.33 | 12-19,26-33                            
-  home.tsx           |      20 |    22.22 |      20 |      20 | 41-165                                 
-  homepagelogo.tsx   |   36.95 |    31.81 |   18.18 |   38.63 | 17-19,24,28-29,36,40-53,58-60,64-71,99 
-  index.tsx          |       0 |      100 |     100 |       0 | 7-19                                   
-  notification.tsx   |   52.38 |    34.21 |      75 |   52.38 | 17,19,27,35-43                         
-  reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10                                   
-  resultPage.tsx     |       0 |        0 |       0 |       0 | 13                                     
- src/CSS             |       0 |      100 |     100 |       0 |                                        
-  Border.tsx         |       0 |      100 |     100 |       0 | 3                                      
-  Center.tsx         |       0 |      100 |     100 |       0 | 3                                      
-  Heading.tsx        |       0 |      100 |     100 |       0 | 3                                      
----------------------|---------|----------|---------|---------|----------------------------------------
+---------------------|---------|----------|---------|---------|-------------------
+File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------|---------|----------|---------|---------|-------------------
+All files            |       0 |        0 |       0 |       0 |                   
+ src                 |       0 |        0 |       0 |       0 |                   
+  App.tsx            |       0 |        0 |       0 |       0 | 12-101            
+  LoginForm.tsx      |       0 |      100 |       0 |       0 | 17-29             
+  basicCareer.tsx    |       0 |        0 |       0 |       0 | 32-235            
+  chatGpt.ts         |       0 |        0 |       0 |       0 | 3-33              
+  detailedCareer.tsx |       0 |        0 |       0 |       0 | 22-214            
+  gptResponse.tsx    |       0 |        0 |       0 |       0 | 14-69             
+  header.tsx         |       0 |        0 |       0 |       0 | 11-57             
+  home.tsx           |       0 |        0 |       0 |       0 | 24-181            
+  homepagelogo.tsx   |       0 |        0 |       0 |       0 | 5-99              
+  index.tsx          |       0 |      100 |     100 |       0 | 7-19              
+  notification.tsx   |       0 |        0 |       0 |       0 | 11-47             
+  reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10              
+  resultPage.tsx     |       0 |        0 |       0 |       0 | 15                
+ src/CSS             |       0 |      100 |     100 |       0 |                   
+  Border.tsx         |       0 |      100 |     100 |       0 | 3                 
+  Center.tsx         |       0 |      100 |     100 |       0 | 3                 
+  Heading.tsx        |       0 |      100 |     100 |       0 | 3                 
+---------------------|---------|----------|---------|---------|-------------------
 Test Suites: 1 failed, 1 total
-Tests:       1 failed, 1 total
+Tests:       0 total
 Snapshots:   0 total
-Time:        3.602 s
+Time:        4.454 s
 Ran all test suites.
