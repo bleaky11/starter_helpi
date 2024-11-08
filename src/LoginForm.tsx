@@ -1,5 +1,5 @@
-import { Form } from 'react-bootstrap';
-import { useEffect } from 'react';
+import { Form} from 'react-bootstrap';
+import { useEffect} from 'react';
 import './LoginForm.css';
 import React from 'react';
 
@@ -16,6 +16,7 @@ export interface LoginFormProps {
   selectedUser: string;
   setSelect: (value: React.SetStateAction<string>) => void;
   formTitle: string;
+  resetPassword: () => JSX.Element;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -31,7 +32,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   selectedUser,
   setSelect,
   formTitle,
+  resetPassword
 }) => {
+
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
     setSelect(selectedUsername);
@@ -99,7 +102,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           onChange={updateStatus}
           required
         />
-        <div style={{fontSize: "12px", marginBottom: "5px"}}>Forgot Password?</div>
+       <div 
+          onClick={resetPassword} 
+          style={{fontSize: "12px", marginBottom: "10px", cursor: "pointer", color: "blue", textDecoration: "underline"}} 
+          tabIndex={0} 
+          role="button" 
+        >
+          Forgot Password?
+      </div>
+
         <button type="submit" className="btn">Login</button>
         
         {/* Remember me option */}

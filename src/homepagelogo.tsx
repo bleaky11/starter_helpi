@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import jerboa from './Images/Four-toes-jerboa-modified.png';
 import { LoginForm } from './LoginForm';
-import { Button } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -13,11 +13,11 @@ export const HomePage: React.FC = () => {
   const [db, setDb] = useState<IDBDatabase | null>(null);
   const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean }[]>([]);
   const [selectedUser, setSelect] = useState("");
+  const [newPassword, setNewPassword] = useState<string>("");
 
 const CryptoJS = require("crypto-js");
 
 const secretKey = CryptoJS.lib.WordArray.random(32); // 256-bit random key
-console.log(secretKey.toString(CryptoJS.enc.Hex)); // Display key in hex format
 
 const encryptPassword = (password: string) => {
   const iv = CryptoJS.lib.WordArray.random(16); // Generate a random 128-bit IV
@@ -30,6 +30,31 @@ const decryptPassword = (encryptedPassword: string, iv: string) => {
   const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey, { iv: ivWordArray });
   return bytes.toString(CryptoJS.enc.Utf8); // Decrypt and return as string
 };
+
+function updatePassword(event: React.ChangeEvent<HTMLInputElement>)
+{
+  setNewPassword(event.target.value);
+}
+
+function resetPassword(): JSX.Element {
+  setIsFormOpen(false); // Close the form
+  setUserInfo({
+    ...userInfo,  
+    password: newPassword, 
+  });
+  return (
+    <div>
+      <Form.Group controlId="passwordReset">
+        <Form.Control
+          type="password"
+          value={newPassword}
+          onChange={updatePassword}
+          placeholder="Enter password"
+        />
+      </Form.Group>
+    </div>
+  );
+}
 
 const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedIV: string, userInput: string, passInput: string) => {
   if (userInput === savedUsername) {
@@ -124,11 +149,13 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
       if (existingUser) {
         if (formTitle === "Log in") {
-          const { username, password, iv, remembered } = existingUser;
+          const { username, password: encryptedPassword, iv, remembered } = existingUser;
 
-          if (checkInfo(username, password, iv, userInfo.username, userInfo.password)) {
+          // Call checkInfo to verify the username and decrypted password
+          if (checkInfo(username, encryptedPassword, iv, userInfo.username, userInfo.password)) {
             setIsLoggedIn(true);
 
+            // Update the remembered status if necessary
             if (remember !== remembered) {
               existingUser.remembered = remember;
               const updateRequest = store.put(existingUser);
@@ -142,6 +169,8 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
             if (!remember) {
               removeFromDropdown(userInfo.username);
             }
+          } else {
+            alert("Incorrect username or password.");
           }
         } else {
           alert("Account already exists. Please log in.");
@@ -349,6 +378,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           accounts={accounts}
           closeForm={toggleForm}
           formTitle={formTitle}
+          resetPassword={resetPassword}
         />
       )}
   
