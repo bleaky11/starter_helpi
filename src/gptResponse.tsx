@@ -68,7 +68,7 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-      <Button onClick={handleSendMessage} disabled={isLoading} style={{ marginBottom: '20px' }}>
+      <Button onClick={handleSendMessage} disabled={isLoading} style={{ marginBottom: '20px', background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid" }}>
         GPT Test: {isLoading ? "loading" : "send"}
       </Button>
       

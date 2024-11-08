@@ -121,7 +121,7 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
 
 function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element { //Submit button - disabled if progress is less than 100
   return(<div>
-    <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => handleSubmit({detailedComplete, toggleDetailed})}>Submit</Button>
+    <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => handleSubmit({detailedComplete, toggleDetailed})}>Submit</Button>
   </div>)
 }
 
@@ -147,7 +147,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
 
   function DetailedClear(){ //Clear button
     return(<div>
-      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Clear</Button>
+      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
     </div>)
   }
 
@@ -209,9 +209,9 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
         )}
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px', padding: "0 37%" }}>
-        <Button onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
-        <Button onClick={() => updateAnswered()} style={{width: "200px"}}>Record Answer</Button>
-        <Button onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", width: "200px"}} onClick={() => updateAnswered()}>Record Answer</Button>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
       </div>
     </div>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "80px" }}>

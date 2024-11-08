@@ -154,20 +154,20 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element { //Submit button - Disabled if progress is less than 100%
     return(<div>
-      <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), ]}>Submit</Button>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), ]}>Submit</Button>
     </div>)
   }
 
   function BasicSave({savedBasicCareer, setBasicCareer}: saveButton): JSX.Element  //Save button
   {
     return(<div>
-      <Button onClick = {handleBasicSave} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Save</Button>
+      <Button onClick = {handleBasicSave} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Save</Button>
     </div>)
   }
 
   function BasicClear(){ //Clear button
     return(<div>
-      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Clear</Button>
+      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
     </div>)
   }
 
@@ -241,7 +241,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
             ))}
           </Row>
         </div>
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "80px" }}>
+    <div style={{ display: "flex", justifyContent: "center", marginTop: "80px"}}>
     <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
     <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
     <BasicClear/>
