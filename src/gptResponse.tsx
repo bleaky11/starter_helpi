@@ -67,10 +67,11 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
   };
 
   return (
-    <div>
-      <Button onClick={handleSendMessage} disabled={isLoading}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+      <Button onClick={handleSendMessage} disabled={isLoading} style={{ marginBottom: '20px' }}>
         GPT Test: {isLoading ? "loading" : "send"}
       </Button>
+      
       <div>
         <h2>Results:</h2>
         <div
