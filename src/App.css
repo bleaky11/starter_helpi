@@ -13,6 +13,13 @@
   }
 }
 
+.button {
+  border-radius: 8px; /* Apply rounded corners */
+  border: none;       /* Optional: remove the border */
+  padding: 10px 20px; /* Optional: adjust padding for better look */
+  color: #bc6c25;
+}
+
 .container {
   display: flex;
   justify-content: flex-end;  /* Pushes the image to the right */
@@ -36,13 +43,12 @@
   border-style: solid;
   border-radius: 25px;
   padding: 10px;
-  font-size: calc(10px + 2vmin);
-  color: black;
-  position: fixed;
 }
 
 .notif-bell{
-  height: 10%;
+  width: auto;
+  height: 100px;
+  max-height: 15%;
   position: absolute;
 }
 

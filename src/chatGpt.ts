@@ -8,9 +8,9 @@ export const getChatGptResponse = async (message: string, apiKey: string) => {
     const response = await axios.post(
       API_URL,
       {
-        model: 'gpt-3.5-turbo', // or 'gpt-4' depending on your access
+        model: 'gpt-4o', // or 'gpt-4o' depending on your access
         messages: [{ role: 'user', content: message }],
-        max_tokens: 30
+        max_tokens: 300
       },
       {
         headers: {

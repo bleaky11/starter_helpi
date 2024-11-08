@@ -102,9 +102,7 @@ export const HomePage: React.FC = () => {
           )}
         </div>
       )}
-      <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
-        <h1>The Career Quiz</h1>
-      </a>
+      <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black', fontSize: '40px'}}>The Career Quiz</a>
     </div>
   );
 };
