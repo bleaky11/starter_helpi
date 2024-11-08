@@ -16,6 +16,8 @@
 .container {
   display: flex;
   justify-content: flex-end;  /* Pushes the image to the right */
+  align-items: center;        /* Optional: vertically center the image */
+  height: 10%;              /* Full viewport height */
 }
 
 .testing{

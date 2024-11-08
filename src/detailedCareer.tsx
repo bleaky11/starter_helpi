@@ -84,6 +84,8 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
       savedAnswers[questionPage] = tempAnswers[questionPage];
       sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
       updateProgress();
+    }if(tempAnswers[questionPage]){
+      setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))
     }
   }
 
