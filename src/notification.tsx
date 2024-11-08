@@ -12,17 +12,17 @@ export function NotifBell({basicComplete, detailedComplete}: submitButton): JSX.
     const [image, changeImage] = useState<boolean>(false);
     const [notification, setNotification] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (basicComplete && sessionStorage.getItem("basicCount") === null) {
+    useEffect(() => { //Runs on basicComplete or detailedComplete update
+        if (basicComplete && sessionStorage.getItem("basicCount") === null) { //if basicQs completed for the first time, notify user
             setNotification(true);
-        } else if (detailedComplete && sessionStorage.getItem("detailedCount") === null){
+        } else if (detailedComplete && sessionStorage.getItem("detailedCount") === null){//if detailedQs completed for the first time, notify user
             setNotification(true);
-        } else {
+        } else {//Turn notification off after viewed 
             setNotification(false);
         }
     }, [basicComplete, detailedComplete]);
 
-    useEffect(() => {
+    useEffect(() => { //Changes image of bell to notification bell when notification is updated
         if(notification){
             changeImage(true);
         }
@@ -31,15 +31,15 @@ export function NotifBell({basicComplete, detailedComplete}: submitButton): JSX.
         }
     }, [notification])
 
-    function basicToggle(): void{
+    function basicToggle(): void{ //Function to handle toggling the notification bar on and off
         toggleBar(!notifBar);
         if(notification === true){
-            setNotification(false);
+            setNotification(false); //set notification to false if it equals true when clicked
             if(basicComplete){
-                sessionStorage.setItem("basicCount", "1")
+                sessionStorage.setItem("basicCount", "1") //update counter so notification doesn't keep getting displayed after being viewed
             }
             
-            if(detailedComplete){
+            if(detailedComplete){ //update counter so notification doesn't keep getting displayed after being viewed
                 sessionStorage.setItem("detailedCount", "1")
             }
         }

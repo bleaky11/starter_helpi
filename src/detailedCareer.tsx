@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
+import questionMarks from "./Images/Questions.png";
+import detective2 from "./Images/Detective2.png";
 
 interface submitButton{ // Interface for keeping track of Detailed Question Completion
   detailedComplete: boolean;
   toggleDetailed: (notDetailed: boolean) => void;
 }
 
-interface Question 
+interface Question // Interface to handle question attributes
 {
   text: string;
   type: string;
@@ -24,12 +26,12 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
 
 
-  const currentQuestion = questions.find(q => q.page === questionPage);
+  const currentQuestion = questions.find(q => q.page === questionPage); //Variable to track which question is displayed
   if(sessionStorage.getItem("quizAnswers") === null){
     sessionStorage.setItem("quizAnswers", JSON.stringify({}))
   }
 
-  const updateProgress = useCallback(() => {
+  const updateProgress = useCallback(() => { //When an answer to a question is saved, update progress
     const totalQuestions = questions.length;
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
     sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
@@ -38,7 +40,7 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
     setProgress(progressPercentage);
   }, [questions]);
 
-  useEffect(() => {
+  useEffect(() => { //Allows for each question to have a different answerbox while still being editable
     const storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
     if (storedQuestions.length > 0){
       setQuestions(storedQuestions)
@@ -74,20 +76,20 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
   
   }, []);
 
-  function updateAnswered() {
+  function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
     if (currentQuestion) {
       const updatedQuestions = [...questions];
-      updatedQuestions[questionPage].answered = true;
-      updatedQuestions[questionPage].answer = tempAnswers[questionPage];
-      setQuestions(updatedQuestions);
-      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-      savedAnswers[questionPage] = tempAnswers[questionPage];
-      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
+      updatedQuestions[questionPage].answered = true; //Updates the answered status of the question to true
+      updatedQuestions[questionPage].answer = tempAnswers[questionPage]; //Sets the answer value of the question to the user's answer
+      setQuestions(updatedQuestions); //Update the questions state to include user's answer
+      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}"); //Creates an array from "quizAnswers" in storage, or returns an empty array if it doesn't exist
+      savedAnswers[questionPage] = tempAnswers[questionPage]; //Populate array with user's answer
+      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers)); //Update "quizAnswers" in storage with the new array
       updateProgress();
     }
   }
 
-  function handleAnswerChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+  function handleAnswerChange(event: React.ChangeEvent<HTMLTextAreaElement>) { //Function to place a user's new answer in a temp variable to hold before recording
     setTempAnswers(prevAnswers => {
       const updatedAnswers = [...prevAnswers];
       updatedAnswers[questionPage] = event.target.value;
@@ -95,11 +97,11 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
     });
   }
 
-  function toggleExplanation() {
+  function toggleExplanation() { //Turns explanation blurb on and off
     setShowExplanation(prev => !prev);
   }
 
-  function IsRecorded({ savedAnswer, currentText }: { savedAnswer: string; currentText: string }) {
+  function IsRecorded({ savedAnswer, currentText }: { savedAnswer: string; currentText: string }) { //Displays the user's recorded answer
     return (
       <div>
         Your Answer: {savedAnswer}
@@ -113,19 +115,19 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
 
   function handleSubmit({detailedComplete, toggleDetailed}: submitButton)
 {
-  toggleDetailed(!detailedComplete);
+  toggleDetailed(true);
   alert("Thanks for completing the Detailed Career quiz!");
 }
 
-function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element {
+function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element { //Submit button - disabled if progress is less than 100
   return(<div>
-    <Button style = {{height: "50px", width: "75px", borderRadius: "15px"}} disabled={progress < 100} onClick={() => handleSubmit({detailedComplete, toggleDetailed})}>Submit</Button>
+    <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => handleSubmit({detailedComplete, toggleDetailed})}>Submit</Button>
   </div>)
 }
 
-  function handleClear(){
-    sessionStorage.removeItem("quizAnswers");
-    sessionStorage.removeItem("quizQuestions");
+  function handleClear(){ //Function to handle clearing quiz and resetting progress
+    sessionStorage.removeItem("quizAnswers"); //removes saved answers from storage
+    sessionStorage.removeItem("quizQuestions"); //removes saved questions from storage
     const defaultQuestions = [
       { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
       { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
@@ -134,22 +136,22 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
       { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
       { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
       { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
-    ];
-    setQuestions(defaultQuestions);
-    setTempAnswers(new Array(defaultQuestions.length).fill(""));
-    setProgress(0);
+    ]; //Initializes a questions array with blank answers, false answer value
+    setQuestions(defaultQuestions); //Update state with empty questions array
+    setTempAnswers(new Array(defaultQuestions.length).fill("")); //Initializes a new array the length of the defaultQuestions array and fills it with empty strings
+    setProgress(0); //Reset progress
     setTimeout(() => {
       alert("Quiz Cleared!");
-  }, 0);
+  }, 0); //Wait until all of the clear logic runs before displaying message
   }
 
-  function DetailedClear(){
+  function DetailedClear(){ //Clear button
     return(<div>
-      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px"}}>Clear</Button>
+      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
     </div>)
   }
 
-  function getSavedAnswer(page: number) {
+  function getSavedAnswer(page: number) { //Helper function to get and display the user's saved answer from storage
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
     return savedAnswers[page] || ""; // Return the saved answer or an empty string if not present
   }
@@ -189,18 +191,27 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
               <p>{currentQuestion.tip}</p>
             </div>
           )}
-          <textarea value={tempAnswers[questionPage]} onChange={handleAnswerChange} style={{ width: '80%', height: '15em', marginTop: '10px', resize: 'none'  }}/>
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '10px' }}>
+            <img src={detective2} alt="Detective" style={{ width: '10%', height: '10%', marginRight: '10px' }} />
+              <textarea 
+                value={tempAnswers[questionPage]} 
+                onChange={handleAnswerChange} 
+                style={{ width: '25%', height: '5em', resize: 'none' }} 
+              />
+            <img src={questionMarks} alt="Question Marks" style={{ width: '10%', height: '10%', marginLeft: '10px' }} />
+          </div>
         </div>
       )}
       <div style={{textAlign: "center"}}>
-        {currentQuestion && (
-          <IsRecorded savedAnswer={getSavedAnswer(questionPage)} currentText={tempAnswers[questionPage]} />
+        {currentQuestion && (<div style={{marginTop: "20px"}}>
+          <IsRecorded savedAnswer={getSavedAnswer(questionPage)} currentText={tempAnswers[questionPage]} /></div>
         )}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px' }}>
-        <Button onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
-        <Button onClick={() => updateAnswered()} style={{width: "300px"}}>Record Answer</Button>
-        <Button onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px', padding: "0 37%" }}>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", width: "200px"}} onClick={() => updateAnswered()}>Record Answer</Button>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
       </div>
     </div>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "80px" }}>
