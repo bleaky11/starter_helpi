@@ -99,6 +99,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           onChange={updateStatus}
           required
         />
+        <div style={{fontSize: "12px", marginBottom: "5px"}}>Forgot Password?</div>
         <button type="submit" className="btn">Login</button>
         
         {/* Remember me option */}

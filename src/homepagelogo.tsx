@@ -14,143 +14,152 @@ export const HomePage: React.FC = () => {
   const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean }[]>([]);
   const [selectedUser, setSelect] = useState("");
 
-  const checkInfo = (savedUsername: string, savedPassword: string, userInput: string, passInput: string) => {
-    if (userInput === savedUsername && passInput === savedPassword) {
-      return true;
-    } else {
-      alert(userInput !== savedUsername ? "Wrong username entered!" : "Wrong password entered!");
-      return false;
+const CryptoJS = require("crypto-js");
+
+const secretKey = CryptoJS.lib.WordArray.random(32); // 256-bit random key
+console.log(secretKey.toString(CryptoJS.enc.Hex)); // Display key in hex format
+
+const encryptPassword = (password: string) => {
+  const iv = CryptoJS.lib.WordArray.random(16); // Generate a random 128-bit IV
+  const encrypted = CryptoJS.AES.encrypt(password, secretKey, { iv });
+  return { encryptedPassword: encrypted.toString(), iv: iv.toString(CryptoJS.enc.Hex) };
+};
+
+const decryptPassword = (encryptedPassword: string, iv: string) => {
+  const ivWordArray = CryptoJS.enc.Hex.parse(iv); // Convert hex back to WordArray
+  const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey, { iv: ivWordArray });
+  return bytes.toString(CryptoJS.enc.Utf8); // Decrypt and return as string
+};
+
+const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedIV: string, userInput: string, passInput: string) => {
+  if (userInput === savedUsername) {
+    try {
+      const decryptedPassword = decryptPassword(savedEncryptedPassword, savedIV);
+      if (decryptedPassword === passInput) {
+        console.log("Login successful");
+        return true;
+      } else {
+        console.log("Incorrect password");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error decrypting password:", error);
+      return false; // Return false if decryption fails
     }
+  } else {
+    console.log("Incorrect username");
+    return false;
+  }
+};
+
+useEffect(() => {
+  const initializeDatabase = async () => {
+    const indexedDB = window.indexedDB;
+    const request = indexedDB.open("UserDatabase", 2);
+
+    request.onerror = (event) => {
+      console.error("Error opening user database!", event);
+    };
+
+    request.onupgradeneeded = (event) => {
+      const dbInstance = (event.target as IDBOpenDBRequest).result;
+      dbInstance.createObjectStore("users", { keyPath: "username" });
+    };
+
+    request.onsuccess = () => {
+      const dbInstance = request.result;
+      if (dbInstance) {
+        setDb(dbInstance);
+        const transaction = dbInstance.transaction("users", "readonly");
+        const store = transaction.objectStore("users");
+        const getAllRequest = store.getAll();
+
+        getAllRequest.onsuccess = () => {
+          const allUsers = getAllRequest.result;
+          const rememberedAccounts = allUsers.filter(user => user.remembered);
+          setAccounts(rememberedAccounts);
+
+          if (localStorage.getItem("homeVisit") && rememberedAccounts.length > 0) {
+            const firstAccount = rememberedAccounts[0];
+            const getRequest = store.get(firstAccount.username);
+            getRequest.onsuccess = () => {
+              const rememberedUser = getRequest.result;
+              if (rememberedUser) {
+                setUserInfo({
+                  username: rememberedUser.username,
+                  password: rememberedUser.password,
+                  remembered: true,
+                });
+                setSelect(rememberedUser.username);
+              }
+            };
+          } else {
+            if (!localStorage.getItem("homeVisit")) {
+              localStorage.setItem("homeVisit", "true");
+            }
+          }
+        };
+      }
+    };
   };
+  initializeDatabase();
+}, []);
 
-  useEffect(() => {
-    const initializeDatabase = async () => {
-      const indexedDB = window.indexedDB;
-      const request = indexedDB.open("UserDatabase", 2);
-  
-      request.onerror = (event) => {
-        console.error("Error opening user database!", event);
-      };
-  
-      request.onupgradeneeded = (event) => {
-        const dbInstance = (event.target as IDBOpenDBRequest).result;
-        dbInstance.createObjectStore("users", { keyPath: "username" });
-      };
-  
-      request.onsuccess = () => {
-        const dbInstance = request.result;
-        if (dbInstance) 
-        {
-          setDb(dbInstance);
-          const transaction = dbInstance.transaction("users", "readonly");
-          const store = transaction.objectStore("users");
-          const getAllRequest = store.getAll();
-  
-          getAllRequest.onsuccess = () => {
-            const allUsers = getAllRequest.result as { username: string; password: string; remembered: boolean }[];
-            const rememberedAccounts = allUsers.filter(user => user.remembered);
-            setAccounts(rememberedAccounts);
+const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-            if (localStorage.getItem("homeVisit") && rememberedAccounts.length > 0) {
-              const firstAccount = rememberedAccounts[0];
-              const getRequest = store.get(firstAccount.username);
-              getRequest.onsuccess = () => {
-                const rememberedUser = getRequest.result;
-                if (rememberedUser) {
-                  setUserInfo({
-                    username: rememberedUser.username,
-                    password: rememberedUser.password,
-                    remembered: true,
-                  });
-                  setSelect(rememberedUser.username); 
-                } else {
-                  console.error("No user found for the remembered account:", firstAccount.username);
-                }
-              };
-              getRequest.onerror = (event) => {
-                console.error("Error retrieving remembered user:", event);
+  if (!userInfo.username || !userInfo.password) {
+    alert("Username and password are required.");
+    return;
+  }
+
+  if (db) {
+    const transaction = db.transaction("users", "readwrite");
+    const store = transaction.objectStore("users");
+
+    const userQuery = store.get(userInfo.username);
+
+    userQuery.onsuccess = () => {
+      const existingUser = userQuery.result;
+
+      if (existingUser) {
+        if (formTitle === "Log in") {
+          const { username, password, iv, remembered } = existingUser;
+
+          if (checkInfo(username, password, iv, userInfo.username, userInfo.password)) {
+            setIsLoggedIn(true);
+
+            if (remember !== remembered) {
+              existingUser.remembered = remember;
+              const updateRequest = store.put(existingUser);
+              updateRequest.onsuccess = () => {
+                updateSavedUsers();
               };
             } else {
-              // If this is the first visit, set homeVisit for future checks
-              if (!localStorage.getItem("homeVisit")) {
-                localStorage.setItem("homeVisit", "true");
-              }
+              updateSavedUsers();
             }
-          };
-  
-          getAllRequest.onerror = (event) => {
-            console.error("Error retrieving users from the users object store:", event);
-          };
-        } else {
-          console.error("Database is not initialized.");
-        }
-      };
-    };
-  
-    initializeDatabase();
-  }, []);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-  
-    // Ensure both username and password are provided
-    if (!userInfo.username || !userInfo.password) {
-      alert("Username and password are required.");
-      return;
-    }
-  
-    if (db) {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
-  
-      const userQuery = store.get(userInfo.username);
-  
-      userQuery.onsuccess = () => {
-        const existingUser = userQuery.result;
-  
-        if (existingUser) {
-          if (formTitle === "Log in") {
-            const { username, password, remembered } = existingUser;
-  
-            // Verify credentials
-            if (checkInfo(username, password, userInfo.username, userInfo.password)) {
-              setIsLoggedIn(true);
-  
-              if (remember !== remembered) {
-                existingUser.remembered = remember;
-                const updateRequest = store.put(existingUser);
-                updateRequest.onsuccess = () => {
-                  updateSavedUsers(); 
-                };
-              } else {
-                updateSavedUsers(); // Refresh accounts if no change
-              }
-  
-              // If "Remember me" is unchecked, remove from saved accounts
-              if (!remember) {
-                removeFromDropdown(userInfo.username);
-              }
+            if (!remember) {
+              removeFromDropdown(userInfo.username);
             }
-          } else {
-            alert("Account already exists. Please log in.");
-            clearForm(); // Clear form inputs for a fresh login attempt
           }
-        } else if (formTitle === "Create Account") {
-          const newUser = { ...userInfo, remembered: remember };
-          store.put(newUser).onsuccess = () => {
-            alert("Account created successfully!");
-            setIsLoggedIn(true);
-            updateSavedUsers(); // Refresh accounts after account creation
-          };
+        } else {
+          alert("Account already exists. Please log in.");
+          clearForm();
         }
-      };
-  
-      userQuery.onerror = (event) => {
-        console.error("Error retrieving user:", event);
-      };
-    }
-  };
-  
+      } else if (formTitle === "Create Account") {
+        const { encryptedPassword, iv } = encryptPassword(userInfo.password);
+        const newUser = { ...userInfo, password: encryptedPassword, iv, remembered: remember };
+        store.put(newUser).onsuccess = () => {
+          alert("Account created successfully!");
+          setIsLoggedIn(true);
+          updateSavedUsers();
+        };
+      }
+    };
+  }
+};
+
   const removeFromDropdown = (username: string) => {
     if (db) {
       const transaction = db.transaction("users", "readwrite");
