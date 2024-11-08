@@ -18,8 +18,8 @@
   justify-content: flex-end;  /* Pushes the image to the right */
   align-items: center;        /* Optional: vertically center the image */
   height: 10%;              /* Full viewport height */
-  padding-right: 10px;        /* Adjust space between the image and screen edge */
 }
+
 .testing{
   position: absolute;
 }
