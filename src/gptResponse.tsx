@@ -14,7 +14,7 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
   const [message, setMessage] = useState<string>("Default");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const generatePrompt = (taggedAnswers: taggedAnswer[]): string => { //Helper function that takes in the array of key:value paired answers and replaces each key in the template with the correlated value.
+  const generatePrompt = (taggedAnswers: taggedAnswer[]): string => { //Helper function that takes in the array of key:value paired answers and replaces each key in prompt template with the correlated value.
     const tagsMap: { [key: string]: string } = {};
     taggedAnswers.forEach(({ answer, tag }) => {
       tagsMap[tag] = answer;
@@ -39,26 +39,26 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
       const prompt = generatePrompt(taggedAnswers); // Generate prompt
       const data = await getChatGptResponse(prompt, apiKey); // Send prompt to ChatGPT
       const formattedResponse = formatResponse(data.choices[0].message.content); // Format response
-      setMessage(formattedResponse); // Get the formatted response from ChatGPT
+      setMessage(formattedResponse); // Set the formatted response from ChatGPT
     } catch (error) {
-      console.error("Error getting response from ChatGPT:", error);
+      console.error("Error getting response from ChatGPT:", error); //Error handling
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); //Set loading state to false
     }
   };
 
   const formatResponse = (response: string): string => { //Helper function to format ChatGPT response. Removes asterisks and adds line breaks for readability.
-    // 1. Remove asterisks
+    //Remove asterisks
     const boldText = response.replace(/\*(.*?)\*/g, (match, p1) => {
       return ``;
     });
 
-    // 2. Add double line break after numbered items like 1., 2., etc.
+    //Add double line break after each item
     const formattedResponse = boldText.replace(/(\d+\.)/g, (match) => {
       return `<br /><br />${match}`;
     });
 
-    // 3. Add line breaks after each highlight
+    //Add line breaks after each highlight (salary, how to start, why)
     const fullyFormatted = formattedResponse.replace(/( - S| - H| - W)/g, (match) => {
       return `<br />${match}`;
     });
@@ -66,7 +66,7 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
     return fullyFormatted;
   };
 
-  return ( //Returns a button which does all of the above on click: Generates a prompt template, replaces placeholders with user's answers, sends prompt to ChatGPT, formats and displays received message.
+  return (
     <div>
       <Button onClick={handleSendMessage} disabled={isLoading}>
         GPT Test: {isLoading ? "loading" : "send"}

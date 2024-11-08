@@ -7,8 +7,8 @@ interface HeaderComponentProps {
     setPage: (page: string) => void;
 }
 
-export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Element | null {
-    if(page === "Basic-Questions"){
+export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Element | null { //Function to handle setting the header buttons
+    if(page === "Basic-Questions"){ //If on basic questions page, display home and detailed questions button
         return(
             <div className='Header-footer'>
                 <nav className="Centered">
@@ -22,7 +22,7 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
             </div>
         )
     }
-    else if(page === "Detailed-Questions"){
+    else if(page === "Detailed-Questions"){//If on detailed questions page, display home and basic questions button
         return(
             <div className="Header-footer">
                 <nav className="Centered">
@@ -36,7 +36,7 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
             </div>
         )
     }
-    else if(page === "Results-Page"){
+    else if(page === "Results-Page"){//If on results page, display basic, home, and detailed questions button
         return(
             <div className="Header-footer">
                 <nav className="Centered">
@@ -53,7 +53,7 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
             </div>
         )
     }
-    else{
+    else{//If on homepage, display homepage component
         return(
         <div className='Header-footer' style={{textAlign: "center"}}>
             <HomePage />

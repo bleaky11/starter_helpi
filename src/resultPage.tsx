@@ -2,7 +2,7 @@
 import { Container } from "react-bootstrap";
 import { GptResponse } from "./gptResponse";
 
-interface completed{
+interface completed{ //Interface to pass results logic
     basicComplete: boolean;
     detailedComplete: boolean;
     apiKey: string;
