@@ -44,10 +44,10 @@ export function MainPage({
             </Col>
         </Container>
         <Container>
-          <Row>
+          <Row style={{width: "100%"}}>
             <Col
               className="Bordered"
-              style={{ display: "flex", flexDirection: "column" }}
+              style={{ display: "flex", flexDirection: "column", width: "45%" }}
             >
               <div style={{ flex: 1 }}>
                 <div><h2>Basic Career Assessment</h2></div>
@@ -69,7 +69,7 @@ export function MainPage({
                   height: "230px",
                 }}
               />
-              <nav style={{ marginTop: "auto", textAlign: "center" }}>
+              <nav style={{ marginTop: "auto", textAlign: "center"}}>
                 <nav>
                   {/* Case 1: First visit (no progress saved, no API key entered) */}
                   {!localStorage.getItem("quizProgress") &&
@@ -111,7 +111,7 @@ export function MainPage({
             </Col>
             <Col
               className="Bordered"
-              style={{ display: "flex", flexDirection: "column" }}
+              style={{ display: "flex", flexDirection: "column", width: "45%" }}
             >
               <div style={{ flex: 1 }}>
                 <h2>Detailed Career Assessment</h2>
