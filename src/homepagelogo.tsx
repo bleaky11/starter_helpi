@@ -72,14 +72,9 @@ const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedI
   if (userInput === savedUsername) {
     try {
       const decryptedPassword = decryptPassword(savedEncryptedPassword, savedIV);
-      console.log("Decrypted Password:", decryptedPassword);
-      console.log("User Input Password:", passInput);
-
       if (decryptedPassword.trim() === passInput.trim()) {
-        console.log("Login successful");
         return true;
       } else {
-        console.log("Incorrect password");
         return false;
       }
     } catch (error) {
@@ -87,7 +82,6 @@ const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedI
       return false; // Return false if decryption fails
     }
   } else {
-    console.log("Incorrect username");
     return false;
   }
 };
@@ -200,6 +194,11 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           updateSavedUsers();
         };
       }
+      else
+      {
+        alert("Username doesn't exist!")
+        clearForm();
+      }
     };
   }
 };
@@ -243,10 +242,9 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const deleteRequest = store.delete(username);
   
         deleteRequest.onsuccess = () => {
-          console.log(`Account ${username} deleted successfully.`);
-          setUserInfo({username: "", password: "", remembered: false});
-          clearForm(); 
+          setUserInfo({username: "", password: "", remembered: false}); 
           handleLogout(); // Ensure the user is logged out after deletion
+          clearForm();
         };
   
         deleteRequest.onerror = (event) => {
@@ -271,26 +269,30 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
       const request = store.getAll();
   
       request.onsuccess = () => {
-        const rememberedAccounts = request.result.filter((account: { remembered: boolean }) => account.remembered);
-        console.log("Remembered accounts:", rememberedAccounts);
-  
+        const rememberedAccounts = request.result.filter(
+          (account: { remembered: boolean }) => account.remembered
+        );
         setAccounts(rememberedAccounts); // Update dropdown with remembered users only
   
         if (rememberedAccounts.length > 0) {
-          setUserInfo({
-            username: rememberedAccounts[0].username,
-            password: rememberedAccounts[0].password,
-            remembered: rememberedAccounts[0].remembered,
-          });
-          setSelect(rememberedAccounts[0].username);
-        } 
-      };
+          const account = rememberedAccounts[0]; // Get the first remembered account
+          const decryptedPassword = decryptPassword(account.password, account.iv); // Decrypt the password
+          console.log("Decrypted password for saved user: ", decryptedPassword);
   
+          setUserInfo({
+            username: account.username,
+            password: decryptedPassword, // Set decrypted password
+            remembered: account.remembered,
+          });
+          console.log("Decrypted password after setInfo:", userInfo.password);
+          setSelect(account.username);
+        }
+      };
       request.onerror = () => {
         console.error("Error fetching users.");
       };
     }
-  };  
+  };    
   
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
