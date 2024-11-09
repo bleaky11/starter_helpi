@@ -11,7 +11,7 @@ export const HomePage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null);
-  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean }[]>([]);
+  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, iv: string }[]>([]);
   const [selectedUser, setSelect] = useState("");
   const [newPassword, setNewPassword] = useState<string>("");
 
@@ -25,7 +25,7 @@ export const HomePage: React.FC = () => {
     }
   }, [secretKey]);
 
-  const encryptPassword = (password: string) => {
+  function encryptPassword(password: string): {encryptedPassword: string, iv: string} {
     if (!secretKey) {
       throw new Error("Secret key is missing. Please check environment variables.");
     }
@@ -34,7 +34,7 @@ export const HomePage: React.FC = () => {
     return { encryptedPassword: encrypted.toString(), iv: iv.toString(CryptoJS.enc.Hex) };
   };
 
-  const decryptPassword = (encryptedPassword: string, iv: string) => {
+  function decryptPassword(encryptedPassword: string, iv: string): string{
     if (!secretKey) {
       throw new Error("Secret key is missing. Please check environment variables.");
     }
@@ -112,92 +112,69 @@ useEffect(() => {
           const allUsers = getAllRequest.result;
           const rememberedAccounts = allUsers.filter(user => user.remembered);
           setAccounts(rememberedAccounts);
-
-          if (localStorage.getItem("homeVisit") && rememberedAccounts.length > 0) {
-            const firstAccount = rememberedAccounts[0];
-            const getRequest = store.get(firstAccount.username);
-            getRequest.onsuccess = () => {
-              const rememberedUser = getRequest.result;
-              if (rememberedUser) {
-                setUserInfo({
-                  username: rememberedUser.username,
-                  password: rememberedUser.password,
-                  remembered: true,
-                });
-                setSelect(rememberedUser.username);
-              }
-            };
-          } else {
-            if (!localStorage.getItem("homeVisit")) {
-              localStorage.setItem("homeVisit", "true");
-            }
-          }
         };
+      } else {
+        if (!localStorage.getItem("homeVisit")) {
+          localStorage.setItem("homeVisit", "true");
+        }
+        clearForm();
       }
     };
   };
+
   initializeDatabase();
-}, []);
+}, [formTitle]);
 
 const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
 
   if (!userInfo.username || !userInfo.password) {
-    alert("Username and password are required.");
-    return;
+      alert("Username and password are required.");
+      return;
   }
 
   if (db) {
-    const transaction = db.transaction("users", "readwrite");
-    const store = transaction.objectStore("users");
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
 
-    const userQuery = store.get(userInfo.username);
+      const userQuery = store.get(userInfo.username);
 
-    userQuery.onsuccess = () => {
-      const existingUser = userQuery.result;
+      userQuery.onsuccess = () => {
+          const existingUser = userQuery.result;
 
-      if (existingUser) {
-        if (formTitle === "Log in") {
-          const { username, password: encryptedPassword, iv, remembered } = existingUser;
-
-          if (checkInfo(username, encryptedPassword, iv, userInfo.username, userInfo.password)) {
-            setIsLoggedIn(true);
-
-            if (remember !== remembered) {
-              existingUser.remembered = remember;
-              const updateRequest = store.put(existingUser);
-              updateRequest.onsuccess = () => {
-                updateSavedUsers();
+          if (existingUser) {
+              if (formTitle === "Log in") {
+                  const { username, password: encryptedPassword, iv, remembered } = existingUser;
+                  if (checkInfo(username, encryptedPassword, iv, userInfo.username, userInfo.password)) {
+                      setIsLoggedIn(true);
+                      if (remember !== remembered) {
+                          existingUser.remembered = remember;
+                      } else {
+                          updateSavedUsers();
+                      }
+                      if (!remember) {
+                        removeFromDropdown(userInfo.username);
+                      }
+                  } else {
+                      alert("Incorrect username or password.");
+                  }
+              } else {
+                  alert("Account already exists. Please log in.");
+                  clearForm();
+              }
+          } else if (formTitle === "Create Account") {
+              const { encryptedPassword, iv } = encryptPassword(userInfo.password);
+              const newUser = { ...userInfo, password: encryptedPassword, iv, remembered: remember };
+              store.put(newUser).onsuccess = () => {
+                  alert("Account created successfully!");
+                  setIsLoggedIn(true);
+                  updateSavedUsers();
               };
-            } else {
-              updateSavedUsers();
-            }
-
-            if (!remember) {
-              // Remove from dropdown if the user doesn't want to be remembered
-              removeFromDropdown(userInfo.username);
-            }
           } else {
-            alert("Incorrect username or password.");
+              alert("Username doesn't exist!");
+              clearForm();
           }
-        } else {
-          alert("Account already exists. Please log in.");
-          clearForm();
-        }
-      } else if (formTitle === "Create Account") {
-        const { encryptedPassword, iv } = encryptPassword(userInfo.password);
-        const newUser = { ...userInfo, password: encryptedPassword, iv, remembered: remember };
-        store.put(newUser).onsuccess = () => {
-          alert("Account created successfully!");
-          setIsLoggedIn(true);
-          updateSavedUsers();
-        };
-      }
-      else {
-        alert("Username doesn't exist!");
-        clearForm();
-      }
-    };
+      };
   }
 };
 
@@ -233,78 +210,61 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   
   const deleteAccount = (username: string) => {
     if (db) {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
-  
-      if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
-        const deleteRequest = store.delete(username);
-  
-        deleteRequest.onsuccess = () => {
-          setUserInfo({username: "", password: "", remembered: false}); 
-          handleLogout(); // Ensure the user is logged out after deletion
-          clearForm();
-        };
-  
-        deleteRequest.onerror = (event) => {
-          console.error("Error deleting account:", event);
-        };
-      }
-  
-      transaction.oncomplete = () => {
-        console.log("Delete transaction completed.");
-      };
-  
-      transaction.onerror = (event) => {
-        console.error("Error in transaction while deleting account:", event);
-      };
+        const transaction = db.transaction("users", "readwrite");
+        const store = transaction.objectStore("users");
+
+        if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
+            const deleteRequest = store.delete(username);
+
+            deleteRequest.onsuccess = () => {
+                setUserInfo({ username: "", password: "", remembered: false });
+                handleLogout();
+                clearForm();
+            };
+        }
     }
-  };  
+};
     
-  const updateSavedUsers = () => { 
-    if (db) {
+const updateSavedUsers = () => { 
+  if (db) {
       const transaction = db.transaction("users", "readonly");
       const store = transaction.objectStore("users");
       const request = store.getAll();
-  
+
       request.onsuccess = () => {
-        const rememberedAccounts = request.result.filter(
-          (account) => account.remembered
-        );
-        setAccounts(rememberedAccounts); // Update dropdown with remembered users only
-  
-        if (rememberedAccounts.length > 0) {
-          const account = rememberedAccounts[0]; // Get the first remembered account
-          const decryptedPassword = decryptPassword(account.password, account.iv); // Decrypt the password
-          console.log("Decrypted password for saved user: ", decryptedPassword);
-  
-          // Use a useEffect to trigger component re-render with updated password
-          setUserInfo({
-            username: account.username,
-            password: decryptedPassword,
-            remembered: account.remembered,
-          });
-          setSelect(account.username);
-        }
+          const rememberedAccounts = request.result.filter(account => account.remembered);
+          setAccounts(rememberedAccounts);
+
+          if (rememberedAccounts.length > 0) {
+              const account = rememberedAccounts[0];
+              const decryptedPassword = decryptPassword(account.password, account.iv);
+
+              console.log("Decrypted password for saved user: ", decryptedPassword);  // Verify it's decrypted
+
+              // Make sure to set the correct password after decryption
+              setUserInfo({
+                  username: account.username,
+                  password: decryptedPassword,  // Decrypted password
+                  remembered: account.remembered,
+              });
+              setSelect(account.username);
+          }
+          else
+          {
+            clearForm();
+          }
       };
-      request.onerror = () => {
-        console.error("Error fetching users.");
-      };
-    }
-  };
-  
-  // Effect to confirm userInfo is updated
-  useEffect(() => {
-    console.log("Updated userInfo:", userInfo);
-  }, [userInfo]);  
-  
+  }
+};
+
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
   };
 
   const clearForm = () => {
     setUserInfo({ username: "", password: "", remembered: false });
-    setRemember(false);
-  };  
+    setRemember(true); // Ensure 'remembered' is also reset
+};
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
@@ -316,9 +276,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setIsFormOpen(true);  // Ensure the form opens after logout
-    updateSavedUsers(); 
-  };   
+}; 
   
   const handleRemember = () => {
     const newRememberState = !remember;
@@ -327,13 +285,16 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   
   const showForm = (title: string) => {
     setFormTitle(title);
-    clearForm();
-    if (title === "Log in") 
+    if (title === "Create Account") {
+      clearForm(); // Clear form fields when switching to "Create Account"
+    }
+    else if(title === "Log in")
     {
-      setRemember(true); 
+      setRemember(true);
     }
     toggleForm();
-  };  
+  }; 
+
   return (
     <div>
       {isLoggedIn ? (
@@ -399,6 +360,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           closeForm={toggleForm}
           formTitle={formTitle}
           resetPassword={resetPassword}
+          decryptPassword = {decryptPassword}
         />
       )}
   

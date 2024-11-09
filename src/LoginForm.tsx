@@ -12,11 +12,12 @@ export interface LoginFormProps {
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemember: () => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  accounts: { username: string; password: string, remembered: boolean}[];
+  accounts: { username: string; password: string, remembered: boolean, iv: string}[];
   selectedUser: string;
   setSelect: (value: React.SetStateAction<string>) => void;
   formTitle: string;
   resetPassword: () => JSX.Element;
+  decryptPassword: (encryptedPassword: string, iv: string) => string;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -32,7 +33,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   selectedUser,
   setSelect,
   formTitle,
-  resetPassword
+  resetPassword,
+  decryptPassword
 }) => {
 
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -44,17 +46,22 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     if (formTitle === "Log in" && selectedUser) {
       const selectedAccount = accounts.find(account => account.username === selectedUser);
       if (selectedAccount) {
-        setUserInfo({
-          username: selectedAccount.username,
-          password: selectedAccount.password,
-          remembered: selectedAccount.remembered ?? false,
-        });
-        console.log("LoginForm updated userInfo:", selectedAccount); // Debugging log
+        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
+        // Only update userInfo if it doesn’t already match
+        if (
+          userInfo.username !== selectedAccount.username ||
+          userInfo.password !== decryptedPassword ||
+          userInfo.remembered !== selectedAccount.remembered
+        ) {
+          setUserInfo({
+            username: selectedAccount.username,
+            password: decryptedPassword,
+            remembered: selectedAccount.remembered ?? false,
+          });
+        }
       }
     }
-  }, [accounts, formTitle, selectedUser, setUserInfo]);  
-  
-  console.log("Current userInfo:", userInfo); // Log to see current state of userInfo  
+  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);    
   
   return (
     <div className="form-popup" id="myForm">
