@@ -24,6 +24,9 @@ export interface LoginFormProps {
   setIsPasswordReset: React.Dispatch<React.SetStateAction<boolean>>;
   newPassword: string;
   updatePassword: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  calledUsername: string;
+  setCalled: React.Dispatch<React.SetStateAction<string>>;
+  updateCalledUser: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -46,16 +49,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   isPasswordReset,
   setIsPasswordReset,
   newPassword,
-  updatePassword
+  updatePassword,
+  calledUsername,
+  setCalled,
+  updateCalledUser
 }) => {
-  
-  // Handle user selection from the dropdown
-  const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedUsername = event.target.value;
-    setSelect(selectedUsername);
-  };
 
-  // Sync selected user info when formTitle is "Log in"
   useEffect(() => {
     if (formTitle === "Log in" && selectedUser) {
       const selectedAccount = accounts.find(account => account.username === selectedUser);
@@ -74,22 +73,35 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         }
       }
     }
-  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);  
+  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);
 
+  // Handle user selection from the dropdown
+  const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedUsername = event.target.value;
+    setSelect(selectedUsername);
+    
+    // If a new user is selected, reset the userInfo fields
+    if (selectedUsername !== "") {
+      setUserInfo({ username: "", password: "", remembered: false });
+    }
+  };
+
+  // Handle reset password click
   const handleResetClick = () => {
     setIsPasswordReset(false);
-    setFormTitle("Log in"); // Reset to login form after reset
+    setFormTitle("Log in");
     setUserInfo(prevState => ({
       ...prevState,
       password: ""  
     }));
     alert("Password Reset!");
-  };  
+  };
 
   // Switch to password reset view
   const handlePasswordReset = () => {
     setFormTitle("Reset Password");
-    setPlaceholder("");
+    setCalled(""); // reset blank username for input
+    setPlaceholder(""); // reset blank password for input
     setIsPasswordReset(true);
   };
 
@@ -190,6 +202,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             </>
           ) : (
             <>
+              <label htmlFor="resetUser"><b>Username</b></label>
+              <input
+                type="text"
+                value={calledUsername}  // Display the new password here
+                placeholder="Enter Username"
+                onChange={updateCalledUser}
+                required
+              />
               <label htmlFor="resetPassword"><b>New Password</b></label>
               <input
                 type="password"
@@ -213,6 +233,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     </div>
   );
 };
+
 
 
 

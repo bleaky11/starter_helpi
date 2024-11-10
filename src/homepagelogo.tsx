@@ -15,6 +15,7 @@ export const HomePage: React.FC = () => {
   const [selectedUser, setSelect] = useState("");
   const [passwordPlaceholder, setPlaceholder] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
+  const [calledUsername, setCalled]= useState<string>("");
   const [isPasswordReset, setIsPasswordReset] = React.useState<boolean>(false);
 
   const CryptoJS = require("crypto-js");
@@ -40,54 +41,62 @@ const decryptPassword = (encryptedPassword: string, iv: string) => {
   return bytes.toString(CryptoJS.enc.Utf8); // Return the decrypted password
 };
 
-  const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const placeholder = event.target.value; 
-    setPlaceholder(placeholder);
+const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const placeholder = event.target.value; 
+  setPlaceholder(placeholder);
   
-    const encrypted = encryptPassword(placeholder);
-    const encryptedPassword = encrypted.encryptedPassword;
-    setNewPassword(encryptedPassword);
+  const encrypted = encryptPassword(placeholder);
+  const encryptedPassword = encrypted.encryptedPassword;
+  setNewPassword(encryptedPassword);
   
-    setUserInfo(prevState => ({
-      ...prevState,
-      password: encryptedPassword,
-    }));
+  setUserInfo(prevState => ({
+    ...prevState,
+    password: encryptedPassword,
+  }));
   
-    // Proceed to update IndexedDB
-    if (db) {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
+  // Use resetUsername for fetching the user in the reset password form
+  const usernameToUpdate = calledUsername;  // Use the username entered in the reset form
   
-      // Fetch the user based on their username
-      const getUserRequest = store.get(userInfo.username);
+  // Proceed to update IndexedDB
+  if (db) {
+    const transaction = db.transaction("users", "readwrite");
+    const store = transaction.objectStore("users");
+
+    // Fetch the user based on the resetUsername, not userInfo.username
+    const getUserRequest = store.get(usernameToUpdate);  // This will use the entered username
+    
+    getUserRequest.onsuccess = () => {
+      const existingUser = getUserRequest.result;
   
-      getUserRequest.onsuccess = () => {
-        const existingUser = getUserRequest.result;
+      if (existingUser) {
+        // Update the password in the existing user object
+        existingUser.password = encryptedPassword;
+        
+        const updateRequest = store.put(existingUser);
+        
+        // On successful update, call updateSavedUsers() to refresh and decrypt
+        updateRequest.onsuccess = () => {
+          updateSavedUsers();  // This decrypts and updates the UI as needed
+        };
   
-        if (existingUser) {
-          // Update the password in the existing user object
-          existingUser.password = encryptedPassword;
-          
-          const updateRequest = store.put(existingUser);
-          
-          // On successful update, call updateSavedUsers() to refresh and decrypt
-          updateRequest.onsuccess = () => {
-            updateSavedUsers();  // This decrypts and updates the UI as needed
-          };
+        updateRequest.onerror = (event) => {
+          console.error("Error updating password:", event);
+        };
+      } else {
+        console.error("User not found for updating password.");
+      }
+    };
   
-          updateRequest.onerror = (event) => {
-            console.error("Error updating password:", event);
-          };
-        } else {
-          console.error("User not found for updating password.");
-        }
-      };
-  
-      transaction.onerror = (event) => {
-        console.error("Error accessing user store:", event);
-      };
-    }
-  };   
+    transaction.onerror = (event) => {
+      console.error("Error accessing user store:", event);
+    };
+  }
+};
+
+const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) =>
+{
+  setCalled(event.target.value);
+}
 
 const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedIV: string, userInput: string, passInput: string) => {
   if (userInput === savedUsername) {
@@ -391,6 +400,9 @@ const updateSavedUsers = () => {
           setIsPasswordReset={setIsPasswordReset}
           newPassword = {newPassword}
           updatePassword = {updatePassword}
+          calledUsername = {calledUsername}
+          setCalled = {setCalled}
+          updateCalledUser = {updateCalledUser}
         />
       )}
   
