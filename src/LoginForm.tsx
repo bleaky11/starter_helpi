@@ -1,5 +1,5 @@
-import { Form} from 'react-bootstrap';
-import { useEffect} from 'react';
+import { Form } from 'react-bootstrap';
+import { useEffect } from 'react';
 import './LoginForm.css';
 import React from 'react';
 
@@ -12,12 +12,17 @@ export interface LoginFormProps {
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemember: () => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  accounts: { username: string; password: string, remembered: boolean, iv: string}[];
+  accounts: { username: string; password: string, remembered: boolean, iv: string }[];
   selectedUser: string;
   setSelect: (value: React.SetStateAction<string>) => void;
   formTitle: string;
-  resetPassword: () => JSX.Element;
+  setFormTitle: React.Dispatch<React.SetStateAction<string>>;
   decryptPassword: (encryptedPassword: string, iv: string) => string;
+  passwordPlaceholder: string;
+  isPasswordReset: boolean;
+  setIsPasswordReset: React.Dispatch<React.SetStateAction<boolean>>;
+  newPassword: string;
+  updatePassword: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -33,8 +38,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   selectedUser,
   setSelect,
   formTitle,
-  resetPassword,
-  decryptPassword
+  setFormTitle,
+  decryptPassword,
+  passwordPlaceholder,
+  isPasswordReset,
+  setIsPasswordReset,
+  newPassword,
+  updatePassword
 }) => {
 
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -47,7 +57,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       const selectedAccount = accounts.find(account => account.username === selectedUser);
       if (selectedAccount) {
         const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
-        // Only update userInfo if it doesn’t already match
         if (
           userInfo.username !== selectedAccount.username ||
           userInfo.password !== decryptedPassword ||
@@ -62,12 +71,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       }
     }
   }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);    
-  
+
+  const handlePasswordReset = () => {
+    setIsPasswordReset(false);
+    setFormTitle("Log in"); // set back to log in after reset
+  };
+
   return (
     <div className="form-popup" id="myForm">
       <form className="form-container" onSubmit={handleSubmit}>
         <h1>{formTitle}</h1>
-        {formTitle === "Log in" && (
+
+        {/* Only show saved users dropdown if not in password reset mode */}
+        {formTitle === "Log in" && !isPasswordReset && (
           <div style={{ marginBottom: "25px" }}>
             {accounts.length === 0 ? (
               <Form.Group controlId="savedUsers">
@@ -91,48 +107,96 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </div>
         )}
 
-        <label htmlFor="username"><b>Username</b></label>
-        <input
-          type="text"
-          value={userInfo.username}
-          placeholder="Enter Username"
-          name="username"
-          onChange={updateStatus}
-          required
-        />
-        <label htmlFor="psw"><b>Password</b></label>
-        <input
-          type="password"
-          value={userInfo.password}
-          placeholder="Enter Password"
-          name="password"
-          onChange={updateStatus}
-          required
-        />
-       <div 
-          onClick={resetPassword} 
-          style={{fontSize: "12px", marginBottom: "10px", cursor: "pointer", color: "blue", textDecoration: "underline"}} 
-          tabIndex={0} 
-          role="button" 
-        >
-          Forgot Password?
-      </div>
+        {/* Login Fields (Username, Password, Remember Me) */}
+        {!isPasswordReset && (
+          <>
+            <label htmlFor="username"><b>Username</b></label>
+            <input
+              type="text"
+              value={userInfo.username}
+              placeholder="Enter Username"
+              name="username"
+              onChange={updateStatus}
+              required
+            />
 
-        <button type="submit" className="btn">Login</button>
-        
-        {/* Remember me option */}
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{ marginRight: '8px' }}>Remember me?</span>
-          <Form.Check
-            type="checkbox"
-            id="save-user"
-            name="save-user"
-            checked={remember}
-            onChange={handleRemember}
-          />
+            <label htmlFor="psw"><b>Password</b></label>
+            <input
+              type="password"
+              value={userInfo.password}
+              placeholder="Enter Password"
+              name="password"
+              onChange={updateStatus}
+              required
+            />
+
+            {formTitle === "Log in" && (
+              <div
+                onClick={() => setIsPasswordReset(true)} // Trigger password reset mode
+                style={{
+                  fontSize: "12px", 
+                  marginBottom: "10px", 
+                  cursor: "pointer", 
+                  color: "blue", 
+                  textDecoration: "underline"
+                }}
+                tabIndex={0}
+                role="button"
+              >
+                Forgot Password?
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Buttons for Login or Password Reset */}
+        <div>
+          {!isPasswordReset ? (
+            <>
+              <button type="submit" className="btn">
+                Login
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ marginRight: '8px' }}>Remember me?</span>
+                <Form.Check
+                  type="checkbox"
+                  id="save-user"
+                  name="save-user"
+                  checked={remember}
+                  onChange={handleRemember}
+                />
+              </div>
+              <button
+                style={{ marginTop: '10px' }}
+                type="button"
+                className="btn cancel"
+                onClick={closeForm}
+              >
+                Close
+              </button>
+            </>
+          ) : (
+            <>
+              {setFormTitle("Reset Password")}
+              <label htmlFor="resetPassword"><b>New Password</b></label>
+              <input
+                type="password"
+                value={passwordPlaceholder}  // Display the new password here
+                placeholder="Enter New Password"
+                onChange={updatePassword}  // Handles new password input
+                required
+              />
+              <button
+                style={{ marginTop: '10px' }}
+                type="button"
+                className="btn cancel"
+                onClick={handlePasswordReset} // Reset password logic here
+              >
+                Reset
+              </button>
+            </>
+          )}
         </div>
-        
-        <button style={{ marginTop: "10px" }} type="button" className="btn cancel" onClick={closeForm}>Close</button>
       </form>
     </div>
   );

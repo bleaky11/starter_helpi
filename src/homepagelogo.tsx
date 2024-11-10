@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import jerboa from './Images/Four-toes-jerboa-modified.png';
 import { LoginForm } from './LoginForm';
-import { Button, Form } from 'react-bootstrap';
+import { Button} from 'react-bootstrap';
 
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -13,7 +13,9 @@ export const HomePage: React.FC = () => {
   const [db, setDb] = useState<IDBDatabase | null>(null);
   const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, iv: string }[]>([]);
   const [selectedUser, setSelect] = useState("");
+  const [passwordPlaceholder, setPlaceholder] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
+  const [isPasswordReset, setIsPasswordReset] = React.useState<boolean>(false);
 
   const CryptoJS = require("crypto-js");
 
@@ -43,30 +45,59 @@ export const HomePage: React.FC = () => {
     return bytes.toString(CryptoJS.enc.Utf8);
   };
 
-function updatePassword(event: React.ChangeEvent<HTMLInputElement>)
-{
-  setNewPassword(event.target.value);
-}
-
-function resetPassword(): JSX.Element {
-  setIsFormOpen(false); // Close the form
-  setUserInfo({
-    ...userInfo,  
-    password: newPassword, 
-  });
-  return (
-    <div>
-      <Form.Group controlId="passwordReset">
-        <Form.Control
-          type="password"
-          value={newPassword}
-          onChange={updatePassword}
-          placeholder="Enter password"
-        />
-      </Form.Group>
-    </div>
-  );
-}
+  const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const placeholder = event.target.value; // stores user input
+    setPlaceholder(placeholder);
+  
+    const encrypted = encryptPassword(placeholder);
+    const encryptedPassword = encrypted.encryptedPassword;
+    setNewPassword(encryptedPassword);
+  
+    // Update the password in state for any UI-related needs
+    setUserInfo(prevState => ({
+      ...prevState,
+      password: encryptedPassword,
+    }));
+  
+    // Proceed to update IndexedDB
+    if (db) {
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+  
+      // Fetch the user based on their username
+      const getUserRequest = store.get(userInfo.username);
+  
+      getUserRequest.onsuccess = () => {
+        const existingUser = getUserRequest.result;
+  
+        if (existingUser) {
+          // Update the password in the existing user object
+          existingUser.password = encryptedPassword;
+          
+          const updateRequest = store.put(existingUser);
+          
+          // On successful update, call updateSavedUsers() to refresh and decrypt
+          updateRequest.onsuccess = () => {
+            console.log("Password updated successfully!");
+            updateSavedUsers();  // This decrypts and updates the UI as needed
+            alert("Password updated successfully!");
+          };
+  
+          updateRequest.onerror = (event) => {
+            console.error("Error updating password:", event);
+            alert("Error updating password.");
+          };
+        } else {
+          console.error("User not found for updating password.");
+          alert("User not found.");
+        }
+      };
+  
+      transaction.onerror = (event) => {
+        console.error("Error accessing user store:", event);
+      };
+    }
+  };   
 
 const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedIV: string, userInput: string, passInput: string) => {
   if (userInput === savedUsername) {
@@ -121,7 +152,6 @@ useEffect(() => {
       }
     };
   };
-
   initializeDatabase();
 }, [formTitle]);
 
@@ -359,8 +389,13 @@ const updateSavedUsers = () => {
           accounts={accounts}
           closeForm={toggleForm}
           formTitle={formTitle}
-          resetPassword={resetPassword}
+          setFormTitle={setFormTitle}
           decryptPassword = {decryptPassword}
+          passwordPlaceholder = {passwordPlaceholder}
+          isPasswordReset = {isPasswordReset}
+          setIsPasswordReset={setIsPasswordReset}
+          newPassword = {newPassword}
+          updatePassword = {updatePassword}
         />
       )}
   
