@@ -75,14 +75,29 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     }
   }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);
 
-  // Handle user selection from the dropdown
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
     setSelect(selectedUsername);
-    
-    // If a new user is selected, reset the userInfo fields
-    if (selectedUsername !== "") {
-      setUserInfo({ username: "", password: "", remembered: false });
+  
+    // If "None" is selected (blank option), clear the form
+    if (selectedUsername === "") {
+      setUserInfo({
+        username: "",
+        password: "",
+        remembered: false,
+      });
+      setRemember(false); // Optionally reset the 'remember' state if necessary
+    } else {
+      // Proceed with selecting a saved user
+      const selectedAccount = accounts.find(account => account.username === selectedUsername);
+      if (selectedAccount) {
+        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
+        setUserInfo({
+          username: selectedAccount.username,
+          password: decryptedPassword,
+          remembered: selectedAccount.remembered ?? false,
+        });
+      }
     }
   };
 
@@ -122,15 +137,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               </Form.Group>
             ) : (
               <Form.Group controlId="savedUsers">
-                <Form.Label>Saved Usernames</Form.Label>
-                <Form.Select value={selectedUser} onChange={handleUserSelect}>
-                  {accounts.map((user) => (
-                    <option key={user.username} value={user.username}>
-                      {user.username}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+            <Form.Label>Saved Usernames</Form.Label>
+            <Form.Select value={selectedUser} onChange={handleUserSelect}>
+              <option value="">Select a user</option> {/* Blank option */}
+              {accounts.map((user) => (
+                <option key={user.username} value={user.username}>
+                  {user.username}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
             )}
           </div>
         )}

@@ -266,15 +266,7 @@ const updateSavedUsers = () => {
 
           if (rememberedAccounts.length > 0) {
               const account = rememberedAccounts[0];
-              console.log("Account retrieved: ", account);
-              console.log("Encrypted password: ", account.password);
-              console.log("IV used for decryption: ", account.iv);
-
               const decryptedPassword = decryptPassword(account.password, account.iv);
-
-              console.log("Decrypted password for saved user: ", decryptedPassword);  // Verify it's decrypted
-
-              // Ensure the decrypted password is set correctly
               setUserInfo({
                   username: account.username,
                   password: decryptedPassword,  // Decrypted password
@@ -405,7 +397,7 @@ const updateSavedUsers = () => {
           updateCalledUser = {updateCalledUser}
         />
       )}
-  
+      
       <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
         <h1>The Career Quiz</h1>
       </a>
