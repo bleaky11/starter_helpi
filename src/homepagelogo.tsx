@@ -27,33 +27,27 @@ export const HomePage: React.FC = () => {
     }
   }, [secretKey]);
 
-  function encryptPassword(password: string): {encryptedPassword: string, iv: string} {
-    if (!secretKey) {
-      throw new Error("Secret key is missing. Please check environment variables.");
-    }
-    const iv = CryptoJS.lib.WordArray.random(16);
-    const encrypted = CryptoJS.AES.encrypt(password, CryptoJS.enc.Hex.parse(secretKey), { iv });
-    return { encryptedPassword: encrypted.toString(), iv: iv.toString(CryptoJS.enc.Hex) };
-  };
+  // Encrypt password and store both encrypted password and IV
+const encryptPassword = (password: string) => {
+  const iv = CryptoJS.lib.WordArray.random(16); // Generate a new random IV
+  const encrypted = CryptoJS.AES.encrypt(password, secretKey, { iv: iv }).toString();
+  
+  return { encryptedPassword: encrypted, iv: iv.toString() };
+};
 
-  function decryptPassword(encryptedPassword: string, iv: string): string{
-    if (!secretKey) {
-      throw new Error("Secret key is missing. Please check environment variables.");
-    }
-    const ivWordArray = CryptoJS.enc.Hex.parse(iv);
-    const bytes = CryptoJS.AES.decrypt(encryptedPassword, CryptoJS.enc.Hex.parse(secretKey), { iv: ivWordArray });
-    return bytes.toString(CryptoJS.enc.Utf8);
-  };
+const decryptPassword = (encryptedPassword: string, iv: string) => {
+  const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey, { iv: CryptoJS.enc.Hex.parse(iv) });
+  return bytes.toString(CryptoJS.enc.Utf8); // Return the decrypted password
+};
 
   const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const placeholder = event.target.value; // stores user input
+    const placeholder = event.target.value; 
     setPlaceholder(placeholder);
   
     const encrypted = encryptPassword(placeholder);
     const encryptedPassword = encrypted.encryptedPassword;
     setNewPassword(encryptedPassword);
   
-    // Update the password in state for any UI-related needs
     setUserInfo(prevState => ({
       ...prevState,
       password: encryptedPassword,
@@ -78,18 +72,14 @@ export const HomePage: React.FC = () => {
           
           // On successful update, call updateSavedUsers() to refresh and decrypt
           updateRequest.onsuccess = () => {
-            console.log("Password updated successfully!");
             updateSavedUsers();  // This decrypts and updates the UI as needed
-            alert("Password updated successfully!");
           };
   
           updateRequest.onerror = (event) => {
             console.error("Error updating password:", event);
-            alert("Error updating password.");
           };
         } else {
           console.error("User not found for updating password.");
-          alert("User not found.");
         }
       };
   
@@ -267,11 +257,15 @@ const updateSavedUsers = () => {
 
           if (rememberedAccounts.length > 0) {
               const account = rememberedAccounts[0];
+              console.log("Account retrieved: ", account);
+              console.log("Encrypted password: ", account.password);
+              console.log("IV used for decryption: ", account.iv);
+
               const decryptedPassword = decryptPassword(account.password, account.iv);
 
               console.log("Decrypted password for saved user: ", decryptedPassword);  // Verify it's decrypted
 
-              // Make sure to set the correct password after decryption
+              // Ensure the decrypted password is set correctly
               setUserInfo({
                   username: account.username,
                   password: decryptedPassword,  // Decrypted password
@@ -392,6 +386,7 @@ const updateSavedUsers = () => {
           setFormTitle={setFormTitle}
           decryptPassword = {decryptPassword}
           passwordPlaceholder = {passwordPlaceholder}
+          setPlaceholder={setPlaceholder}
           isPasswordReset = {isPasswordReset}
           setIsPasswordReset={setIsPasswordReset}
           newPassword = {newPassword}

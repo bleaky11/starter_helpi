@@ -5,20 +5,21 @@ import React from 'react';
 
 export interface LoginFormProps {
   closeForm: () => void;
-  userInfo: { username: string; password: string, remembered: boolean };
-  setUserInfo: (value: React.SetStateAction<{ username: string; password: string, remembered: boolean }>) => void;
+  userInfo: { username: string; password: string; remembered: boolean };
+  setUserInfo: (value: React.SetStateAction<{ username: string; password: string; remembered: boolean }>) => void;
   remember: boolean;
   setRemember: React.Dispatch<React.SetStateAction<boolean>>;
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemember: () => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  accounts: { username: string; password: string, remembered: boolean, iv: string }[];
+  accounts: { username: string; password: string; remembered: boolean; iv: string }[];
   selectedUser: string;
   setSelect: (value: React.SetStateAction<string>) => void;
   formTitle: string;
   setFormTitle: React.Dispatch<React.SetStateAction<string>>;
   decryptPassword: (encryptedPassword: string, iv: string) => string;
   passwordPlaceholder: string;
+  setPlaceholder: React.Dispatch<React.SetStateAction<string>>;
   isPasswordReset: boolean;
   setIsPasswordReset: React.Dispatch<React.SetStateAction<boolean>>;
   newPassword: string;
@@ -41,17 +42,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   setFormTitle,
   decryptPassword,
   passwordPlaceholder,
+  setPlaceholder,
   isPasswordReset,
   setIsPasswordReset,
   newPassword,
   updatePassword
 }) => {
-
+  
+  // Handle user selection from the dropdown
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
     setSelect(selectedUsername);
   };
 
+  // Sync selected user info when formTitle is "Log in"
   useEffect(() => {
     if (formTitle === "Log in" && selectedUser) {
       const selectedAccount = accounts.find(account => account.username === selectedUser);
@@ -70,11 +74,23 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         }
       }
     }
-  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);    
+  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);  
 
-  const handlePasswordReset = () => {
+  const handleResetClick = () => {
     setIsPasswordReset(false);
-    setFormTitle("Log in"); // set back to log in after reset
+    setFormTitle("Log in"); // Reset to login form after reset
+    setUserInfo(prevState => ({
+      ...prevState,
+      password: ""  
+    }));
+    alert("Password Reset!");
+  };  
+
+  // Switch to password reset view
+  const handlePasswordReset = () => {
+    setFormTitle("Reset Password");
+    setPlaceholder("");
+    setIsPasswordReset(true);
   };
 
   return (
@@ -82,7 +98,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <form className="form-container" onSubmit={handleSubmit}>
         <h1>{formTitle}</h1>
 
-        {/* Only show saved users dropdown if not in password reset mode */}
+        {/* Display saved users dropdown if not in reset mode */}
         {formTitle === "Log in" && !isPasswordReset && (
           <div style={{ marginBottom: "25px" }}>
             {accounts.length === 0 ? (
@@ -107,7 +123,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </div>
         )}
 
-        {/* Login Fields (Username, Password, Remember Me) */}
+        {/* Login fields */}
         {!isPasswordReset && (
           <>
             <label htmlFor="username"><b>Username</b></label>
@@ -120,7 +136,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               required
             />
 
-            <label htmlFor="psw"><b>Password</b></label>
+            <label htmlFor="password"><b>Password</b></label>
             <input
               type="password"
               value={userInfo.password}
@@ -132,12 +148,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
             {formTitle === "Log in" && (
               <div
-                onClick={() => setIsPasswordReset(true)} // Trigger password reset mode
+                onClick={handlePasswordReset}  // Trigger password reset mode
                 style={{
-                  fontSize: "12px", 
-                  marginBottom: "10px", 
-                  cursor: "pointer", 
-                  color: "blue", 
+                  fontSize: "12px",
+                  marginBottom: "10px",
+                  cursor: "pointer",
+                  color: "blue",
                   textDecoration: "underline"
                 }}
                 tabIndex={0}
@@ -149,13 +165,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           </>
         )}
 
-        {/* Buttons for Login or Password Reset */}
         <div>
           {!isPasswordReset ? (
             <>
-              <button type="submit" className="btn">
-                Login
-              </button>
+              <button type="submit" className="btn">Login</button>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ marginRight: '8px' }}>Remember me?</span>
                 <Form.Check
@@ -177,20 +190,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             </>
           ) : (
             <>
-              {setFormTitle("Reset Password")}
               <label htmlFor="resetPassword"><b>New Password</b></label>
               <input
                 type="password"
                 value={passwordPlaceholder}  // Display the new password here
                 placeholder="Enter New Password"
-                onChange={updatePassword}  // Handles new password input
+                onChange={updatePassword}
                 required
               />
               <button
                 style={{ marginTop: '10px' }}
                 type="button"
                 className="btn cancel"
-                onClick={handlePasswordReset} // Reset password logic here
+                onClick={handleResetClick}  // Reset state to login
               >
                 Reset
               </button>
@@ -201,3 +213,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     </div>
   );
 };
+
+
+
