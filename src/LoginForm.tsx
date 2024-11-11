@@ -55,13 +55,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   updateCalledUser
 }) => {
 
-  useEffect(() => {
+  useEffect(() => {  // displays saved credentials for dropdown for selected user
     if (formTitle === "Log in" && selectedUser) {
-      const selectedAccount = accounts.find(account => account.username === selectedUser);
+      const selectedAccount = accounts.find(account => account.username === selectedUser); // show saved user credentials if found
       if (selectedAccount) {
         const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
         if (
-          userInfo.username !== selectedAccount.username ||
+          userInfo.username !== selectedAccount.username || // compares old select to new selected user to update if needed
           userInfo.password !== decryptedPassword ||
           userInfo.remembered !== selectedAccount.remembered
         ) {
@@ -78,19 +78,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
     setSelect(selectedUsername);
-    // If "None" is selected (blank option), clear the form
-    if (selectedUsername === "") {
+    if (selectedUsername === "") { // sets blank select to log in to non-saved accounts
       setUserInfo({
         username: "",
         password: "",
         remembered: false,
       });
-      setRemember(false); // Optionally reset the 'remember' state if necessary
     } else {
       // Proceed with selecting a saved user
       const selectedAccount = accounts.find(account => account.username === selectedUsername);
       if (selectedAccount) {
-        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
+        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv); // display saved user with decrypted password for log in
         setUserInfo({
           username: selectedAccount.username,
           password: decryptedPassword,
@@ -100,19 +98,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     }
   };
 
-  // Handle reset password click
-  const handleResetClick = () => {
+  const handleResetClick = () => { // Handle reset password click
     setIsPasswordReset(false);
-    setFormTitle("Log in");
+    setFormTitle("Log in"); // go back to log in form to see change
     setUserInfo(prevState => ({
       ...prevState,
-      password: ""  
+      password: ""
     }));
     alert("Password Reset!");
   };
 
-  // Switch to password reset view
-  const handlePasswordReset = () => {
+  const handlePasswordReset = () => { // Switch to password reset view
     setFormTitle("Reset Password");
     setCalled(""); // reset blank username for input
     setPlaceholder(""); // reset blank password for input
@@ -220,7 +216,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               <label htmlFor="resetUser"><b>Username</b></label>
               <input
                 type="text"
-                value={calledUsername}  // Display the new password here
+                value={calledUsername}  
                 placeholder="Enter Username"
                 onChange={updateCalledUser}
                 required
@@ -228,7 +224,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               <label htmlFor="resetPassword"><b>New Password</b></label>
               <input
                 type="password"
-                value={passwordPlaceholder}  // Display the new password here
+                value={passwordPlaceholder}  
                 placeholder="Enter New Password"
                 onChange={updatePassword}
                 required
@@ -238,7 +234,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 style={{ marginTop: '10px' }}
                 type="button"
                 className="btn"
-                onClick={handleResetClick}  // Reset state to login
+                onClick={handleResetClick}  
               >
                 Reset
               </button>
@@ -246,7 +242,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 style={{ marginTop: '10px' }}
                 type="button"
                 className="btn cancel"
-                onClick={() => closeForm()}  // Reset state to login
+                onClick={() => closeForm()}  
               >
                 Close
               </button>

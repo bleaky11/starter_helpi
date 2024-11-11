@@ -6,21 +6,21 @@ import { Button} from 'react-bootstrap';
 
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: true});
+  const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: false});
   const [remember, setRemember] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formTitle, setFormTitle] = useState("Create Account");
-  const [db, setDb] = useState<IDBDatabase | null>(null);
+  const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, iv: string }[]>([]);
   const [selectedUser, setSelect] = useState("");
-  const [passwordPlaceholder, setPlaceholder] = useState<string>("");
+  const [passwordPlaceholder, setPlaceholder] = useState<string>(""); // a blank input space for the reset form
   const [newPassword, setNewPassword] = useState<string>("");
   const [calledUsername, setCalled]= useState<string>("");
   const [isPasswordReset, setIsPasswordReset] = React.useState<boolean>(false);
 
   const CryptoJS = require("crypto-js");
 
-  const secretKey = process.env.REACT_APP_SECRET_KEY;
+  const secretKey = process.env.REACT_APP_SECRET_KEY; // private password for the encryption algorithmn
 
   useEffect(() => {
     if (!secretKey) {
@@ -28,55 +28,92 @@ export const HomePage: React.FC = () => {
     }
   }, [secretKey]);
 
-  // Encrypt password and store both encrypted password and IV
+  useEffect(() => {
+    const initializeDatabase = async () => {
+      const indexedDB = window.indexedDB;
+      const request = indexedDB.open("UserDatabase", 2);
+  
+      request.onerror = (event) => {
+        console.error("Error opening user database!", event);
+      };
+  
+      request.onupgradeneeded = (event) => {
+        const dbInstance = (event.target as IDBOpenDBRequest).result;
+        dbInstance.createObjectStore("users", { keyPath: "username" }); // creates or updates database: creates an objectStore if not found
+      };
+  
+      request.onsuccess = () => {
+        const dbInstance = request.result;
+        if (dbInstance) {
+          setDb(dbInstance); // save current db instance
+          const transaction = dbInstance.transaction("users", "readonly");
+          const store = transaction.objectStore("users");
+          const getAllRequest = store.getAll();
+  
+          getAllRequest.onsuccess = () => {
+            const allUsers = getAllRequest.result;
+            const rememberedAccounts = allUsers.filter(user => user.remembered); // render saved account dropdown instantaneously
+            setAccounts(rememberedAccounts);
+          };
+        } else {
+          if (!localStorage.getItem("homeVisit")) { // save user visit to refresh saved accounts for next surf
+            localStorage.setItem("homeVisit", "true");
+          }
+          clearForm();
+        }
+      };
+    };
+    initializeDatabase(); // create/update database
+  }, [formTitle]);
+
+/* Encrypt password and store both encrypted password and IV
+    Secret Key: A private password for Advanced Encryption Standard (AES)
+    Initialized Vector (IV): unique random string used to control encyption output. Prevents hackers from recognizing patterns.
+*/
+
 const encryptPassword = (password: string) => {
   const iv = CryptoJS.lib.WordArray.random(16); // Generate a new random IV
   const encrypted = CryptoJS.AES.encrypt(password, secretKey, { iv: iv }).toString();
-  
   return { encryptedPassword: encrypted, iv: iv.toString() };
 };
 
-const decryptPassword = (encryptedPassword: string, iv: string) => {
-  const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey, { iv: CryptoJS.enc.Hex.parse(iv) });
-  return bytes.toString(CryptoJS.enc.Utf8); // Return the decrypted password
+const decryptPassword = (encryptedPassword: string, iv: string) => { // decrypt the user password for log in purposes
+  const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey, { iv: CryptoJS.enc.Hex.parse(iv) }); // parse IV into readable form
+  return bytes.toString(CryptoJS.enc.Utf8); 
 };
 
-const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // updates the password to be reset in the reset form
   const placeholder = event.target.value; 
-  setPlaceholder(placeholder);
+  setPlaceholder(placeholder); 
   
   const encrypted = encryptPassword(placeholder);
   const encryptedPassword = encrypted.encryptedPassword;
   setNewPassword(encryptedPassword);
   
-  setUserInfo(prevState => ({
+  setUserInfo(prevState => ({ // updates user info
     ...prevState,
     password: encryptedPassword,
   }));
   
-  // Use resetUsername for fetching the user in the reset password form
-  const usernameToUpdate = calledUsername;  // Use the username entered in the reset form
+  const usernameToUpdate = calledUsername;  // reset password for the called user
   
-  // Proceed to update IndexedDB
   if (db) {
     const transaction = db.transaction("users", "readwrite");
     const store = transaction.objectStore("users");
 
-    // Fetch the user based on the resetUsername, not userInfo.username
-    const getUserRequest = store.get(usernameToUpdate);  // This will use the entered username
+    const getUserRequest = store.get(usernameToUpdate); 
     
     getUserRequest.onsuccess = () => {
       const existingUser = getUserRequest.result;
   
       if (existingUser) {
-        // Update the password in the existing user object
+        
         existingUser.password = encryptedPassword;
         
-        const updateRequest = store.put(existingUser);
+        const updateRequest = store.put(existingUser); // overwrites old password in database
         
-        // On successful update, call updateSavedUsers() to refresh and decrypt
         updateRequest.onsuccess = () => {
-          updateSavedUsers();  // This decrypts and updates the UI as needed
+          updateSavedUsers();  // Update saved accounts
         };
   
         updateRequest.onerror = (event) => {
@@ -93,66 +130,20 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
   }
 };
 
-const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) =>
+const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) => // controls username input in reset form
 {
   setCalled(event.target.value);
 }
 
-const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedIV: string, userInput: string, passInput: string) => {
+const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedIV: string, userInput: string, passInput: string) => // checks if log in input matches user credentials
+{
   if (userInput === savedUsername) {
-    try {
-      const decryptedPassword = decryptPassword(savedEncryptedPassword, savedIV);
-      if (decryptedPassword.trim() === passInput.trim()) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error("Error decrypting password:", error);
-      return false; // Return false if decryption fails
-    }
+      const decryptedPassword = decryptPassword(savedEncryptedPassword, savedIV); // decrypt password to compare
+      return decryptedPassword.trim() === passInput.trim()
   } else {
     return false;
   }
 };
-
-useEffect(() => {
-  const initializeDatabase = async () => {
-    const indexedDB = window.indexedDB;
-    const request = indexedDB.open("UserDatabase", 2);
-
-    request.onerror = (event) => {
-      console.error("Error opening user database!", event);
-    };
-
-    request.onupgradeneeded = (event) => {
-      const dbInstance = (event.target as IDBOpenDBRequest).result;
-      dbInstance.createObjectStore("users", { keyPath: "username" });
-    };
-
-    request.onsuccess = () => {
-      const dbInstance = request.result;
-      if (dbInstance) {
-        setDb(dbInstance);
-        const transaction = dbInstance.transaction("users", "readonly");
-        const store = transaction.objectStore("users");
-        const getAllRequest = store.getAll();
-
-        getAllRequest.onsuccess = () => {
-          const allUsers = getAllRequest.result;
-          const rememberedAccounts = allUsers.filter(user => user.remembered);
-          setAccounts(rememberedAccounts);
-        };
-      } else {
-        if (!localStorage.getItem("homeVisit")) {
-          localStorage.setItem("homeVisit", "true");
-        }
-        clearForm();
-      }
-    };
-  };
-  initializeDatabase();
-}, [formTitle]);
 
 const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
@@ -177,18 +168,17 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
           if (checkInfo(username, encryptedPassword, iv, userInfo.username, userInfo.password)) {
             setIsLoggedIn(true);
-            // Update remembered status if different
             if (remember !== remembered) {
               existingUser.remembered = remember;
-              const updateRequest = store.put(existingUser);
-              updateRequest.onsuccess = () => updateSavedUsers(); // Refresh after updating
+              const updateRequest = store.put(existingUser); // change remembered field of user if changed
+              updateRequest.onsuccess = () => updateSavedUsers(); // save changes
               updateRequest.onerror = (event) => console.error("Error updating remembered status:", event);
             } else {
-              updateSavedUsers();
+              updateSavedUsers(); // update regardless if updateSavedUsers() finds no remembered accounts
             }
 
             if (!remember) {
-              removeFromDropdown(userInfo.username);
+              removeFromDropdown(userInfo.username); // remove saved account when not remembered
             }
           } else {
             alert("Incorrect username or password.");
@@ -224,7 +214,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const user = getUserRequest.result;
         
         if (user) {
-          user.remembered = false;
+          user.remembered = false; // set to false to remove from saved accounts
   
           const updateRequest = store.put(user);
   
@@ -250,22 +240,19 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const store = transaction.objectStore("users");
 
         if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
-            // First, get the account from the store
             const getRequest = store.get(username);
 
             getRequest.onsuccess = () => {
                 const userAccount = getRequest.result;
 
-                // Check if the account is remembered
-                if (userAccount && userAccount.remembered) {
-                    removeFromDropdown(username);
+                if (userAccount && userAccount.remembered) { 
+                    removeFromDropdown(username); // remove account from saved dropdown if remembered
                 }
 
-                // Now delete the account
                 const deleteRequest = store.delete(username);
 
                 deleteRequest.onsuccess = () => {
-                    setUserInfo({ username: "", password: "", remembered: false });
+                    setUserInfo({ username: "", password: "", remembered: false }); // delete account and reset form
                     handleLogout();
                     clearForm();
                 };
@@ -289,15 +276,15 @@ const updateSavedUsers = () => {
       const request = store.getAll();
 
       request.onsuccess = () => {
-          const rememberedAccounts = request.result.filter(account => account.remembered);
+          const rememberedAccounts = request.result.filter(account => account.remembered); // capture only remembered users
           setAccounts(rememberedAccounts);
 
           if (rememberedAccounts.length > 0) {
-              const account = rememberedAccounts[0];
+              const account = rememberedAccounts[0]; // set first user in dropdown to be last saved
               const decryptedPassword = decryptPassword(account.password, account.iv);
               setUserInfo({
                   username: account.username,
-                  password: decryptedPassword,  // Decrypted password
+                  password: decryptedPassword,  
                   remembered: account.remembered,
               });
               setSelect(account.username);
@@ -310,20 +297,20 @@ const updateSavedUsers = () => {
   }
 };
 
-  const toggleForm = () => {
+  const toggleForm = () => { // controls opening/closing form
     setIsFormOpen(!isFormOpen);
   };
 
-  const clearForm = () => {
+  const clearForm = () => {    // resets form
     setUserInfo({ username: "", password: "", remembered: false });
-    setRemember(true); // Ensure 'remembered' is also reset
+    setRemember(true); 
 };
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target;
+    const { name, value, type, checked } = event.target; // destructured HTML element
     setUserInfo((prevInfo) => ({
       ...prevInfo,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : value, // takes name as generic key... updates field based on type
     }));
   };   
 
@@ -333,18 +320,18 @@ const updateSavedUsers = () => {
 }; 
   
   const handleRemember = () => {
-    const newRememberState = !remember;
-    setRemember(newRememberState); // Toggle remember state
+    const newRememberState = !remember; // switch remember on check mark click/unclick
+    setRemember(newRememberState); 
   };  
   
   const showForm = (title: string) => {
     setFormTitle(title);
     if (title === "Create Account") {
-      clearForm(); // Clear form fields when switching to "Create Account"
+      clearForm(); // clear form fields when switching to "Create Account"
     }
     else if(title === "Log in")
     {
-      setRemember(true);
+      setRemember(true); // set true regardless to show saved accounts
     }
     toggleForm();
   }; 
@@ -354,11 +341,11 @@ const updateSavedUsers = () => {
       {isLoggedIn ? (
         <div>
           <img
-            src={jerboa}
+            src={jerboa} // default profile picture
             alt="Four-Toed Jerboa"
             style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
             onClick={() => showForm("Create Account")}
-            title={userInfo.username || "Logged-in User"} 
+            title={userInfo.username || "Logged-in User"} // error with not showing unremembered username
           />
           <div>
             <Button 
@@ -369,7 +356,7 @@ const updateSavedUsers = () => {
             </Button>
   
             <Button 
-              onClick={() => deleteAccount(userInfo.username)} // Ensure the username is passed correctly here
+              onClick={() => deleteAccount(userInfo.username)} 
               style={{
                 float: "left", 
                 marginTop: "10px", 
@@ -388,7 +375,7 @@ const updateSavedUsers = () => {
             alt="User Profile"
             style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
             onClick={() => showForm("Create Account")}
-            title="Guest"
+            title="Guest" // default visiter status
           />
           <Button 
             style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "darkblue" }}
@@ -426,7 +413,6 @@ const updateSavedUsers = () => {
           updateCalledUser = {updateCalledUser}
         />
       )}
-      
       <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black' }}>
         <h1>The Career Quiz</h1>
       </a>
