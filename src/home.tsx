@@ -30,7 +30,7 @@ export function MainPage({
         ></NotifBell>
         <Container>
           <Col className="ResultBorder" >
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 2 }}>
                 <h2>Results Page</h2>
                 <h6 className="Body-Heading" style={{fontSize: "16px" }}>
                   Results of the quiz will be displayed after completing basic and/or detailed question
@@ -52,6 +52,7 @@ export function MainPage({
                 )}
               </nav>
             </Col>
+            
         </Container>
         <Container>
           <Row>

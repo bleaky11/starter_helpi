@@ -43,13 +43,16 @@
   border-style: solid;
   border-radius: 25px;
   padding: 10px;
+  right: 5%;
+  nav-up: auto;
 }
 
 .notif-bell{
   width: auto;
   height: 100px;
   max-height: 15%;
-  position: absolute;
+  right: 0%;
+  position: absolute
 }
 
 .App-header {
