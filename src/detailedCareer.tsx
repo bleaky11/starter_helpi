@@ -86,6 +86,8 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
       savedAnswers[questionPage] = tempAnswers[questionPage]; //Populate array with user's answer
       sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers)); //Update "quizAnswers" in storage with the new array
       updateProgress();
+    }if(tempAnswers[questionPage]){
+      setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))
     }
   }
 
@@ -143,6 +145,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
     setTimeout(() => {
       alert("Quiz Cleared!");
   }, 0); //Wait until all of the clear logic runs before displaying message
+    setQuestionPage(prev => Math.min(questions.length - 1, 0))
   }
 
   function DetailedClear(){ //Clear button
