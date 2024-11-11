@@ -65,7 +65,7 @@ function App() {
             onChange={changeKey}
           />
           <br />
-          <Button className="Submit-Button" style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}onClick={handleSubmit}>
+          <Button className="Button" onClick={handleSubmit}>
             Submit
           </Button>
         </Form>
