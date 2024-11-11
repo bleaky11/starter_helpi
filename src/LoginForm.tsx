@@ -55,8 +55,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   updateCalledUser
 }) => {
 
-  useEffect(() => {  // displays saved credentials for dropdown for selected user
-    if (formTitle === "Log in" && selectedUser) {
+  useEffect(() => {  
+    // displays saved credentials for dropdown for selected user
+    if (formTitle === "Log in" && selectedUser && accounts.length > 0) {
       const selectedAccount = accounts.find(account => account.username === selectedUser); // show saved user credentials if found
       if (selectedAccount) {
         const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
@@ -73,7 +74,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         }
       }
     }
-  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);
+  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);  
 
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;

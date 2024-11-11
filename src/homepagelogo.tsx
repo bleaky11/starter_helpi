@@ -7,7 +7,7 @@ import { Button} from 'react-bootstrap';
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: false});
-  const [remember, setRemember] = useState(true);
+  const [remember, setRemember] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
@@ -235,6 +235,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   };
   
   const deleteAccount = (username: string) => {
+    console.log('Deleting account for:', username);  // Debugging line
     if (db) {
         const transaction = db.transaction("users", "readwrite");
         const store = transaction.objectStore("users");
@@ -276,22 +277,26 @@ const updateSavedUsers = () => {
       const request = store.getAll();
 
       request.onsuccess = () => {
-          const rememberedAccounts = request.result.filter(account => account.remembered); // capture only remembered users
-          setAccounts(rememberedAccounts);
+          const allAccounts = request.result; 
+          const rememberedAccounts = allAccounts.filter(account => account.remembered);  // Capture only remembered users
+          setAccounts(rememberedAccounts);  // Update the accounts list for UI
 
           if (rememberedAccounts.length > 0) {
-              const account = rememberedAccounts[0]; // set first user in dropdown to be last saved
-              const decryptedPassword = decryptPassword(account.password, account.iv);
+              const account = rememberedAccounts[0];  // Select the first remembered account
+              const decryptedPassword = decryptPassword(account.password, account.iv); 
               setUserInfo({
                   username: account.username,
                   password: decryptedPassword,  
                   remembered: account.remembered,
               });
-              setSelect(account.username);
-          }
-          else
-          {
-            clearForm();
+              setSelect(account.username);  // Update the dropdown to show the remembered username
+          } else {
+              // If no remembered accounts exist, use the new user input
+              setUserInfo({
+                  username: userInfo.username,  
+                  password: userInfo.password, 
+                  remembered: false, 
+              });
           }
       };
   }
@@ -345,7 +350,7 @@ const updateSavedUsers = () => {
             alt="Four-Toed Jerboa"
             style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
             onClick={() => showForm("Create Account")}
-            title={userInfo.username || "Logged-in User"} // error with not showing unremembered username
+            title={userInfo.username} // error with not showing unremembered username
           />
           <div>
             <Button 
