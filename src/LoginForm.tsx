@@ -66,7 +66,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           userInfo.password !== decryptedPassword ||
           userInfo.remembered !== selectedAccount.remembered
         ) {
-          setUserInfo({
+          setUserInfo({ 
             username: selectedAccount.username,
             password: decryptedPassword,
             remembered: selectedAccount.remembered ?? false,
@@ -74,7 +74,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         }
       }
     }
-  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo]);  
+  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo, remember]);  
 
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;

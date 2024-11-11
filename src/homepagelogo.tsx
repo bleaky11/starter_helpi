@@ -59,7 +59,6 @@ export const HomePage: React.FC = () => {
           if (!localStorage.getItem("homeVisit")) { // save user visit to refresh saved accounts for next surf
             localStorage.setItem("homeVisit", "true");
           }
-          clearForm();
         }
       };
     };
@@ -204,70 +203,75 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   }
 };
 
-  const removeFromDropdown = (username: string) => {
-    if (db) {
+const removeFromDropdown = (username: string) => {
+  if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
       const getUserRequest = store.get(username);
-  
+
       getUserRequest.onsuccess = () => {
-        const user = getUserRequest.result;
-        
-        if (user) {
-          user.remembered = false; // set to false to remove from saved accounts
-  
-          const updateRequest = store.put(user);
-  
-          updateRequest.onsuccess = () => {
-            updateSavedUsers(); // Refresh the accounts list after updating
-          };
-  
-          updateRequest.onerror = (event) => {
-            console.error("Error updating account:", event);
-          };
-        }
+          const user = getUserRequest.result;
+
+          if (user) {
+              user.remembered = false; // set to false to remove from saved accounts
+
+              const updateRequest = store.put(user);
+
+              updateRequest.onsuccess = () => {
+                  updateSavedUsers(); // Refresh the accounts list after updating
+                  // Trigger a re-render for the dropdown or selected user change.
+              };
+
+              updateRequest.onerror = (event) => {
+                  console.error("Error updating account:", event);
+              };
+          }
       };
-  
+
       transaction.onerror = (event) => {
-        console.error("Error accessing the user store:", event);
+          console.error("Error accessing the user store:", event);
       };
+  }
+};
+
+const deleteAccount = async (username: string) => {
+  if (db) {
+    const transaction = db.transaction("users", "readwrite");
+    const store = transaction.objectStore("users");
+
+    if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
+      try {
+        const getRequest = store.get(username);
+
+        getRequest.onsuccess = async () => {
+          const userAccount = getRequest.result;
+
+          if (userAccount && userAccount.remembered) {
+            removeFromDropdown(username); // Remove account from saved dropdown if remembered
+          }
+
+          const deleteRequest = store.delete(username);
+
+          deleteRequest.onsuccess = () => {
+            handleLogout(); // Reset the login state
+            clearForm(); 
+            updateSavedUsers(); // Update saved accounts
+            alert("Account deleted!");
+          };
+
+          deleteRequest.onerror = () => {
+            console.error("Error deleting account");
+          };
+        };
+
+        getRequest.onerror = () => {
+          console.error("Error fetching account");
+        };
+      } catch (error) {
+        console.error("An error occurred while deleting the account:", error);
+      }
     }
-  };
-  
-  const deleteAccount = (username: string) => {
-    console.log('Deleting account for:', username);  // Debugging line
-    if (db) {
-        const transaction = db.transaction("users", "readwrite");
-        const store = transaction.objectStore("users");
-
-        if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
-            const getRequest = store.get(username);
-
-            getRequest.onsuccess = () => {
-                const userAccount = getRequest.result;
-
-                if (userAccount && userAccount.remembered) { 
-                    removeFromDropdown(username); // remove account from saved dropdown if remembered
-                }
-
-                const deleteRequest = store.delete(username);
-
-                deleteRequest.onsuccess = () => {
-                    setUserInfo({ username: "", password: "", remembered: false }); // delete account and reset form
-                    handleLogout();
-                    clearForm();
-                };
-
-                deleteRequest.onerror = () => {
-                    console.error("Error deleting account");
-                };
-            };
-
-            getRequest.onerror = () => {
-                console.error("Error fetching account");
-            };
-        }
-    }
+  }
 };
     
 const updateSavedUsers = () => { 
@@ -306,10 +310,12 @@ const updateSavedUsers = () => {
     setIsFormOpen(!isFormOpen);
   };
 
-  const clearForm = () => {    // resets form
-    setUserInfo({ username: "", password: "", remembered: false });
-    setRemember(true); 
-};
+  const clearForm = () => {
+    setTimeout(() => {
+      setUserInfo({ username: "", password: "", remembered: false });
+      setSelect(""); // Clear selected user from dropdown
+    }, 100); // Delay to ensure state is fully reset
+  };  
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target; // destructured HTML element
@@ -320,8 +326,12 @@ const updateSavedUsers = () => {
   };   
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setIsFormOpen(false);
+    setTimeout(() =>
+    {
+      setIsLoggedIn(false);
+      setIsFormOpen(false);
+      setRemember(false);
+    }, 2000);
 }; 
   
   const handleRemember = () => {
