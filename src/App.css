@@ -128,6 +128,13 @@
   border-style: outset
 }
 
+.Button:disabled {
+  background: #c47937;
+  border: 3px;
+  border-color: #bc6c25;
+  border-style: solid
+}
+
 .Button:hover {
   background: #f39440;
   border: 5px;

@@ -39,7 +39,7 @@ export function MainPage({
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 {!basicComplete && !detailedComplete ? (
                   <div>
-                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Results</Button>
+                    <Button className="Button" disabled={true}>Results</Button>
                     <h6>Please complete a Quiz!</h6>
                   </div>
                 ) : (
