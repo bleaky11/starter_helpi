@@ -78,7 +78,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
     setSelect(selectedUsername);
-  
     // If "None" is selected (blank option), clear the form
     if (selectedUsername === "") {
       setUserInfo({
@@ -139,13 +138,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               <Form.Group controlId="savedUsers">
             <Form.Label>Saved Usernames</Form.Label>
             <Form.Select value={selectedUser} onChange={handleUserSelect}>
-              <option value="">Select a user</option> {/* Blank option */}
-              {accounts.map((user) => (
-                <option key={user.username} value={user.username}>
-                  {user.username}
-                </option>
-              ))}
-            </Form.Select>
+            <option value=""></option> {/* Default placeholder */}
+            {accounts.map((user) => (
+              <option key={user.username} value={user.username}>
+                {user.username}
+              </option>
+            ))}
+          </Form.Select>
           </Form.Group>
             )}
           </div>
@@ -235,12 +234,21 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 required
               />
               <button
+                disabled = {calledUsername === "" || passwordPlaceholder === ""}
                 style={{ marginTop: '10px' }}
                 type="button"
-                className="btn cancel"
+                className="btn"
                 onClick={handleResetClick}  // Reset state to login
               >
                 Reset
+              </button>
+              <button
+                style={{ marginTop: '10px' }}
+                type="button"
+                className="btn cancel"
+                onClick={() => closeForm()}  // Reset state to login
+              >
+                Close
               </button>
             </>
           )}

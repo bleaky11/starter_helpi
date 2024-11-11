@@ -158,52 +158,59 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
 
   if (!userInfo.username || !userInfo.password) {
-      alert("Username and password are required.");
-      return;
+    alert("Username and password are required.");
+    return;
   }
 
   if (db) {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
+    const transaction = db.transaction("users", "readwrite");
+    const store = transaction.objectStore("users");
 
-      const userQuery = store.get(userInfo.username);
+    const userQuery = store.get(userInfo.username);
 
-      userQuery.onsuccess = () => {
-          const existingUser = userQuery.result;
+    userQuery.onsuccess = () => {
+      const existingUser = userQuery.result;
 
-          if (existingUser) {
-              if (formTitle === "Log in") {
-                  const { username, password: encryptedPassword, iv, remembered } = existingUser;
-                  if (checkInfo(username, encryptedPassword, iv, userInfo.username, userInfo.password)) {
-                      setIsLoggedIn(true);
-                      if (remember !== remembered) {
-                          existingUser.remembered = remember;
-                      } else {
-                          updateSavedUsers();
-                      }
-                      if (!remember) {
-                        removeFromDropdown(userInfo.username);
-                      }
-                  } else {
-                      alert("Incorrect username or password.");
-                  }
-              } else {
-                  alert("Account already exists. Please log in.");
-                  clearForm();
-              }
-          } else if (formTitle === "Create Account") {
-              const { encryptedPassword, iv } = encryptPassword(userInfo.password);
-              const newUser = { ...userInfo, password: encryptedPassword, iv, remembered: remember };
-              store.put(newUser).onsuccess = () => {
-                  alert("Account created successfully!");
-                  setIsLoggedIn(true);
-                  updateSavedUsers();
-              };
+      if (existingUser) {
+        if (formTitle === "Log in") {
+          const { username, password: encryptedPassword, iv, remembered } = existingUser;
+
+          if (checkInfo(username, encryptedPassword, iv, userInfo.username, userInfo.password)) {
+            setIsLoggedIn(true);
+            // Update remembered status if different
+            if (remember !== remembered) {
+              existingUser.remembered = remember;
+              const updateRequest = store.put(existingUser);
+              updateRequest.onsuccess = () => updateSavedUsers(); // Refresh after updating
+              updateRequest.onerror = (event) => console.error("Error updating remembered status:", event);
+            } else {
+              updateSavedUsers();
+            }
+
+            if (!remember) {
+              removeFromDropdown(userInfo.username);
+            }
           } else {
-              alert("Username doesn't exist!");
-              clearForm();
+            alert("Incorrect username or password.");
           }
-      };
+        } else {
+          alert("Account already exists. Please log in.");
+          clearForm();
+        }
+      } else if (formTitle === "Create Account") {
+        const { encryptedPassword, iv } = encryptPassword(userInfo.password);
+        const newUser = { ...userInfo, password: encryptedPassword, iv, remembered: remember };
+
+        store.put(newUser).onsuccess = () => {
+          alert("Account created successfully!");
+          setIsLoggedIn(true);
+          updateSavedUsers();
+        };
+      } else {
+        alert("Username doesn't exist!");
+        clearForm();
+      }
+    };
   }
 };
 
@@ -243,12 +250,33 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const store = transaction.objectStore("users");
 
         if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
-            const deleteRequest = store.delete(username);
+            // First, get the account from the store
+            const getRequest = store.get(username);
 
-            deleteRequest.onsuccess = () => {
-                setUserInfo({ username: "", password: "", remembered: false });
-                handleLogout();
-                clearForm();
+            getRequest.onsuccess = () => {
+                const userAccount = getRequest.result;
+
+                // Check if the account is remembered
+                if (userAccount && userAccount.remembered) {
+                    removeFromDropdown(username);
+                }
+
+                // Now delete the account
+                const deleteRequest = store.delete(username);
+
+                deleteRequest.onsuccess = () => {
+                    setUserInfo({ username: "", password: "", remembered: false });
+                    handleLogout();
+                    clearForm();
+                };
+
+                deleteRequest.onerror = () => {
+                    console.error("Error deleting account");
+                };
+            };
+
+            getRequest.onerror = () => {
+                console.error("Error fetching account");
             };
         }
     }
@@ -301,6 +329,7 @@ const updateSavedUsers = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setIsFormOpen(false);
 }; 
   
   const handleRemember = () => {
