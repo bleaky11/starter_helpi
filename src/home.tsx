@@ -47,7 +47,7 @@ export function MainPage({
                     to="/results-page"
                     onClick={() => setPage("Results-Page")}
                   >
-                    <Button style={{background: "#c47937", border: "5px", borderColor: "#bc6c25", borderStyle: "outset"}}>Results</Button>
+                    <Button className="Button">Results</Button>
                   </Link>
                 )}
               </nav>

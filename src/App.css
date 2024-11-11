@@ -52,7 +52,12 @@
   height: 100px;
   max-height: 15%;
   right: 0%;
-  position: absolute
+  position: absolute;
+  transition: transform 0.25s ease, width 0.25s ease;
+}
+
+.notif-bell:hover {
+  transform: scale(1.2);
 }
 
 .App-header {
