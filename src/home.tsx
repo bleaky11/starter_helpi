@@ -160,7 +160,7 @@ export function MainPage({
                   justifyContent: "center",
                 }}
               >
-                <Row style={{width: "90%", verticalAlign: "middle"}}>
+                <Row style={{width: "90%", verticalAlign: ""}}>
                   <Col>
                 <img
                   src={detective}
