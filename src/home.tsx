@@ -160,28 +160,30 @@ export function MainPage({
                   justifyContent: "center",
                 }}
               >
+                <Row style={{width: "90%", verticalAlign: "middle"}}>
+                  <Col>
                 <img
                   src={detective}
                   alt="Detective"
                   style={{
                     margin: "0 auto",
                     paddingBottom: "30px",
-                    width: "200px",
-                    height: "230px",
+                    width: "75%",
                     marginRight: "10px",
                   }}
-                />
+                /></Col>
+                <Col>
                 <img
                   src={detective}
                   alt="Detective"
                   style={{
                     margin: "0 auto",
                     paddingBottom: "30px",
-                    width: "200px",
-                    height: "230px",
+                    width: "75%",
                     marginRight: "40px",
                   }}
-                />
+                /></Col>
+                </Row>
               </div>
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 {!isKeyEntered ? (
