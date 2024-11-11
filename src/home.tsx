@@ -47,7 +47,7 @@ export function MainPage({
                     to="/results-page"
                     onClick={() => setPage("Results-Page")}
                   >
-                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Results</Button>
+                    <Button style={{background: "#c47937", border: "5px", borderColor: "#bc6c25", borderStyle: "outset"}}>Results</Button>
                   </Link>
                 )}
               </nav>
@@ -103,7 +103,7 @@ export function MainPage({
                       to="/basic-questions"
                       onClick={() => setPage("Basic-Questions")}
                     >
-                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions</Button>
+                      <Button className="Button">Basic Questions</Button>
                     </Link>
                   ) : /* Case 3: Returning visit with saved progress but no API key entered */
                   localStorage.getItem("quizProgress") &&
@@ -121,7 +121,7 @@ export function MainPage({
                       to="/basic-questions"
                       onClick={() => setPage("Basic-Questions")}
                     >
-                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions (Last Save)</Button>
+                      <Button className="Button">Basic Questions (Last Save)</Button>
                     </Link>
                   ) : null}
                 </nav>
@@ -181,7 +181,7 @@ export function MainPage({
                     to="/detailed-questions"
                     onClick={() => setPage("Detailed-Questions")}
                   >
-                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Detailed Questions</Button>
+                    <Button className="Button">Detailed Questions</Button>
                   </Link>
                 )}
               </nav>

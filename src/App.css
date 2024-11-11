@@ -121,6 +121,27 @@
   font-size: 12px;
 }
 
+.Button {
+  background: #c47937;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: outset
+}
+
+.Button:hover {
+  background: #f39440;
+  border: 5px;
+  border-color: #e3822d;
+  border-style: outset
+}
+
+.Button:active {
+  background: #c47937;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: inset
+}
+
 .Centered {
   display: flex;
   justify-content: center;
