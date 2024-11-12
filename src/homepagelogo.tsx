@@ -288,7 +288,7 @@ const updateSavedUsers = () => {
         const rememberedAccounts = allAccounts.filter(account => account.remembered);
         setAccounts(rememberedAccounts); 
 
-          if (rememberedAccounts.length > 0) {
+          if (rememberedAccounts.length > 1) { // check if the default account isn't the only remembered account
               const account = rememberedAccounts[0];  // Select the first remembered account
               const decryptedPassword = decryptPassword(account.password, account.iv); 
               setUserInfo({
