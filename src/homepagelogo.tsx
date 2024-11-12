@@ -53,8 +53,8 @@ export const HomePage: React.FC = () => {
           getAllRequest.onsuccess = () => {
             const allUsers = getAllRequest.result;
             const defaultAccount = { username: "Select a saved user", password: "", remember: true, iv: "" };
-            const rememberedAccounts = allUsers.filter(user => user.remembered); // render saved account dropdown instantaneously
-            setAccounts([defaultAccount, ...rememberedAccounts]);
+            //const rememberedAccounts = allUsers.filter(user => user.remembered); // render saved account dropdown instantaneously
+            setAccounts([defaultAccount, ...allUsers]);
             if(!isLoggedIn)
             {
               clearForm(); // clear form for account deletion
@@ -134,7 +134,7 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // upda
   }
 };
 
-const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) => // controls username input in reset form
+const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) =>
 {
   setCalled(event.target.value);
 }
@@ -279,37 +279,40 @@ const deleteAccount = async (username: string) => {
     
 const updateSavedUsers = () => { 
   if (db) {
-      const transaction = db.transaction("users", "readonly");
-      const store = transaction.objectStore("users");
-      const request = store.getAll();
+    const transaction = db.transaction("users", "readonly");
+    const store = transaction.objectStore("users");
+    const request = store.getAll();
 
-      request.onsuccess = () => {
-        const allAccounts = request.result; 
-        const rememberedAccounts = allAccounts.filter(account => account.remembered);
-        setAccounts(rememberedAccounts); 
+    request.onsuccess = () => {
+      const allAccounts = request.result;
+      setAccounts(allAccounts); // Set all users for general access
 
-          if (rememberedAccounts.length > 1) { // check if the default account isn't the only remembered account
-              const account = rememberedAccounts[0];  // Select the first remembered account
-              const decryptedPassword = decryptPassword(account.password, account.iv); 
-              setUserInfo({
-                  username: account.username,
-                  password: decryptedPassword,  
-                  remembered: account.remembered,
-              });
-              setSelect(account.username);  // Update the dropdown to show the remembered username
-          } else {
-              // If no remembered accounts exist, use the new user input
-              setUserInfo({
-                  username: userInfo.username,  
-                  password: userInfo.password, 
-                  remembered: false, 
-              });
-          }
-      };
+      const rememberedAccounts = allAccounts.filter(account => account.remembered);
+      if (rememberedAccounts.length > 1) { 
+        const account = rememberedAccounts[0];  // Select the first remembered account
+        const decryptedPassword = decryptPassword(account.password, account.iv); 
+        setUserInfo({
+          username: account.username,
+          password: decryptedPassword,  
+          remembered: account.remembered,
+        });
+        setSelect(account.username);  // Update the dropdown to show the remembered username
+      } else {
+        setUserInfo({
+          username: userInfo.username,
+          password: userInfo.password,
+          remembered: false, 
+        });
+      }
+    };
   }
 };
 
   const toggleForm = () => { // controls opening/closing form
+    if(formTitle === "Reset Password")
+    {
+      setIsPasswordReset(false);
+    }
     setIsFormOpen(!isFormOpen);
   };
 
@@ -317,7 +320,7 @@ const updateSavedUsers = () => {
     setTimeout(() => {
       setUserInfo({ username: "", password: "", remembered: false });
       setSelect(""); // Clear selected user from dropdown
-    }, 100); // Delay to ensure state is fully reset
+    }, 50); 
   };  
 
   const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -363,7 +366,7 @@ const updateSavedUsers = () => {
             alt="Four-Toed Jerboa"
             style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
             onClick={() => showForm("Create Account")}
-            title={userInfo.username} // error with not showing unremembered username
+            title={userInfo.username} 
           />
           <div>
             <Button 
