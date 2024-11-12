@@ -1,13 +1,15 @@
 
 import { Container } from "react-bootstrap";
+import { GptResponse } from "./gptResponse";
 
-interface completed{
+interface completed{ //Interface to pass results logic
     basicComplete: boolean;
     detailedComplete: boolean;
     apiKey: string;
+    answerVals: {answer: string, tag: string}[];
 }
 
-export function ResultPage({basicComplete, detailedComplete, apiKey}: completed): JSX.Element
+export function ResultPage({basicComplete, detailedComplete, apiKey, answerVals}: completed): JSX.Element
 {
 
     return (
@@ -18,7 +20,7 @@ export function ResultPage({basicComplete, detailedComplete, apiKey}: completed)
             Results will be more accurate if you finished both.
         </Container>
         {!(basicComplete && detailedComplete) && <h2 style={{textAlign: "center", paddingTop:"5%"}}>Complete some questions for results</h2>}
-        {/* <GptResponse apiKey={apiKey}></GptResponse> */}
+        <GptResponse apiKey={apiKey} taggedAnswers={answerVals}></GptResponse>
     </div>
     )
 }
