@@ -247,20 +247,21 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
             ))}
           </Row>
         </div>
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "80px"}}>
-    <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
-    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
-    <BasicClear/>
-    </div>
-
-    {basicComplete && <div style={{ display: "flex", justifyContent: "center" }}>
-    <Link
+    <div style={{justifyContent: "center", marginTop: "80px"}}>
+      {basicComplete && <div style={{ display: "flex", justifyContent: "center" }}>
+      <Link
         to="/results-page"
         onClick={() => setPage("Results-Page")}
         >
         <Button className="flashy-button">Results</Button>
-    </Link>
-    </div>}
+      </Link>
+      </div>}
+    </div>
+    <div style={{ display: "flex", justifyContent: "center", marginTop: "2px"}}>
+      <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
+      <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
+      <BasicClear/>
+      </div>
       </div>
     </div>
   );
