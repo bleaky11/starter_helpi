@@ -47,7 +47,7 @@ export function MainPage({
                     to="/results-page"
                     onClick={() => setPage("Results-Page")}
                   >
-                    <Button className="Button">Results</Button>
+                    <Button className="flashy-button">Results</Button>
                   </Link>
                 )}
               </nav>
