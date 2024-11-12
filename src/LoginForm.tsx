@@ -123,7 +123,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <Form.Group controlId="savedUsers">
   {formTitle === "Log in" && (  
     <div style={{ marginBottom: "25px" }}>
-      {accounts.length === 1 && accounts[0].username === "Select a saved user" ? ( // no saved users
+      {accounts.filter((account) => account.remembered && account.username !== 'Select a saved user').length === 0 ? (
         <>
           <Form.Label>No Saved Usernames</Form.Label>
           <Form.Select value="" disabled>
@@ -135,11 +135,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <Form.Label>Saved Usernames</Form.Label>
           <Form.Select value={selectedUser} onChange={handleUserSelect}>
             <option value="">Select a saved user</option> {/* Default placeholder */}
-            {accounts.filter(account => account.remembered).map((user) => (
-              <option key={user.username} value={user.username}>
-                {user.username}
-              </option>
-            ))}
+            {accounts
+              .filter((account) => account.remembered) // Show remembered accounts
+              .map((user) => (
+                <option key={user.username} value={user.username}>
+                  {user.username}
+                </option>
+              ))}
           </Form.Select>
         </>
       )}

@@ -53,7 +53,6 @@ export const HomePage: React.FC = () => {
           getAllRequest.onsuccess = () => {
             const allUsers = getAllRequest.result;
             const defaultAccount = { username: "Select a saved user", password: "", remember: true, iv: "" };
-            //const rememberedAccounts = allUsers.filter(user => user.remembered); // render saved account dropdown instantaneously
             setAccounts([defaultAccount, ...allUsers]);
             if(!isLoggedIn)
             {
@@ -337,7 +336,7 @@ const updateSavedUsers = () => {
       alert("Logging out...");
       setIsLoggedIn(false);
       setIsFormOpen(false);
-    }, 2000);
+    }, 1500);
 }; 
   
   const handleRemember = () => {
