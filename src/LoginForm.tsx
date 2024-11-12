@@ -79,17 +79,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
     setSelect(selectedUsername);
-    if (selectedUsername === "") { // sets blank select to log in to non-saved accounts
+    if (selectedUsername === "") { // reset to no saved user selected
       setUserInfo({
         username: "",
         password: "",
         remembered: false,
       });
     } else {
-      // Proceed with selecting a saved user
       const selectedAccount = accounts.find(account => account.username === selectedUsername);
       if (selectedAccount) {
-        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv); // display saved user with decrypted password for log in
+        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
         setUserInfo({
           username: selectedAccount.username,
           password: decryptedPassword,
@@ -97,7 +96,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         });
       }
     }
-  };
+  };  
 
   const handleResetClick = () => { // Handle reset password click
     setIsPasswordReset(false);
@@ -120,32 +119,32 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     <div className="form-popup" id="myForm">
       <form className="form-container" onSubmit={handleSubmit}>
         <h1>{formTitle}</h1>
-
-        {/* Display saved users dropdown if not in reset mode */}
-        {formTitle === "Log in" && !isPasswordReset && (
-          <div style={{ marginBottom: "25px" }}>
-            {accounts.length === 0 ? (
-              <Form.Group controlId="savedUsers">
-                <Form.Label>No Saved Usernames</Form.Label>
-                <Form.Select value={selectedUser} onChange={handleUserSelect} disabled>
-                  <option>No saved users</option>
-                </Form.Select>
-              </Form.Group>
-            ) : (
-              <Form.Group controlId="savedUsers">
-            <Form.Label>Saved Usernames</Form.Label>
-            <Form.Select value={selectedUser} onChange={handleUserSelect}>
-            <option value=""></option> {/* Default placeholder */}
-            {accounts.map((user) => (
+        <Form.Group controlId="savedUsers">
+  {formTitle === "Log in" && (  
+    <div style={{ marginBottom: "25px" }}>
+      {accounts.length === 1 && accounts[0].username === "Select a saved user" ? ( // no saved users
+        <>
+          <Form.Label>No Saved Usernames</Form.Label>
+          <Form.Select value="" disabled>
+            <option value="">No saved usernames</option>
+          </Form.Select>
+        </>
+      ) : (
+        <>
+          <Form.Label>Saved Usernames</Form.Label>
+          <Form.Select value={selectedUser} onChange={handleUserSelect}>
+            <option value="">Select a saved user</option> {/* Default placeholder */}
+            {accounts.filter(account => account.remembered).map((user) => (
               <option key={user.username} value={user.username}>
                 {user.username}
               </option>
             ))}
           </Form.Select>
-          </Form.Group>
-            )}
-          </div>
-        )}
+        </>
+      )}
+    </div>
+  )}
+    </Form.Group>
 
         {/* Login fields */}
         {!isPasswordReset && (

@@ -12,7 +12,7 @@ export const HomePage: React.FC = () => {
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, iv: string }[]>([]);
-  const [selectedUser, setSelect] = useState("");
+  const [selectedUser, setSelect] = useState("Select a saved user");
   const [passwordPlaceholder, setPlaceholder] = useState<string>(""); // a blank input space for the reset form
   const [newPassword, setNewPassword] = useState<string>("");
   const [calledUsername, setCalled]= useState<string>("");
@@ -52,8 +52,13 @@ export const HomePage: React.FC = () => {
   
           getAllRequest.onsuccess = () => {
             const allUsers = getAllRequest.result;
+            const defaultAccount = { username: "Select a saved user", password: "", remember: true, iv: "" };
             const rememberedAccounts = allUsers.filter(user => user.remembered); // render saved account dropdown instantaneously
-            setAccounts(rememberedAccounts);
+            setAccounts([defaultAccount, ...rememberedAccounts]);
+            if(!isLoggedIn)
+            {
+              clearForm(); // clear form for account deletion
+            }
           };
         } else {
           if (!localStorage.getItem("homeVisit")) { // save user visit to refresh saved accounts for next surf
@@ -63,7 +68,7 @@ export const HomePage: React.FC = () => {
       };
     };
     initializeDatabase(); // create/update database
-  }, [formTitle]);
+  }, [formTitle, isLoggedIn]);
 
 /* Encrypt password and store both encrypted password and IV
     Secret Key: A private password for Advanced Encryption Standard (AES)
@@ -175,7 +180,6 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
             } else {
               updateSavedUsers(); // update regardless if updateSavedUsers() finds no remembered accounts
             }
-
             if (!remember) {
               removeFromDropdown(userInfo.username); // remove saved account when not remembered
             }
@@ -254,7 +258,6 @@ const deleteAccount = async (username: string) => {
 
           deleteRequest.onsuccess = () => {
             handleLogout(); // Reset the login state
-            clearForm(); 
             updateSavedUsers(); // Update saved accounts
             alert("Account deleted!");
           };
@@ -281,9 +284,9 @@ const updateSavedUsers = () => {
       const request = store.getAll();
 
       request.onsuccess = () => {
-          const allAccounts = request.result; 
-          const rememberedAccounts = allAccounts.filter(account => account.remembered);  // Capture only remembered users
-          setAccounts(rememberedAccounts);  // Update the accounts list for UI
+        const allAccounts = request.result; 
+        const rememberedAccounts = allAccounts.filter(account => account.remembered);
+        setAccounts(rememberedAccounts); 
 
           if (rememberedAccounts.length > 0) {
               const account = rememberedAccounts[0];  // Select the first remembered account
@@ -328,9 +331,9 @@ const updateSavedUsers = () => {
   const handleLogout = () => {
     setTimeout(() =>
     {
+      alert("Logging out...");
       setIsLoggedIn(false);
       setIsFormOpen(false);
-      setRemember(false);
     }, 2000);
 }; 
   
