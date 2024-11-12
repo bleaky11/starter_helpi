@@ -1,58 +1,55 @@
-*  
+.form-popup {
+  display: block;
+  position: fixed;
+  top: 10px;  /* Distance from the top of the screen */
+  left: 10px; /* Distance from the left of the screen */
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+  background-color: white;
+  padding: 10px;
+  max-width: 80%; /* Limits the width */
+  max-height: 80%; /* Limits the height */
+  overflow: auto;
+}
 
-  /*Pop up form styling taken from W3 Schools: https://www.w3schools.com/howto/howto_js_popup_form.asp */
+/* Form container styling */
+.form-container {
+  width: 100%;
+  max-width: 300px; /* Keep this to limit the form width */
+}
 
-  {
-    box-sizing: border-box;
-  }
-  
-  /* Popup form styling */
-  .form-popup {
-    display: block;
-    position: fixed;
-    border: 3px solid #f1f1f1;
-    z-index: 9;
-    background-color: white;
-    padding: 10px;
-  }
-  
-  /* Form container styling */
-  .form-container {
-    max-width: 300px;
-  }
-  
-  /* Input field styling */
-  .form-container input[type="text"], .form-container input[type="password"] {
-    width: 100%;
-    padding: 15px;
-    margin: 5px 0 22px 0;
-    border: none;
-    background: #f1f1f1;
-  }
-  
-  .form-container input[type="text"]:focus, .form-container input[type="password"]:focus {
-    background-color: #ddd;
-    outline: none;
-  }
-  
-  /* Submit/Login button styling */
-  .form-container .btn {
-    background-color: #04AA6D;
-    color: white;
-    padding: 16px 20px;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    margin-bottom: 10px;
-    opacity: 0.8;
-  }
-  
-  .form-container .cancel {
-    background-color: red;
-  }
-  
-  /* Hover effects */
-  .form-container .btn:hover {
-    opacity: 1;
-  }
+/* Input field styling */
+.form-container input[type="text"], .form-container input[type="password"] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+.form-container input[type="text"]:focus, .form-container input[type="password"]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Submit/Login button styling */
+.form-container .btn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Hover effects */
+.form-container .btn:hover {
+  opacity: 1;
+}
   

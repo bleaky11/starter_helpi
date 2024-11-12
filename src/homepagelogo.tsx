@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
-import jerboa from './Images/Four-toes-jerboa-modified.png';
+import detective from './Images/detective-profile.png';
 import { LoginForm } from './LoginForm';
 import { Button} from 'react-bootstrap';
 
@@ -357,54 +357,55 @@ const updateSavedUsers = () => {
   }; 
 
   return (
-    <div>
-      {isLoggedIn ? (
-        <div>
-          <img
-            src={jerboa} // default profile picture
-            alt="Four-Toed Jerboa"
-            style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
-            onClick={() => showForm("Create Account")}
-            title={userInfo.username} 
-          />
+    <div style={{ height: '125px', display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative"}}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {isLoggedIn ? (
           <div>
-            <Button 
-              style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "salmon" }}
-              onClick={handleLogout}
-            >
-              Log out
-            </Button>
+            <img
+              src={detective} // default profile picture
+              alt="detective profile"
+              style={{ width: '50px', height: '50px', cursor: 'pointer' }}
+              onClick={() => showForm("Create Account")}
+              title={userInfo.username}
+            />
+            <div>
+              <Button
+                style={{borderRadius: "20px", backgroundColor: "salmon" }}
+                onClick={handleLogout}
+              >
+                Log out
+              </Button>
   
-            <Button 
-              onClick={() => deleteAccount(userInfo.username)} 
-              style={{
-                float: "left", 
-                marginTop: "10px", 
-                borderRadius: "20px", 
-                backgroundColor: "darkred"
-              }}
+              <Button
+                onClick={() => deleteAccount(userInfo.username)}
+                style={{
+                  marginTop: "10px",
+                  borderRadius: "20px",
+                  backgroundColor: "darkred"
+                }}
+              >
+                Delete Account
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <img
+              src={userProfile}
+              alt="User Profile"
+              style={{ width: '50px', height: '55px', cursor: 'pointer' }}
+              onClick={() => showForm("Create Account")}
+              title="Guest" // default visitor status
+            />
+            <Button
+              style={{borderRadius: "20px", backgroundColor: "darkblue" }}
+              onClick={() => showForm("Log in")}
             >
-              Delete Account
+              Log in
             </Button>
           </div>
-        </div>
-      ) : (
-        <div>
-          <img
-            src={userProfile}
-            alt="User Profile"
-            style={{ float: "left", width: '50px', height: '55px', cursor: 'pointer' }}
-            onClick={() => showForm("Create Account")}
-            title="Guest" // default visiter status
-          />
-          <Button 
-            style={{ float: "left", marginTop: "10px", borderRadius: "20px", backgroundColor: "darkblue" }}
-            onClick={() => showForm("Log in")}
-          >
-            Log in
-          </Button>
-        </div>
-      )}
+        )}
+      </div>
   
       {isFormOpen && !isLoggedIn && (
         <LoginForm
@@ -421,18 +422,28 @@ const updateSavedUsers = () => {
           closeForm={toggleForm}
           formTitle={formTitle}
           setFormTitle={setFormTitle}
-          decryptPassword = {decryptPassword}
-          passwordPlaceholder = {passwordPlaceholder}
+          decryptPassword={decryptPassword}
+          passwordPlaceholder={passwordPlaceholder}
           setPlaceholder={setPlaceholder}
-          isPasswordReset = {isPasswordReset}
+          isPasswordReset={isPasswordReset}
           setIsPasswordReset={setIsPasswordReset}
-          newPassword = {newPassword}
-          updatePassword = {updatePassword}
-          calledUsername = {calledUsername}
-          setCalled = {setCalled}
-          updateCalledUser = {updateCalledUser}
+          newPassword={newPassword}
+          updatePassword={updatePassword}
+          calledUsername={calledUsername}
+          setCalled={setCalled}
+          updateCalledUser={updateCalledUser}
         />
       )}
-      <a href="https://bleaky11.github.io/starter_helpi/" style={{ color: 'black', fontSize: '40px'}}>The Career Quiz</a>
+  
+      {/* Career Quiz Link */}
+      <div style={{ flex: 1, display: "flex", justifyContent: "center", marginTop: '20px', position: 'relative' }}>
+        <a
+          href="https://bleaky11.github.io/starter_helpi/"
+          style={{ color: 'black', fontSize: '40px', textDecoration: 'none' }}
+        >
+          The Career Quiz
+        </a>
+      </div>
     </div>
-  )};
+  );
+}  
