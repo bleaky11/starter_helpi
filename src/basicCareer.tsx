@@ -246,6 +246,9 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
     <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
     <BasicClear/>
     </div>
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <Button className="flashy-button">test</Button>
+    </div>
       </div>
     </div>
   );
