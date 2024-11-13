@@ -133,7 +133,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     {
       localStorage.removeItem("basicQuizProgress");
       localStorage.removeItem("basicQuizAnswers");
-      sessionStorage.removeItem("visited");
+      sessionStorage.removeItem("quizAttempt");
 }
 
 useEffect(() => { //Loads saved quiz data
@@ -141,8 +141,8 @@ useEffect(() => { //Loads saved quiz data
   const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
 
   if (!savedBasicProgress && !savedBasicAnswers) {
-      clearStorage(); // This will clear local storage and session storage
-      sessionStorage.setItem("visited", "true"); // Set the visited flag
+      clearStorage(); 
+      sessionStorage.setItem("quizAttempt", "true"); // track if the user has a saved quiz for next visit
   } 
   else if (savedBasicProgress && savedBasicAnswers )
   {
@@ -182,8 +182,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
     const updatedQuestions = [...questions];
 
     if (updatedQuestions[index].type === "radio") {
-      // Set all to false and only mark the selected index as true
-      updatedQuestions[index].selected = updatedQuestions[index].selected.map((_, i) => i === selectIndex);
+      updatedQuestions[index].selected = updatedQuestions[index].selected.map((_, i) => i === selectIndex); // line written by ChatGPT
     } else {
       // Checkbox logic
       updatedQuestions[index].selected[selectIndex] = event.target.checked;
