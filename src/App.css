@@ -13,15 +13,64 @@
   }
 }
 
+.button {
+  border-radius: 8px; /* Apply rounded corners */
+  border: none;       /* Optional: remove the border */
+  padding: 10px 20px; /* Optional: adjust padding for better look */
+  color: #bc6c25;
+}
+
+.container {
+  display: flex;
+  justify-content: flex-end;  /* Pushes the image to the right */
+  align-items: center;        /* Optional: vertically center the image */
+  height: 10%;              /* Full viewport height */
+}
+
+.testing{
+  position: absolute;
+}
+
+
+.notif-bar {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  max-height: 150px;
+  background-color: white;
+  border: 2px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 25px;
+  padding: 10px;
+  right: 5%;
+  nav-up: auto;
+}
+
+.notif-bell{
+  width: auto;
+  height: 100px;
+  max-height: 15%;
+  right: 0%;
+  position: absolute;
+  transition: transform 0.25s ease, width 0.25s ease;
+}
+
+.notif-bell:hover {
+  transform: scale(1.2);
+}
+
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
+  background: #FDF6C3;
+  border-color: #bc6c25;
+  border-style: solid;
 }
 
 .App-link {
@@ -34,5 +83,115 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.Header-footer {
+  background: #DDA15E;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: solid;
+}
+
+.Background {
+  background: #FDF6C3;
+  border-color: #bc6c25;
+  border-style: solid;
+  min-height: 100vh;
+  color: Black
+}
+
+.Bordered {
+  border: 10px solid #bc6c25;
+  border-radius: 25px;
+  padding: 16px;
+  margin: 10px;
+  flex: 1;
+  background-color: #dda15e;
+  height: 500px;
+}
+
+.ResultBorder {
+  border: 10px solid #bc6c25;
+  border-radius: 25px;
+  padding: 16px;
+  margin: 10px;
+  flex: 1;
+  background-color: #dda15e;
+  width: 80%;
+}
+
+.Body-Heading {
+  text-align: center;
+  font-size: 12px;
+}
+
+.Button {
+  background: #c47937;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: outset
+}
+
+.Button:disabled {
+  background: #c47937;
+  border: 3px;
+  border-color: #bc6c25;
+  border-style: solid
+}
+
+.Button:hover {
+  background: #f39440;
+  border: 5px;
+  border-color: #e3822d;
+  border-style: outset
+}
+
+.Button:active {
+  background: #c47937;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: inset
+}
+
+.Centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 65px;
+}
+
+.flashy-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #DDA15E;
+  border: 4px outset #bc6c25; /* Initial border color */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s ease; /* Smooth transition */
+  animation: hoverBorderColorChange 2s linear infinite;
+}
+
+.flashy-button:hover {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #fab96e;
+  border: 4px inset #bc6c25; /* Initial border color */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s ease; /* Smooth transition */
+  animation: hoverBorderColorChange 1s linear infinite;
+}
+
+
+@keyframes hoverBorderColorChange {
+  0% {
+    border-color: #bc6c25;
+  }
+  50% {
+    border-color: gold;
+  }
+  100% {
+    border-color: #bc6c25;
   }
 }
