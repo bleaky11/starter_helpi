@@ -356,94 +356,90 @@ const updateSavedUsers = () => {
     toggleForm();
   }; 
 
-  return (
-    <div style={{ height: '125px', display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative"}}>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        {isLoggedIn ? (
-          <div>
-            <img
-              src={detective} // default profile picture
-              alt="detective profile"
-              style={{ width: '50px', height: '50px', cursor: 'pointer' }}
-              onClick={() => showForm("Create Account")}
-              title={userInfo.username}
-            />
-            <div>
-              <Button
-                style={{borderRadius: "20px", backgroundColor: "salmon" }}
-                onClick={handleLogout}
-              >
-                Log out
-              </Button>
-  
-              <Button
-                onClick={() => deleteAccount(userInfo.username)}
-                style={{
-                  marginTop: "10px",
-                  borderRadius: "20px",
-                  backgroundColor: "darkred"
-                }}
-              >
-                Delete Account
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <img
-              src={userProfile}
-              alt="User Profile"
-              style={{ width: '50px', height: '55px', cursor: 'pointer' }}
-              onClick={() => showForm("Create Account")}
-              title="Guest" // default visitor status
-            />
+  return (<div style={{ height: '100px', display: "flex", justifyContent: "flex-start", alignItems: "center", position: 'relative'}}>
+    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+      {isLoggedIn ? (
+        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "10px" }}>
+          <img
+            src={detective} // default profile picture
+            alt="detective profile"
+            style={{ width: '80px', height: '80px', cursor: 'pointer' }}
+            onClick={() => showForm("Create Account")}
+            title={userInfo.username}
+          />
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
             <Button
-              style={{borderRadius: "20px", backgroundColor: "darkblue" }}
-              onClick={() => showForm("Log in")}
+              style={{ borderRadius: "20px", backgroundColor: "salmon" }}
+              onClick={handleLogout}
             >
-              Log in
+              Log out
+            </Button>
+            <Button
+              onClick={() => deleteAccount(userInfo.username)}
+              style={{
+                borderRadius: "20px",
+                backgroundColor: "darkred"
+              }}
+            >
+              Delete Account
             </Button>
           </div>
-        )}
-      </div>
-  
-      {isFormOpen && !isLoggedIn && (
-        <LoginForm
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-          remember={remember}
-          setRemember={setRemember}
-          handleRemember={handleRemember}
-          handleSubmit={handleSubmit}
-          updateStatus={updateStatus}
-          selectedUser={selectedUser}
-          setSelect={setSelect}
-          accounts={accounts}
-          closeForm={toggleForm}
-          formTitle={formTitle}
-          setFormTitle={setFormTitle}
-          decryptPassword={decryptPassword}
-          passwordPlaceholder={passwordPlaceholder}
-          setPlaceholder={setPlaceholder}
-          isPasswordReset={isPasswordReset}
-          setIsPasswordReset={setIsPasswordReset}
-          newPassword={newPassword}
-          updatePassword={updatePassword}
-          calledUsername={calledUsername}
-          setCalled={setCalled}
-          updateCalledUser={updateCalledUser}
-        />
+        </div>
+      ) : (
+        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+          <img
+            src={userProfile}
+            alt="User Profile"
+            style={{ width: '50px', height: '55px', cursor: 'pointer' }}
+            onClick={() => showForm("Create Account")}
+            title="Guest" // default visitor status
+          />
+          <Button
+            style={{ borderRadius: "20px", height: "40px", backgroundColor: "darkblue" }}
+            onClick={() => showForm("Log in")}
+          >
+            Log in
+          </Button>
+        </div>
       )}
-  
-      {/* Career Quiz Link */}
-      <div style={{ flex: 1, display: "flex", justifyContent: "center", marginTop: '20px', position: 'relative' }}>
-        <a
-          href="https://bleaky11.github.io/starter_helpi/"
-          style={{ color: 'black', fontSize: '40px', textDecoration: 'none' }}
-        >
-          The Career Quiz
-        </a>
-      </div>
     </div>
-  );
-}  
+  
+    {isFormOpen && !isLoggedIn && (
+      <LoginForm
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+        remember={remember}
+        setRemember={setRemember}
+        handleRemember={handleRemember}
+        handleSubmit={handleSubmit}
+        updateStatus={updateStatus}
+        selectedUser={selectedUser}
+        setSelect={setSelect}
+        accounts={accounts}
+        closeForm={toggleForm}
+        formTitle={formTitle}
+        setFormTitle={setFormTitle}
+        decryptPassword={decryptPassword}
+        passwordPlaceholder={passwordPlaceholder}
+        setPlaceholder={setPlaceholder}
+        isPasswordReset={isPasswordReset}
+        setIsPasswordReset={setIsPasswordReset}
+        newPassword={newPassword}
+        updatePassword={updatePassword}
+        calledUsername={calledUsername}
+        setCalled={setCalled}
+        updateCalledUser={updateCalledUser}
+      />
+    )}
+  
+    {/* Fixed Career Quiz Link */}
+    <div style={{ position: 'absolute', left: '595px', top: '50%', transform: 'translateY(-50%)' }}>
+      <a
+        href="https://bleaky11.github.io/starter_helpi/"
+        style={{ color: 'black', fontSize: '40px', textDecoration: 'none' }}
+      >
+        The Career Codebreaker
+      </a>
+    </div>
+  </div>
+)}  
