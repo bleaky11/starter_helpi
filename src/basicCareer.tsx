@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
+import { Link } from "react-router-dom";
 
 export interface SubmitButton {
   basicComplete: boolean;
@@ -27,7 +28,12 @@ interface Answers
   setAnswerVals: (newState: {answer: string, tag: string}[]) => void;
 }
 
-export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals }: SubmitButton & saveButton & Answers): JSX.Element 
+export interface Pages 
+{
+  setPage: (page: string) => void;
+}
+
+export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage }: SubmitButton & saveButton & Answers & Pages): JSX.Element 
 {
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
@@ -240,11 +246,21 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
             ))}
           </Row>
         </div>
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "80px"}}>
-    <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
-    <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
-    <BasicClear/>
+    <div style={{justifyContent: "center", marginTop: "80px"}}>
+      {basicComplete && <div style={{ display: "flex", justifyContent: "center" }}>
+      <Link
+        to="/results-page"
+        onClick={() => setPage("Results-Page")}
+        >
+        <Button className="flashy-button">Results</Button>
+      </Link>
+      </div>}
     </div>
+    <div style={{ display: "flex", justifyContent: "center", marginTop: "2px"}}>
+      <BasicSave savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer}/>
+      <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic}/>
+      <BasicClear/>
+      </div>
       </div>
     </div>
   );
