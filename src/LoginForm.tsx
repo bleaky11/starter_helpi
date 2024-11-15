@@ -17,6 +17,7 @@ export interface LoginFormProps {
   setSelect: (value: React.SetStateAction<string>) => void;
   formTitle: string;
   setFormTitle: React.Dispatch<React.SetStateAction<string>>;
+  decryptUsername: (encryptedPassword: string, iv: string) => string;
   decryptPassword: (encryptedPassword: string, iv: string) => string;
   passwordPlaceholder: string;
   setPlaceholder: React.Dispatch<React.SetStateAction<string>>;
@@ -43,6 +44,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   setSelect,
   formTitle,
   setFormTitle,
+  decryptUsername,
   decryptPassword,
   passwordPlaceholder,
   setPlaceholder,

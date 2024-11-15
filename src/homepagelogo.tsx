@@ -87,6 +87,11 @@ const encryptPassword = (password: string) => {
   return { encryptedPassword: encrypted, iv: iv.toString() };
 };
 
+const decryptUsername = (encryptedUsername: string, iv: string) => { 
+  const bytes = CryptoJS.AES.decrypt(encryptedUsername, secretKey, { iv: CryptoJS.enc.Hex.parse(iv) }); // parse IV into readable form
+  return bytes.toString(CryptoJS.enc.Utf8); 
+}
+
 const decryptPassword = (encryptedPassword: string, iv: string) => { // decrypt the user password for log in purposes
   const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey, { iv: CryptoJS.enc.Hex.parse(iv) }); // parse IV into readable form
   return bytes.toString(CryptoJS.enc.Utf8); 
@@ -146,7 +151,7 @@ const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) =>
 }
 
 const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: string, savedPasswordIV: string, savedUsernameIV: string, userInput: string, passInput: string) => {
-  const decryptedUsername = decryptPassword(savedEncryptedUsername, savedUsernameIV); // Decrypt the username
+  const decryptedUsername = decryptUsername(savedEncryptedUsername, savedUsernameIV); // Decrypt the username
   if (decryptedUsername === userInput) {
     const decryptedPassword = decryptPassword(savedEncryptedPassword, savedPasswordIV); // Decrypt the password
     return decryptedPassword.trim() === passInput.trim();
@@ -305,8 +310,9 @@ const updateSavedUsers = () => {
       if (rememberedAccounts.length > 1) { 
         const account = rememberedAccounts[0];  // Select the first remembered account
         const decryptedPassword = decryptPassword(account.password, account.iv); 
+        const decryptedUsername = decryptUsername(account.username, account.iv);
         setUserInfo({
-          username: account.username,
+          username: decryptedUsername,
           password: decryptedPassword,  
           remembered: account.remembered,
         });
@@ -434,6 +440,7 @@ const updateSavedUsers = () => {
         closeForm={toggleForm}
         formTitle={formTitle}
         setFormTitle={setFormTitle}
+        decryptUsername = {decryptUsername}
         decryptPassword={decryptPassword}
         passwordPlaceholder={passwordPlaceholder}
         setPlaceholder={setPlaceholder}
