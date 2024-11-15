@@ -20,7 +20,7 @@ export const HomePage: React.FC = () => {
 
   const CryptoJS = require("crypto-js");
 
-  const secretKey = process.env.REACT_APP_SECRET_KEY; // private password for the encryption algorithmn
+  const secretKey = process.env.REACT_APP_SECRET_KEY;
 
   useEffect(() => {
     if (!secretKey) {
@@ -73,6 +73,13 @@ export const HomePage: React.FC = () => {
     Secret Key: A private password for Advanced Encryption Standard (AES)
     Initialized Vector (IV): unique random string used to control encyption output. Prevents hackers from recognizing patterns.
 */
+
+const encryptUsername = (username: string) => 
+{
+  const iv = CryptoJS.lib.WordArray.random(16); // Generate a new random IV
+  const encrypted = CryptoJS.AES.encrypt(username, secretKey, { iv: iv }).toString();
+  return {encryptedUsername: encrypted, iv: iv.toString()};
+}
 
 const encryptPassword = (password: string) => {
   const iv = CryptoJS.lib.WordArray.random(16); // Generate a new random IV
@@ -138,11 +145,11 @@ const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) =>
   setCalled(event.target.value);
 }
 
-const checkInfo = (savedUsername: string, savedEncryptedPassword: string, savedIV: string, userInput: string, passInput: string) => // checks if log in input matches user credentials
-{
-  if (userInput === savedUsername) {
-      const decryptedPassword = decryptPassword(savedEncryptedPassword, savedIV); // decrypt password to compare
-      return decryptedPassword.trim() === passInput.trim()
+const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: string, savedPasswordIV: string, savedUsernameIV: string, userInput: string, passInput: string) => {
+  const decryptedUsername = decryptPassword(savedEncryptedUsername, savedUsernameIV); // Decrypt the username
+  if (decryptedUsername === userInput) {
+    const decryptedPassword = decryptPassword(savedEncryptedPassword, savedPasswordIV); // Decrypt the password
+    return decryptedPassword.trim() === passInput.trim();
   } else {
     return false;
   }
@@ -167,9 +174,9 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
       if (existingUser) {
         if (formTitle === "Log in") {
-          const { username, password: encryptedPassword, iv, remembered } = existingUser;
+          const { username: encryptedUsername, password: encryptedPassword, iv, remembered, usernameIV } = existingUser;
 
-          if (checkInfo(username, encryptedPassword, iv, userInfo.username, userInfo.password)) {
+          if (checkInfo(encryptedUsername, encryptedPassword, iv, usernameIV, userInfo.username, userInfo.password)) {
             setIsLoggedIn(true);
             if (remember !== remembered) {
               existingUser.remembered = remember;
@@ -190,8 +197,16 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           clearForm();
         }
       } else if (formTitle === "Create Account") {
-        const { encryptedPassword, iv } = encryptPassword(userInfo.password);
-        const newUser = { ...userInfo, password: encryptedPassword, iv, remembered: remember };
+        const { encryptedPassword, iv: passwordIV } = encryptPassword(userInfo.password);
+        const { encryptedUsername, iv: usernameIV } = encryptUsername(userInfo.username);
+
+        const newUser = { 
+          username: encryptedUsername, 
+          password: encryptedPassword, 
+          iv: passwordIV, 
+          remembered: remember,
+          usernameIV: usernameIV // Store the IV for the username
+        };
 
         store.put(newUser).onsuccess = () => {
           alert("Account created successfully!");
