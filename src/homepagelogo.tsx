@@ -433,7 +433,7 @@ const updateSavedUsers = () => {
     )}
   
     {/* Fixed Career Quiz Link */}
-    <div style={{ position: 'absolute', left: '595px', top: '50%', transform: 'translateY(-50%)' }}>
+    <div style={{ marginTop: '10px', transform: 'translateY(-50%)' }}>
       <a
         href="https://bleaky11.github.io/starter_helpi/"
         style={{ color: 'black', fontSize: '40px', textDecoration: 'none' }}

@@ -69,10 +69,10 @@ export function MainPage({
             
         </Container>
         <Container>
-          <Row style={{width: "100%"}}>
+          <Row style={{width: "100%", height: "auto"}}>
             <Col
               className="Bordered"
-              style={{ display: "flex", flexDirection: "column", width: "45%" }}
+              style={{ display: "flex", flexDirection: "column", width: "45%", height: "auto" }}
             >
               <div style={{ flex: 1 }}>
                 <div><h2>Basic Career Assessment</h2></div>
@@ -143,7 +143,7 @@ export function MainPage({
             </Col>
             <Col
               className="Bordered"
-              style={{ display: "flex", flexDirection: "column", width: "45%" }}
+              style={{ display: "flex", flexDirection: "column", width: "45%", height: "auto" }}
             >
               <div style={{ flex: 1 }}>
                 <h2>Detailed Career Assessment</h2>

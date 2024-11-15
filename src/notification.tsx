@@ -44,7 +44,7 @@ export function NotifBell({basicComplete, detailedComplete}: submitButton): JSX.
             }
         }
     }
-    return (<div className="container" style={{width: "10%", margin: "0px", backgroundColor: "#FDF6C3", borderRadius: "7px", right: "2%",
+    return (<div className="container" style={{width: "15%", margin: "0px", backgroundColor: "#FDF6C3", borderRadius: "7px", right: "2%",
         top:"5px",
         position:"absolute"}}>
         <div>
