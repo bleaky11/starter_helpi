@@ -44,7 +44,7 @@ export function MainPage({
         
         <Container>
           <Col className="ResultBorder" >
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 2 }}>
                 <h2>Results Page</h2>
                 <h6 className="Body-Heading" style={{fontSize: "16px" }}>
                   Results of the quiz will be displayed after completing basic and/or detailed question
@@ -53,7 +53,7 @@ export function MainPage({
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 {!basicComplete && !detailedComplete ? (
                   <div>
-                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Results</Button>
+                    <Button className="Button" disabled={true}>Results</Button>
                     <h6>Please complete a Quiz!</h6>
                   </div>
                 ) : (
@@ -61,11 +61,12 @@ export function MainPage({
                     to="/results-page"
                     onClick={() => setPage("Results-Page")}
                   >
-                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Results</Button>
+                    <Button className="flashy-button">Results</Button>
                   </Link>
                 )}
               </nav>
             </Col>
+            
         </Container>
         <Container>
           <Row style={{width: "100%"}}>
@@ -116,7 +117,7 @@ export function MainPage({
                       to="/basic-questions"
                       onClick={() => setPage("Basic-Questions")}
                     >
-                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions</Button>
+                      <Button className="Button">Basic Questions</Button>
                     </Link>
                   ) : /* Case 3: Returning visit with saved progress but no API key entered */
                   localStorage.getItem("quizProgress") &&
@@ -134,7 +135,7 @@ export function MainPage({
                       to="/basic-questions"
                       onClick={() => setPage("Basic-Questions")}
                     >
-                      <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Basic Questions (Last Save)</Button>
+                      <Button className="Button">Basic Questions (Last Save)</Button>
                     </Link>
                   ) : null}
                 </nav>
@@ -196,7 +197,7 @@ export function MainPage({
                     to="/detailed-questions"
                     onClick={() => setPage("Detailed-Questions")}
                   >
-                    <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Detailed Questions</Button>
+                    <Button className="Button">Detailed Questions</Button>
                   </Link>
                 )}
               </nav>
