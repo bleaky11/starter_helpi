@@ -356,10 +356,10 @@ const updateSavedUsers = () => {
     toggleForm();
   }; 
 
-  return (<div style={{ height: '100px', display: "flex", justifyContent: "flex-start", alignItems: "center", position: 'relative'}}>
-    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+  return (<div style={{ height: '100px', display: "flex", alignItems: "center", position:'relative' }}>
+    <div style={{position:'absolute', zIndex: 5 }}>
       {isLoggedIn ? (
-        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "10px" }}>
+        <div style={{ gap: "10px" }}>
           <img
             src={detective} // default profile picture
             alt="detective profile"
@@ -367,7 +367,7 @@ const updateSavedUsers = () => {
             onClick={() => showForm("Create Account")}
             title={userInfo.username}
           />
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
+          <div style={{ gap: "10px" }}>
             <Button
               style={{ borderRadius: "20px", backgroundColor: "salmon" }}
               onClick={handleLogout}
@@ -386,7 +386,7 @@ const updateSavedUsers = () => {
           </div>
         </div>
       ) : (
-        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+        <div style={{ }}>
           <img
             src={userProfile}
             alt="User Profile"
@@ -433,10 +433,10 @@ const updateSavedUsers = () => {
     )}
   
     {/* Fixed Career Quiz Link */}
-    <div style={{ position: 'absolute', left: '595px', top: '50%', transform: 'translateY(-50%)' }}>
+    <div style={{flexGrow:'2', textAlign:'center', position:'relative', zIndex: 1}}>
       <a
         href="https://bleaky11.github.io/starter_helpi/"
-        style={{ color: 'black', fontSize: '40px', textDecoration: 'none' }}
+        style={{ color: 'black', fontSize: '40px', textDecoration: 'none',  }}
       >
         The Career Codebreaker
       </a>
