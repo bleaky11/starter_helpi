@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import detective from './Images/detective-profile.png';
 import { LoginForm } from './LoginForm';
-import { Button} from 'react-bootstrap';
+import { Button, Col, Row} from 'react-bootstrap';
 
 export const HomePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -356,8 +356,9 @@ const updateSavedUsers = () => {
     toggleForm();
   }; 
 
-  return (<div style={{ height: '100px', display: "flex", justifyContent: "flex-start", alignItems: "center", position: 'relative'}}>
-    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+  return (<div style={{ height: 'auto', display: "flex", justifyContent: "flex-start", alignItems: "center", position: 'relative', textAlign:"center", width:"100%"}}>
+   <Row style={{width:"100%", display:"flex",flexDirection:"column"}}><Col>
+    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", width:"45%" }}>
       {isLoggedIn ? (
         <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "10px" }}>
           <img
@@ -395,7 +396,7 @@ const updateSavedUsers = () => {
             title="Guest" // default visitor status
           />
           <Button
-            style={{ borderRadius: "20px", height: "40px", backgroundColor: "darkblue" }}
+            style={{ borderRadius: "20px", height: "100%", backgroundColor: "darkblue" }}
             onClick={() => showForm("Log in")}
           >
             Log in
@@ -431,15 +432,20 @@ const updateSavedUsers = () => {
         updateCalledUser={updateCalledUser}
       />
     )}
-  
+  </Col>
+  </Row>
+
+    <Row style={{width:"100%", display:"flex",flexDirection:"column"}}><Col>
     {/* Fixed Career Quiz Link */}
-    <div style={{ marginTop: '10px', transform: 'translateY(-50%)' }}>
+    <div 
+    style={{ marginTop: '10px'}}
+    >
       <a
         href="https://bleaky11.github.io/starter_helpi/"
-        style={{ color: 'black', fontSize: '40px', textDecoration: 'none' }}
+        style={{ color: 'black', fontSize: '45px', textDecoration: 'none' }}
       >
         The Career Codebreaker
       </a>
-    </div>
+    </div></Col></Row>
   </div>
 )}  

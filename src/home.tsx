@@ -23,25 +23,11 @@ export function MainPage({
 }: HomeComponentProps): JSX.Element {
   return (
     <div className="App">
-                  <div className='Header-footer'>
-                <nav className="Centered">
-                    <Link to="/">
-                        <Button onClick={() => setPage("Home")}>Home</Button>
-                    </Link>
-                    <Link to="/basic-questions">
-                        <Button onClick={() => setPage("Basic-Questions")}>Basic Questions</Button>
-                    </Link>
-                    <Link to="/detailed-questions">
-                        <Button onClick={() => setPage("Detailed-Questions")}>Detailed Questions</Button>
-                    </Link>
-                    <NotifBell
+      <header className="App-header">
+        <NotifBell
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
         ></NotifBell>
-                </nav>
-            </div>
-      <header className="App-header">
-        
         <Container>
           <Col className="ResultBorder" >
               <div style={{ flex: 2 }}>
@@ -96,8 +82,7 @@ export function MainPage({
                 style={{
                   margin: "0 auto",
                   paddingBottom: "30px",
-                  width: "200px",
-                  height: "230px",
+                  width: "75%",
                 }}
               />
               </div>
