@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import {HashRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Button, Form } from 'react-bootstrap';
+import { Button, Col, Form } from 'react-bootstrap';
 import { BasicCareerComponent } from './basicCareer';
 import { DetailedCareerComponent } from './detailedCareer';
 import { HeaderComponent } from './header';
@@ -57,8 +57,9 @@ function App() {
         setQuestion={setQuestion}
       />
       {page === "Home" && (
-        <Form className='Header-footer'>
-          <Form.Label style={{ color: "white" }}>API Key:</Form.Label>
+        <div className='Header-footer' style={{paddingLeft:"20%",paddingRight:"20%"}}>
+        <Form>
+          <Form.Label style={{ color: "white"}}>API Key:</Form.Label>
           <Form.Control
             type="password"
             placeholder="Insert API Key Here"
@@ -68,7 +69,7 @@ function App() {
           <Button className="Button" onClick={handleSubmit}>
             Submit
           </Button>
-        </Form>
+        </Form></div>
       )}
     </Router>
   );

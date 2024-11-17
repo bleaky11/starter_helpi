@@ -49,10 +49,9 @@
 
 .notif-bell{
   width: auto;
-  height: 100px;
-  max-height: 15%;
-  right: 0%;
-  position: absolute;
+  height: 80px;
+  max-height: 75%;
+  padding: 2px;
   transition: transform 0.25s ease, width 0.25s ease;
 }
 
@@ -91,6 +90,10 @@
   border: 5px;
   border-color: #bc6c25;
   border-style: solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }
 
 .Background {
