@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/starter_helpi/static/css/main.25072339.css",
-    "main.js": "/starter_helpi/static/js/main.899768b9.js",
+    "main.css": "/starter_helpi/static/css/main.67c691be.css",
+    "main.js": "/starter_helpi/static/js/main.1a6dc8ce.js",
     "static/js/453.dda23872.chunk.js": "/starter_helpi/static/js/453.dda23872.chunk.js",
     "static/media/detective-profile.png": "/starter_helpi/static/media/detective-profile.47c139e74c55522bc773.png",
     "static/media/Questions.png": "/starter_helpi/static/media/Questions.baf323050048168249fe.png",
@@ -10,12 +10,12 @@
     "static/media/Detective2.png": "/starter_helpi/static/media/Detective2.e82d437746508369f2f7.png",
     "static/media/Detective.png": "/starter_helpi/static/media/Detective.36a652c320ea41a8d242.png",
     "index.html": "/starter_helpi/index.html",
-    "main.25072339.css.map": "/starter_helpi/static/css/main.25072339.css.map",
-    "main.899768b9.js.map": "/starter_helpi/static/js/main.899768b9.js.map",
+    "main.67c691be.css.map": "/starter_helpi/static/css/main.67c691be.css.map",
+    "main.1a6dc8ce.js.map": "/starter_helpi/static/js/main.1a6dc8ce.js.map",
     "453.dda23872.chunk.js.map": "/starter_helpi/static/js/453.dda23872.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.25072339.css",
-    "static/js/main.899768b9.js"
+    "static/css/main.67c691be.css",
+    "static/js/main.1a6dc8ce.js"
   ]
 }
