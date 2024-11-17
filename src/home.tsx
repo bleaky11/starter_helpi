@@ -80,9 +80,9 @@ export function MainPage({
                 src={magGlass}
                 alt="Magnifying Glass"
                 style={{
-                  margin: "0 auto",
+                  margin: "3px",
                   paddingBottom: "30px",
-                  width: "75%",
+                  width: "35%",
                 }}
               />
               </div>
@@ -152,7 +152,7 @@ export function MainPage({
                   src={detective}
                   alt="Detective"
                   style={{
-                    margin: "0 auto",
+                    margin: "3px",
                     paddingBottom: "30px",
                     width: "75%",
                     marginRight: "10px",
@@ -163,7 +163,7 @@ export function MainPage({
                   src={detective}
                   alt="Detective"
                   style={{
-                    margin: "0 auto",
+                    margin: "3px",
                     paddingBottom: "30px",
                     width: "75%",
                     marginRight: "40px",

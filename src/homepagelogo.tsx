@@ -356,7 +356,7 @@ const updateSavedUsers = () => {
     toggleForm();
   }; 
 
-  return (<div style={{ height: 'auto', display: "flex", justifyContent: "flex-start", alignItems: "center", position: 'relative', textAlign:"center", width:"100%"}}>
+  return (<div style={{ height: 'auto', display: "flex", justifyContent: "flex-start", alignItems: "center", position: 'relative', textAlign:"center", width:"100%", flexDirection:"column"}}>
    <Row style={{width:"100%", display:"flex",flexDirection:"column"}}><Col>
     <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", width:"45%" }}>
       {isLoggedIn ? (
@@ -442,7 +442,7 @@ const updateSavedUsers = () => {
     >
       <a
         href="https://bleaky11.github.io/starter_helpi/"
-        style={{ color: 'black', fontSize: '45px', textDecoration: 'none' }}
+        style={{ color: 'black', fontSize: '45px', textDecoration: 'none', fontFamily:"fantasy" }}
       >
         The Career Codebreaker
       </a>
