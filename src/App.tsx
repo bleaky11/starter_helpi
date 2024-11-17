@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import {HashRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Button, Col, Form } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import { BasicCareerComponent } from './basicCareer';
 import { DetailedCareerComponent } from './detailedCareer';
 import { HeaderComponent } from './header';
