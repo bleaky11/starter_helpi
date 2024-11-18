@@ -153,6 +153,7 @@ const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) =>
 
 const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: string, savedUsernameIV: string, savedPasswordIV: string, userInput: string, passInput: string) => {
   const decryptedUsername = decryptUsername(savedEncryptedUsername, savedUsernameIV);
+  console.log("Decrypted in checkInfo: ", decryptedUsername);
   if (decryptedUsername === userInput) {
     const decryptedPassword = decryptPassword(savedEncryptedPassword, savedPasswordIV);
     return decryptedPassword.trim() === passInput.trim();
@@ -177,12 +178,11 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const getAllRequest = store.getAll();
 
     getAllRequest.onsuccess = () => {
-      const allUsers = getAllRequest.result;
-
       // Attempt to find the matching user by decrypting each stored username
-      const matchingUser = allUsers.find((user: any) => {
-        const decryptedUsername = decryptUsername(user.username, user.ivUser);
-        return decryptedUsername === userInfo.username;
+      const matchingUser = accounts.find((account) => {
+          const decryptedUsername = decryptUsername(account.username, account.ivUser);
+          console.log(decryptedUsername);
+          return decryptedUsername === userInfo.username;
       });
 
       if (matchingUser) {
@@ -224,9 +224,9 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           alert("Account already exists. Please log in.");
           clearForm();
         }
-      } else if (formTitle === "Create Account") 
-        {
-    
+      }
+      else if (formTitle === "Create Account") 
+      {
         const { encryptedPassword, ivPass } = encryptPassword(userInfo.password);
         const { encryptedUsername, ivUser } = encryptUsername(userInfo.username);
 
@@ -290,29 +290,46 @@ const deleteAccount = async (username: string) => {
   if (db) {
     const transaction = db.transaction("users", "readwrite");
     const store = transaction.objectStore("users");
-
+    let userAccount: { username: string; password: string, remembered: boolean, ivUser: string, ivPass: string};
     if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
       try {
-        const getRequest = store.get(username);
+        // First, find the account by decrypting the username stored in the database
+        const getRequest = store.getAll();
 
         getRequest.onsuccess = async () => {
-          const userAccount = getRequest.result;
+          accounts.find((account) => {
+            if(decryptUsername(account.username, account.ivUser) === username)
+            {
+              userAccount = account;
+            }
+            return account.username === username});
+          if (userAccount) {
+            // Decrypt the stored username and compare it to the input username
+            const decryptedUsername = decryptUsername(userAccount.username, userAccount.ivUser);
+            console.log(`Decrypted Username: ${decryptedUsername}`);
 
-          if (userAccount && userAccount.remembered) {
-            removeFromDropdown(username); // Remove account from saved dropdown if remembered
+            if (decryptedUsername === username) {
+              // If the account's decrypted username matches the input, proceed with deletion
+              if (userAccount.remembered) {
+                removeFromDropdown(username); // Remove account from saved dropdown if remembered
+              }
+
+              const deleteRequest = store.delete(userAccount.username); // Use the encrypted username to delete
+              deleteRequest.onsuccess = () => {
+                handleLogout(); // Reset the login state
+                updateSavedUsers(); // Update saved accounts
+                alert("Account deleted!");
+              };
+
+              deleteRequest.onerror = () => {
+                console.error("Error deleting account");
+              };
+            } else {
+              console.error("No matching decrypted account found.");
+            }
+          } else {
+            console.error("Account not found");
           }
-
-          const deleteRequest = store.delete(username);
-
-          deleteRequest.onsuccess = () => {
-            handleLogout(); // Reset the login state
-            updateSavedUsers(); // Update saved accounts
-            alert("Account deleted!");
-          };
-
-          deleteRequest.onerror = () => {
-            console.error("Error deleting account");
-          };
         };
 
         getRequest.onerror = () => {
@@ -325,7 +342,7 @@ const deleteAccount = async (username: string) => {
   }
 };
     
-const updateSavedUsers = () => { 
+const updateSavedUsers = () => {
   if (db) {
     const transaction = db.transaction("users", "readonly");
     const store = transaction.objectStore("users");
@@ -333,26 +350,45 @@ const updateSavedUsers = () => {
 
     request.onsuccess = () => {
       const allAccounts = request.result;
+
+      // Ensure that request.result is not empty
+      if (!allAccounts || allAccounts.length === 0) {
+        console.log("No accounts found in the database.");
+        return;
+      }
+
       setAccounts(allAccounts); // Set all users for general access
 
       const rememberedAccounts = allAccounts.filter(account => account.remembered);
-      if (rememberedAccounts.length > 1) { 
+
+      // Check if there are any remembered accounts and if data is valid
+      if (rememberedAccounts.length > 0) {
         const account = rememberedAccounts[0];  // Select the first remembered account
-        const decryptedPassword = decryptPassword(account.password, account.iv); 
-        const decryptedUsername = decryptUsername(account.username, account.iv);
-        setUserInfo({
-          username: decryptedUsername,
-          password: decryptedPassword,  
-          remembered: account.remembered,
-        });
-        setSelect(account.username);  // Update the dropdown to show the remembered username
+        
+        // Check if account properties exist before decrypting
+        if (account.password && account.iv && account.username && account.iv) {
+          const decryptedPassword = decryptPassword(account.password, account.iv);
+          const decryptedUsername = decryptUsername(account.username, account.iv);
+
+          setUserInfo({
+            username: decryptedUsername,
+            password: decryptedPassword,
+            remembered: account.remembered,
+          });
+          setSelect(account.username);  // Update the dropdown to show the remembered username
+        } 
       } else {
+        // If no remembered accounts, reset user info
         setUserInfo({
           username: userInfo.username,
           password: userInfo.password,
-          remembered: false, 
+          remembered: false,
         });
       }
+    };
+
+    request.onerror = () => {
+      console.error("Error fetching users from the database.");
     };
   }
 };
