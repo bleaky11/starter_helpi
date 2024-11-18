@@ -97,41 +97,57 @@ const decryptPassword = (encryptedPassword: string, iv: string) => { // decrypt 
   return bytes.toString(CryptoJS.enc.Utf8); 
 };
 
-const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // updates the password to be reset in the reset form
-  const placeholder = event.target.value; 
-  setPlaceholder(placeholder); 
-  
+const findUser = () => {
+  return accounts.find((account) => {
+    try {
+      const decryptedUsername = decryptUsername(account.username, account.ivUser);
+      return decryptedUsername === userInfo.username;
+    } catch (error) {
+      console.error("Decryption failed for account:", account, error);
+      return false; // Skip this account
+    }
+  });
+};
+
+const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Update the password to be reset in the reset form
+  const placeholder = event.target.value;
+  setPlaceholder(placeholder);
+
   const encrypted = encryptPassword(placeholder);
   const encryptedPassword = encrypted.encryptedPassword;
+
   setNewPassword(encryptedPassword);
-  
-  setUserInfo(prevState => ({ // updates user info
+
+  // Update user info
+  setUserInfo((prevState) => ({
     ...prevState,
     password: encryptedPassword,
   }));
-  
-  const usernameToUpdate = calledUsername;  // reset password for the called user
-  
-  if (db) {
+
+  // Find the matching account by decrypting usernames
+  const usernameToUpdate = findUser()?.username;
+
+  if (db && usernameToUpdate) {
     const transaction = db.transaction("users", "readwrite");
     const store = transaction.objectStore("users");
 
-    const getUserRequest = store.get(usernameToUpdate); 
-    
+    const getUserRequest = store.get(usernameToUpdate);
+
     getUserRequest.onsuccess = () => {
       const existingUser = getUserRequest.result;
-  
+
       if (existingUser) {
-        
+        // Update the password and IV in the database
         existingUser.password = encryptedPassword;
-        existingUser.ivPass = encryptedPassword.ivPass;
-        
-        const updateRequest = store.put(existingUser); // overwrites old password in database
-        
+        existingUser.ivPass = encrypted.ivPass; // Use the IV generated during encryption
+
+        const updateRequest = store.put(existingUser);
+
         updateRequest.onsuccess = () => {
-          updateSavedUsers();  // Update saved accounts
+          updateSavedUsers(); // Update saved accounts
         };
-  
+
         updateRequest.onerror = (event) => {
           console.error("Error updating password:", event);
         };
@@ -139,21 +155,25 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // upda
         console.error("User not found for updating password.");
       }
     };
-  
+
+    getUserRequest.onerror = (event) => {
+      console.error("Error fetching user for password update:", event);
+    };
+
     transaction.onerror = (event) => {
       console.error("Error accessing user store:", event);
     };
+  } else {
+    console.error("Database is not available or usernameToUpdate is undefined.");
   }
 };
 
-const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) =>
-{
+const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) => {
   setCalled(event.target.value);
-}
+};
 
 const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: string, savedUsernameIV: string, savedPasswordIV: string, userInput: string, passInput: string) => {
   const decryptedUsername = decryptUsername(savedEncryptedUsername, savedUsernameIV);
-  console.log("Decrypted in checkInfo: ", decryptedUsername);
   if (decryptedUsername === userInput) {
     const decryptedPassword = decryptPassword(savedEncryptedPassword, savedPasswordIV);
     return decryptedPassword.trim() === passInput.trim();
@@ -179,11 +199,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
     getAllRequest.onsuccess = () => {
       // Attempt to find the matching user by decrypting each stored username
-      const matchingUser = accounts.find((account) => {
-          const decryptedUsername = decryptUsername(account.username, account.ivUser);
-          console.log(decryptedUsername);
-          return decryptedUsername === userInfo.username;
-      });
+      const matchingUser = findUser();
 
       if (matchingUser) {
         const { username: storedEncryptedUsername, password: storedEncryptedPassword, ivPass, remembered, ivUser } = matchingUser;
@@ -290,50 +306,41 @@ const deleteAccount = async (username: string) => {
   if (db) {
     const transaction = db.transaction("users", "readwrite");
     const store = transaction.objectStore("users");
-    let userAccount: { username: string; password: string, remembered: boolean, ivUser: string, ivPass: string};
+
     if (window.confirm("Are you sure you want to delete your account? This can't be undone!")) {
       try {
-        // First, find the account by decrypting the username stored in the database
+        // Fetch all accounts from the database
         const getRequest = store.getAll();
 
         getRequest.onsuccess = async () => {
-          accounts.find((account) => {
-            if(decryptUsername(account.username, account.ivUser) === username)
+          // Use the find method to locate the account with a matching decrypted username
+          const userAccount = findUser();
+
+          // Proceed if the account is found
+          if (userAccount) 
             {
-              userAccount = account;
+            if (userAccount.remembered) {
+              removeFromDropdown(username);
             }
-            return account.username === username});
-          if (userAccount) {
-            // Decrypt the stored username and compare it to the input username
-            const decryptedUsername = decryptUsername(userAccount.username, userAccount.ivUser);
-            console.log(`Decrypted Username: ${decryptedUsername}`);
+            // Delete the account using its encrypted username
+            const deleteRequest = store.delete(userAccount.username);
 
-            if (decryptedUsername === username) {
-              // If the account's decrypted username matches the input, proceed with deletion
-              if (userAccount.remembered) {
-                removeFromDropdown(username); // Remove account from saved dropdown if remembered
-              }
+            deleteRequest.onsuccess = () => {
+              handleLogout(); // Reset the login state
+              updateSavedUsers(); // Update saved accounts
+              alert("Account deleted!");
+            };
 
-              const deleteRequest = store.delete(userAccount.username); // Use the encrypted username to delete
-              deleteRequest.onsuccess = () => {
-                handleLogout(); // Reset the login state
-                updateSavedUsers(); // Update saved accounts
-                alert("Account deleted!");
-              };
-
-              deleteRequest.onerror = () => {
-                console.error("Error deleting account");
-              };
-            } else {
-              console.error("No matching decrypted account found.");
-            }
+            deleteRequest.onerror = () => {
+              console.error("Error deleting account");
+            };
           } else {
             console.error("Account not found");
           }
         };
 
         getRequest.onerror = () => {
-          console.error("Error fetching account");
+          console.error("Error fetching accounts");
         };
       } catch (error) {
         console.error("An error occurred while deleting the account:", error);
@@ -353,7 +360,6 @@ const updateSavedUsers = () => {
 
       // Ensure that request.result is not empty
       if (!allAccounts || allAccounts.length === 0) {
-        console.log("No accounts found in the database.");
         return;
       }
 
