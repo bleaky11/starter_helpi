@@ -11,7 +11,7 @@ export const HomePage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
-  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, iv: string }[]>([]);
+  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, ivUser: string, ivPass: string }[]>([]);
   const [selectedUser, setSelect] = useState("Select a saved user");
   const [passwordPlaceholder, setPlaceholder] = useState<string>(""); // a blank input space for the reset form
   const [newPassword, setNewPassword] = useState<string>("");
@@ -52,7 +52,7 @@ export const HomePage: React.FC = () => {
   
           getAllRequest.onsuccess = () => {
             const allUsers = getAllRequest.result;
-            const defaultAccount = { username: "Select a saved user", password: "", remember: true, iv: "" };
+            const defaultAccount = { username: "Select a saved user", password: "", remember: true, ivUser: "", ivPass: "" };
             setAccounts([defaultAccount, ...allUsers]);
             if(!isLoggedIn)
             {
@@ -67,7 +67,7 @@ export const HomePage: React.FC = () => {
       };
     };
     initializeDatabase(); // create/update database
-  }, [formTitle, isLoggedIn]);
+  }, [isLoggedIn]);
 
 /* Encrypt password and store both encrypted password and IV
     Secret Key: A private password for Advanced Encryption Standard (AES)
@@ -78,13 +78,13 @@ const encryptUsername = (username: string) =>
 {
   const iv = CryptoJS.lib.WordArray.random(16); // Generate a new random IV
   const encrypted = CryptoJS.AES.encrypt(username, secretKey, { iv: iv }).toString();
-  return {encryptedUsername: encrypted, iv: iv.toString()};
+  return {encryptedUsername: encrypted, ivUser: iv.toString()};
 }
 
 const encryptPassword = (password: string) => {
   const iv = CryptoJS.lib.WordArray.random(16); // Generate a new random IV
   const encrypted = CryptoJS.AES.encrypt(password, secretKey, { iv: iv }).toString();
-  return { encryptedPassword: encrypted, iv: iv.toString() };
+  return { encryptedPassword: encrypted, ivPass: iv.toString() };
 };
 
 const decryptUsername = (encryptedUsername: string, iv: string) => { 
@@ -124,6 +124,7 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // upda
       if (existingUser) {
         
         existingUser.password = encryptedPassword;
+        existingUser.ivPass = encryptedPassword.ivPass;
         
         const updateRequest = store.put(existingUser); // overwrites old password in database
         
@@ -150,10 +151,10 @@ const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) =>
   setCalled(event.target.value);
 }
 
-const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: string, savedPasswordIV: string, savedUsernameIV: string, userInput: string, passInput: string) => {
-  const decryptedUsername = decryptUsername(savedEncryptedUsername, savedUsernameIV); // Decrypt the username
+const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: string, savedUsernameIV: string, savedPasswordIV: string, userInput: string, passInput: string) => {
+  const decryptedUsername = decryptUsername(savedEncryptedUsername, savedUsernameIV);
   if (decryptedUsername === userInput) {
-    const decryptedPassword = decryptPassword(savedEncryptedPassword, savedPasswordIV); // Decrypt the password
+    const decryptedPassword = decryptPassword(savedEncryptedPassword, savedPasswordIV);
     return decryptedPassword.trim() === passInput.trim();
   } else {
     return false;
@@ -172,27 +173,49 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const transaction = db.transaction("users", "readwrite");
     const store = transaction.objectStore("users");
 
-    const userQuery = store.get(userInfo.username);
+    // Retrieve all users from the database
+    const getAllRequest = store.getAll();
 
-    userQuery.onsuccess = () => {
-      const existingUser = userQuery.result;
+    getAllRequest.onsuccess = () => {
+      const allUsers = getAllRequest.result;
 
-      if (existingUser) {
+      // Attempt to find the matching user by decrypting each stored username
+      const matchingUser = allUsers.find((user: any) => {
+        const decryptedUsername = decryptUsername(user.username, user.ivUser);
+        return decryptedUsername === userInfo.username;
+      });
+
+      if (matchingUser) {
+        const { username: storedEncryptedUsername, password: storedEncryptedPassword, ivPass, remembered, ivUser } = matchingUser;
+
         if (formTitle === "Log in") {
-          const { username: encryptedUsername, password: encryptedPassword, iv, remembered, usernameIV } = existingUser;
+          // Validate username and password
+          const isValid = checkInfo(
+            storedEncryptedUsername,
+            storedEncryptedPassword,
+            ivUser,
+            ivPass,
+            userInfo.username,
+            userInfo.password
+          );
 
-          if (checkInfo(encryptedUsername, encryptedPassword, iv, usernameIV, userInfo.username, userInfo.password)) {
+          if (isValid) {
             setIsLoggedIn(true);
+
+            // Update remembered status if needed
             if (remember !== remembered) {
-              existingUser.remembered = remember;
-              const updateRequest = store.put(existingUser); // change remembered field of user if changed
-              updateRequest.onsuccess = () => updateSavedUsers(); // save changes
-              updateRequest.onerror = (event) => console.error("Error updating remembered status:", event);
+              matchingUser.remembered = remember;
+              const updateRequest = store.put(matchingUser);
+              updateRequest.onsuccess = () => updateSavedUsers();
+              updateRequest.onerror = (event) =>
+                console.error("Error updating remembered status:", event);
             } else {
-              updateSavedUsers(); // update regardless if updateSavedUsers() finds no remembered accounts
+              updateSavedUsers();
             }
+
+            // Remove from dropdown if "Remember me" is not checked
             if (!remember) {
-              removeFromDropdown(userInfo.username); // remove saved account when not remembered
+              removeFromDropdown(userInfo.username);
             }
           } else {
             alert("Incorrect username or password.");
@@ -201,16 +224,18 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           alert("Account already exists. Please log in.");
           clearForm();
         }
-      } else if (formTitle === "Create Account") {
-        const { encryptedPassword, iv: passwordIV } = encryptPassword(userInfo.password);
-        const { encryptedUsername, iv: usernameIV } = encryptUsername(userInfo.username);
+      } else if (formTitle === "Create Account") 
+        {
+    
+        const { encryptedPassword, ivPass } = encryptPassword(userInfo.password);
+        const { encryptedUsername, ivUser } = encryptUsername(userInfo.username);
 
-        const newUser = { 
-          username: encryptedUsername, 
-          password: encryptedPassword, 
-          iv: passwordIV, 
+        const newUser = {
+          username: encryptedUsername,
+          password: encryptedPassword,
+          ivPass: ivPass,
           remembered: remember,
-          usernameIV: usernameIV // Store the IV for the username
+          ivUser: ivUser,
         };
 
         store.put(newUser).onsuccess = () => {
@@ -222,6 +247,10 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         alert("Username doesn't exist!");
         clearForm();
       }
+    };
+
+    getAllRequest.onerror = () => {
+      console.error("Error fetching users from the database.");
     };
   }
 };

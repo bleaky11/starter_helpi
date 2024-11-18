@@ -12,13 +12,13 @@ export interface LoginFormProps {
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemember: () => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  accounts: { username: string; password: string; remembered: boolean; iv: string }[];
+  accounts: { username: string; password: string; remembered: boolean; ivUser:string, ivPass: string }[];
   selectedUser: string;
   setSelect: (value: React.SetStateAction<string>) => void;
   formTitle: string;
   setFormTitle: React.Dispatch<React.SetStateAction<string>>;
-  decryptUsername: (encryptedPassword: string, iv: string) => string;
-  decryptPassword: (encryptedPassword: string, iv: string) => string;
+  decryptUsername: (encryptedPassword: string, ivUser: string) => string;
+  decryptPassword: (encryptedPassword: string, ivPass: string) => string;
   passwordPlaceholder: string;
   setPlaceholder: React.Dispatch<React.SetStateAction<string>>;
   isPasswordReset: boolean;
@@ -57,32 +57,35 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   updateCalledUser
 }) => {
 
-  useEffect(() => {  
-    // displays saved credentials for dropdown for selected user
+  useEffect(() => {
+    // Displays saved credentials for dropdown for selected user
     if (formTitle === "Log in" && selectedUser && accounts.length > 0) {
-      const selectedAccount = accounts.find(account => account.username === selectedUser); // show saved user credentials if found
+      const selectedAccount = accounts.find(account => account.username === selectedUser // Compare decrypted username
+      );
       if (selectedAccount) {
-        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
+        const decryptedUsername = decryptUsername(selectedAccount.username, selectedAccount.ivUser);
+        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.ivPass);
         if (
-          userInfo.username !== selectedAccount.username || // compares old select to new selected user to update if needed
+          userInfo.username !== decryptedUsername || // Compare decrypted username
           userInfo.password !== decryptedPassword ||
           userInfo.remembered !== selectedAccount.remembered
         ) {
-          setUserInfo({ 
-            username: selectedAccount.username,
+          setUserInfo({
+            username: decryptedUsername, // Use decrypted username
             password: decryptedPassword,
             remembered: selectedAccount.remembered ?? false,
           });
         }
       }
     }
-  }, [formTitle, selectedUser, accounts, decryptPassword, setUserInfo, userInfo, remember]);  
-
+  }, [formTitle, selectedUser, accounts, decryptUsername, decryptPassword, setUserInfo, userInfo, remember]);
+  
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
     setSelect(selectedUsername);
     setCalled(selectedUsername);
-    if (selectedUsername === "") { // reset to no saved user selected
+  
+    if (selectedUsername === "") {
       setUserInfo({
         username: "",
         password: "",
@@ -90,10 +93,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       });
     } else {
       const selectedAccount = accounts.find(account => account.username === selectedUsername);
+  
       if (selectedAccount) {
-        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.iv);
+        const decryptedUsername = decryptUsername(selectedAccount.username, selectedAccount.ivUser);
+        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.ivPass);
         setUserInfo({
-          username: selectedAccount.username,
+          username: decryptedUsername, // Use decrypted username
           password: decryptedPassword,
           remembered: selectedAccount.remembered ?? false,
         });
@@ -136,15 +141,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <>
           <Form.Label>Saved Usernames</Form.Label>
           <Form.Select value={selectedUser} onChange={handleUserSelect}>
-            <option value="">Select a saved user</option> {/* Default placeholder */}
-            {accounts
-              .filter((account) => account.remembered) // Show remembered accounts
-              .map((user) => (
+          <option value="">Select a saved user</option> {/* Default placeholder */}
+          {accounts
+            .filter((account) => account.remembered) // Show remembered accounts
+            .map((user) => {
+              const decryptedUsername = decryptUsername(user.username, user.ivUser);
+              return (
                 <option key={user.username} value={user.username}>
-                  {user.username}
+                  {decryptedUsername} {/* Display decrypted username */}
                 </option>
-              ))}
-          </Form.Select>
+              );
+            })}
+        </Form.Select>
         </>
       )}
     </div>
@@ -216,17 +224,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             </>
           ) : (
             <>
-            <div style = {{marginTop: '10px', marginBottom: '10px'}}>
-            <Form.Label>Usernames</Form.Label>
-            <Form.Select value={selectedUser} onChange={handleUserSelect}>
-              {accounts.map((user) => (
-                <option key={user.username} value={user.username}>
-                  {user.username}
-                </option>
-              ))}
-            </Form.Select>
-            </div>
-
           <label htmlFor="resetUser"><b>Username</b></label>
           <input
             type="text"
