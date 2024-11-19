@@ -91,6 +91,10 @@
   border: 5px;
   border-color: #bc6c25;
   border-style: solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }
 
 .Background {

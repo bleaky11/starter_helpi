@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import detective from './Images/detective-profile.png';
 import { LoginForm } from './LoginForm';
-import { Button} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
-export const HomePage: React.FC = () => {
+export const HomePage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: false});
   const [remember, setRemember] = useState(false);
@@ -430,10 +430,10 @@ const updateSavedUsers = () => {
     toggleForm();
   }; 
 
-  return (<div style={{ height: '100px', display: "flex", justifyContent: "flex-start", alignItems: "center", position: 'relative'}}>
-    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+  return (<div style={{ height: '100px', display: "flex", alignItems: "center", position:'relative' }}>
+    <div style={{position:'absolute', zIndex: 5 }}>
       {isLoggedIn ? (
-        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "10px" }}>
+        <div style={{ gap: "10px" }}>
           <img
             src={detective} // default profile picture
             alt="detective profile"
@@ -441,7 +441,7 @@ const updateSavedUsers = () => {
             onClick={() => showForm("Create Account")}
             title={userInfo.username}
           />
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
+          <div style={{ gap: "10px" }}>
             <Button
               style={{ borderRadius: "20px", backgroundColor: "salmon" }}
               onClick={handleLogout}
@@ -460,7 +460,7 @@ const updateSavedUsers = () => {
           </div>
         </div>
       ) : (
-        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+        <div style={{ }}>
           <img
             src={userProfile}
             alt="User Profile"
@@ -469,7 +469,7 @@ const updateSavedUsers = () => {
             title="Guest" // default visitor status
           />
           <Button
-            style={{ borderRadius: "20px", height: "40px", backgroundColor: "darkblue" }}
+            style={{ borderRadius: "20px", height: "100%", backgroundColor: "darkblue" }}
             onClick={() => showForm("Log in")}
           >
             Log in
@@ -506,12 +506,11 @@ const updateSavedUsers = () => {
         updateCalledUser={updateCalledUser}
       />
     )}
-  
     {/* Fixed Career Quiz Link */}
-    <div style={{ position: 'absolute', left: '595px', top: '50%', transform: 'translateY(-50%)' }}>
+    <div style={{flexGrow:'1', textAlign:'center', position:'relative', zIndex: 1, marginTop: '15px'}}>
       <a
         href="https://bleaky11.github.io/starter_helpi/"
-        style={{ color: 'black', fontSize: '40px', textDecoration: 'none' }}
+        style={{ color: 'black', fontSize: '45px', textDecoration: 'none', fontFamily:"fantasy" }}
       >
         The Career Codebreaker
       </a>

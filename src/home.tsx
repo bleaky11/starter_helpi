@@ -23,7 +23,7 @@ export function MainPage({
 }: HomeComponentProps): JSX.Element {
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header"> 
         <NotifBell
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
