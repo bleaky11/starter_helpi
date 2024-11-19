@@ -24,7 +24,7 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
   const [questions, setQuestions] = useState<Question[]>([]);
   const [progress, setProgress] = useState<number>(0);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
-
+  const [responses, setResponses] = useState<string[]>([]);
 
   const currentQuestion = questions.find(q => q.page === questionPage); //Variable to track which question is displayed
   if(sessionStorage.getItem("quizAnswers") === null){
@@ -156,6 +156,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
 
   function getSavedAnswer(page: number) { //Helper function to get and display the user's saved answer from storage
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+    setResponses(savedAnswers);
     return savedAnswers[page] || ""; // Return the saved answer or an empty string if not present
   }
   

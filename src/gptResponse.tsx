@@ -7,6 +7,11 @@ interface taggedAnswer { //Interface to provide an array of key:value pairs for 
   tag: string;
 }
 
+export interface DetailedProps
+{
+  responses: string[];
+}
+
 
 // Function that takes in an API key (entered on homepage) and an array of key:value paired answers (provided by basic quiz), then
 // places the answers into a prompt. Prompt is sent to chatGPT and first response is returned.
@@ -25,6 +30,7 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
     I prefer {noise} noise in my work environment, and I believe that communication is {communication}. 
     I am educated with a {education} and ideally I would like to make {salary} annually. 
     Lastly, I am {techComfort} with technology, I am {manualLabor} comfortable with manual labor, and I am interested in {STEM} when it comes to STEM.
+    Here is my response to these questions: 
     What would be some ideal career paths for me and why? Give me 5 careers including career name, salary, how to get started, and why it would appeal to me based on my responses.
     `;
 
