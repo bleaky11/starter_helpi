@@ -56,7 +56,7 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
     else{//If on homepage, display homepage component
         return(
         <div className='Header-footer' style={{textAlign: "center"}}>
-            <HomePage />
+            <HomePage/>
         </div>
         )
     }

@@ -49,9 +49,10 @@
 
 .notif-bell{
   width: auto;
-  height: 80px;
-  max-height: 75%;
-  padding: 2px;
+  height: 100px;
+  max-height: 15%;
+  right: 0%;
+  position: absolute;
   transition: transform 0.25s ease, width 0.25s ease;
 }
 
