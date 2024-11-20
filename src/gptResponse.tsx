@@ -7,12 +7,6 @@ interface taggedAnswer { //Interface to provide an array of key:value pairs for 
   tag: string;
 }
 
-export interface DetailedProps
-{
-  responses: string[];
-}
-
-
 // Function that takes in an API key (entered on homepage) and an array of key:value paired answers (provided by basic quiz), then
 // places the answers into a prompt. Prompt is sent to chatGPT and first response is returned.
 export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedAnswers: taggedAnswer[] }): JSX.Element {

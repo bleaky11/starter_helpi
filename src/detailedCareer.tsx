@@ -18,13 +18,19 @@ interface Question // Interface to handle question attributes
   tip?: string;
 }
 
+interface DetailedProps
+{
+  answers: {answer: string, tag: string}[];
+  setAnswerVals: (newState: {answer: string, tag: string}[]) => void;
+}
+
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
   const [questions, setQuestions] = useState<Question[]>([]);
   const [progress, setProgress] = useState<number>(0);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
-  const [responses, setResponses] = useState<string[]>([]);
+  const [responses, setResponses] = useState<string>("");
 
   const currentQuestion = questions.find(q => q.page === questionPage); //Variable to track which question is displayed
   if(sessionStorage.getItem("quizAnswers") === null){
@@ -67,13 +73,12 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
       updatedTempAnswers[parseInt(key)] = savedAnswers[key];
     });
     setTempAnswers(updatedTempAnswers);
-  
+
     // Calculate progress after setting questions
     const totalQuestions = storedQuestions.length;
-    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
-    const progressPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
+    const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0
     setProgress(progressPercentage);
-  
   }, []);
 
   function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
@@ -118,6 +123,8 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
   function handleSubmit({detailedComplete, toggleDetailed}: submitButton)
 {
   toggleDetailed(true);
+  setResponses("quizAnswers");
+  console.log(responses);
   alert("Thanks for completing the Detailed Career quiz!");
 }
 
@@ -154,11 +161,10 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
     </div>)
   }
 
-  function getSavedAnswer(page: number) { //Helper function to get and display the user's saved answer from storage
-    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-    setResponses(savedAnswers);
+  function getSavedAnswer(page: number) {
+    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");  
     return savedAnswers[page] || ""; // Return the saved answer or an empty string if not present
-  }
+  }  
   
   return (
     <div className="Background">
