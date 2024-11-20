@@ -13,10 +13,10 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
             <div className='Header-footer'>
                 <nav className="Centered">
                     <Link to="/">
-                        <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setPage("Home")}>Home</Button>
+                        <Button className="Button" onClick={() => setPage("Home")}>Home</Button>
                     </Link>
                     <Link to="/detailed-questions">
-                        <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setPage("Detailed-Questions")}>Detailed Questions</Button>
+                        <Button className="Button" onClick={() => setPage("Detailed-Questions")}>Detailed Questions</Button>
                     </Link>
                 </nav>
             </div>
@@ -27,10 +27,10 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
             <div className="Header-footer">
                 <nav className="Centered">
                     <Link to="/">
-                        <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setPage("Home")}>Home</Button>
+                        <Button className="Button" onClick={() => setPage("Home")}>Home</Button>
                     </Link>
                     <Link to="/basic-questions">
-                        <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setPage("Basic-Questions")}>Basic Questions</Button>
+                        <Button className="Button" onClick={() => setPage("Basic-Questions")}>Basic Questions</Button>
                     </Link>
                 </nav>
             </div>
@@ -41,13 +41,13 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
             <div className="Header-footer">
                 <nav className="Centered">
                     <Link to="/basic-questions">
-                        <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setPage("Basic-Questions")}>Basic Questions</Button>
+                        <Button className="Button" onClick={() => setPage("Basic-Questions")}>Basic Questions</Button>
                     </Link>
                     <Link to="/">
-                        <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setPage("Home")}>Home</Button>
+                        <Button className="Button" onClick={() => setPage("Home")}>Home</Button>
                     </Link>
                     <Link to="/detailed-questions">
-                        <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setPage("Detailed-Questions")}>Detailed Questions</Button>
+                        <Button className="Button" onClick={() => setPage("Detailed-Questions")}>Detailed Questions</Button>
                     </Link>
                 </nav>
             </div>
@@ -56,7 +56,7 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
     else{//If on homepage, display homepage component
         return(
         <div className='Header-footer' style={{textAlign: "center"}}>
-            <HomePage />
+            <HomePage/>
         </div>
         )
     }

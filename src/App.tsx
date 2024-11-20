@@ -57,18 +57,19 @@ function App() {
         setQuestion={setQuestion}
       />
       {page === "Home" && (
-        <Form className='Header-footer'>
-          <Form.Label style={{ color: "white" }}>API Key:</Form.Label>
+        <div className='Header-footer' style={{paddingLeft:"20%",paddingRight:"20%"}}>
+        <Form>
+          <Form.Label style={{ color: "white"}}>API Key:</Form.Label>
           <Form.Control
             type="password"
             placeholder="Insert API Key Here"
             onChange={changeKey}
           />
           <br />
-          <Button className="Submit-Button" style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}onClick={handleSubmit}>
+          <Button className="Button" onClick={handleSubmit}>
             Submit
           </Button>
-        </Form>
+        </Form></div>
       )}
     </Router>
   );
@@ -102,7 +103,8 @@ function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, to
     <>
       <HeaderComponent setPage={setPage} page={currentPage} />
       <Routes>
-        <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}  savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}/>} />
+        <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}  savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
+        setPage={setPage}/>} />
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed} />} />
         <Route path="/results-page" element={<ResultPage basicComplete={basicComplete} detailedComplete={detailedComplete} apiKey={apiKey} answerVals={answerVals}></ResultPage>} />
         <Route path="/" element={<MainPage setPage={setPage} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} apiKey={apiKey}/>} />

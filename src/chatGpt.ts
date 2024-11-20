@@ -1,3 +1,4 @@
+// Taken from chatgpt and edited to allow for custom questions and apikey inputs
 import axios from "axios";
 
 const API_URL = 'https://api.openai.com/v1/chat/completions';
