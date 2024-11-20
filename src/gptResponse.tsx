@@ -29,11 +29,11 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
     `;
 
     const detailedPromptTemplate = `
-    When I was younger, I always wanted to be a {aspiration] and my favorite class that I've taken was {class}.
+    When I was younger, I always wanted to be a {aspiration} and my favorite class that I've taken was {class}.
     Out of every societal issue, I think it's important to address {society}. In the past, I've disliked {dislike} about my jobs. 
     My favorite hobbies are {hobbies}, and a topic that I love so much I could teach someone about it is {topic}. The best words to describe me are {words}. 
     What would be some ideal career paths for me and why? Include career name, salary, how to get started, and why it would appeal to me as an individual.
-    `
+    `;
 
     return basicPromptTemplate.replace(/{(.*?)}/g, (match, tag) => { //Returns above template with user's answers in place of placeholders.
       return tagsMap[tag] || match;

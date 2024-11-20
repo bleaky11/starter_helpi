@@ -157,7 +157,10 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     handleBasicSave(); //Saves user's progress
     setBasicCareer("basicQuizAnswers"); //Sets state that tracks user's saved answers
     handleUpdateValues(); //Populates array to track user's answers to each question
+    const taggedAnswers = assignTagsToAnswers(promptValues);  // Assign tags to the answers
+    setAnswerVals(taggedAnswers);  // Set the state with the tagged answers
     alert("Thanks for completing the Basic Career quiz!");
+    console.log(answers)
   }
 
   const clearStorage = () => 
@@ -187,7 +190,8 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
     const taggedAnswers = assignTagsToAnswers(promptValues);
     setAnswerVals(taggedAnswers);
   }
-}, [assignTagsToAnswers, promptValues, setAnswerVals]);
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [promptValues]);
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element { //Submit button - Disabled if progress is less than 100%
     return(<div>
