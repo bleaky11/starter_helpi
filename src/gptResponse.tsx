@@ -11,7 +11,8 @@ interface taggedAnswer { //Interface to provide an array of key:value pairs for 
 // Function that takes in an API key (entered on homepage) and an array of key:value paired answers (provided by basic quiz), then
 // places the answers into a prompt. Prompt is sent to chatGPT and first response is returned.
 export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedAnswers: taggedAnswer[] }): JSX.Element {
-  const [message, setMessage] = useState<string>("Default");
+  const [message, setMessage] = useState<string>("Press the button to see your results!");
+  const [keyState, setKeyState] = useState<string>("Valid");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const generatePrompt = (taggedAnswers: taggedAnswer[]): string => { //Helper function that takes in the array of key:value paired answers and replaces each key in prompt template with the correlated value.
@@ -41,7 +42,9 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
       const formattedResponse = formatResponse(data.choices[0].message.content); // Format response
       setMessage(formattedResponse); // Set the formatted response from ChatGPT
     } catch (error) {
-      console.error("Error getting response from ChatGPT:", error); //Error handling
+      console.error("Error getting response from ChatGPT:", error); //Error handling\
+      setMessage("OpenAI API Key is invalid. Please Return to the homepage and enter a valid key.");
+      setKeyState("Invalid");
     } finally {
       setIsLoading(false); //Set loading state to false
     }
@@ -74,11 +77,18 @@ export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedA
       
       <div>
         <h2>Results:</h2>
+        {keyState === "Valid" ?
         <div
           dangerouslySetInnerHTML={{
             __html: message,
           }}
         />
+        :
+        <div style={{color:"red", fontSize:"large"}}>
+          {message}
+        </div>
+        
+        }
       </div>
     </div>
   );
