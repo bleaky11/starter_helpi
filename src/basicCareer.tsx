@@ -233,17 +233,18 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
   return (
     <div className="Background">
       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
+        <div style = {{display: "flex", justifyContent: "flex-end"}}>
         <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>
           Percent Complete: {progress.toFixed(0)}%
         </label>
         <progress
           id="question"
           value={progress}
+          style = {{height: "40px", width: "300px"}}
           max="100"
-          style={{ height: "45px", width: "300px", position: "relative" }}
         ></progress>
-        
-        <div style={{ position: "relative", width: "300px", height: "45px" }}>
+        </div>
+        <div style={{ position: "relative", height: "25px"}}>
           <img
             src={detectiveWalk}
             alt="detective-walking"
