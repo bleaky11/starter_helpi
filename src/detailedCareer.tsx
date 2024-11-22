@@ -18,27 +18,13 @@ interface Question // Interface to handle question attributes
   tip?: string;
 }
 
-<<<<<<< Updated upstream
-interface DetailedProps
-{
-  answers: {answer: string, tag: string}[];
-  setAnswerVals: (newState: {answer: string, tag: string}[]) => void;
-}
-
-export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: submitButton): JSX.Element {
-=======
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: submitButton): JSX.Element {
->>>>>>> Stashed changes
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
   const [questions, setQuestions] = useState<Question[]>([]);
   const [progress, setProgress] = useState<number>(0);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
-<<<<<<< Updated upstream
-  const [responses, setResponses] = useState<string>("");
-=======
   const [prompts, setPrompts] = useState<string[]>([]);
->>>>>>> Stashed changes
 
   const currentQuestion = questions.find(q => q.page === questionPage); //Variable to track which question is displayed
   if(sessionStorage.getItem("quizAnswers") === null){
@@ -49,18 +35,6 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
     const totalQuestions = questions.length;
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
     sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
-<<<<<<< Updated upstream
-    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
-    const progressPercentage = (answeredQuestions / totalQuestions) * 100;
-    setProgress(progressPercentage);
-  }, [questions]);
-
-  useEffect(() => { //Allows for each question to have a different answerbox while still being editable
-    const storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
-    if (storedQuestions.length > 0){
-      setQuestions(storedQuestions)
-    } else {
-=======
     setPrompts(savedAnswers);
     const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
     const progressPercentage = (answeredQuestions / totalQuestions) * 100;
@@ -75,7 +49,6 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
       sessionStorage.setItem("quizAnswers", JSON.stringify(newTags));
     } 
     else {
->>>>>>> Stashed changes
       const defaultQuestions = [
         { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
         { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
@@ -104,12 +77,8 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
     const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
     const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0
     setProgress(progressPercentage);
-<<<<<<< Updated upstream
-  }, []);
-=======
   
   }, [prompts]);
->>>>>>> Stashed changes
 
   function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
     if (currentQuestion) {
@@ -126,8 +95,6 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
     }
   }
 
-<<<<<<< Updated upstream
-=======
   function assignTags(prompts: string[]): {response: string, tag: number}[]
   {
     const copiedTags: { tag: number; response: string }[] = prompts.map((response, index) => ({
@@ -137,7 +104,6 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
     return copiedTags;
   }
   
->>>>>>> Stashed changes
   function handleAnswerChange(event: React.ChangeEvent<HTMLTextAreaElement>) { //Function to place a user's new answer in a temp variable to hold before recording
     setTempAnswers(prevAnswers => {
       const updatedAnswers = [...prevAnswers];
@@ -165,8 +131,6 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
   function handleSubmit({detailedComplete, toggleDetailed}: submitButton)
 {
   toggleDetailed(true);
-  setResponses("quizAnswers");
-  console.log(responses);
   alert("Thanks for completing the Detailed Career quiz!");
 }
 
