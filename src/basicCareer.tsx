@@ -4,11 +4,6 @@ import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 import { Link } from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
 
-// export interface AccountProps {
-//   accounts: { username: string; password: string; quiz: Question[]; remembered: boolean; iv: string }[];
-//   db: IDBDatabase | null;
-// }
-
 export interface SubmitButton {
   basicComplete: boolean;
   toggleBasic: (notBasic: boolean) => void;
