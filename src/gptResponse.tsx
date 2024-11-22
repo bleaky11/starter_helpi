@@ -33,16 +33,20 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers}: { apiKey:
     I prefer {noise} noise in my work environment, and I believe that communication is {communication}. 
     I am educated with a {education} and ideally I would like to make {salary} annually. 
     Lastly, I am {techComfort} with technology, I am {manualLabor} comfortable with manual labor, and I am interested in {STEM} when it comes to STEM.
-    Here is my response to these questions: 
     What would be some ideal career paths for me and why? Give me 5 careers including career name, salary, how to get started, and why it would appeal to me based on my responses.
     `;
 
     const detailedPromptTemplate = `When I was younger, I always wanted to be a {0} and my favorite class that I've taken was {1}. Out of every societal issue, 
     I think its important to address {2}. In the past, I’ve disliked {3} about my jobs. My favorite hobbies are {4}, and a topic that I love so much I could 
-    teach someone about it is {5}. The best words to describe me are {words}. What would be some ideal career paths for me and why? Include career name, salary, how to get started, 
+    teach someone about it is {5}. The best words to describe me are {6}. What would be some ideal career paths for me and why? Include career name, salary, how to get started, 
     and why it would appeal to me as an individual.`;
 
-    const fullPrompt = `${basicPromptTemplate}\n${detailedPromptTemplate}`;
+    let fullPrompt = basicPromptTemplate;
+
+    if(detailedAnswers.length > 0)
+    {
+      fullPrompt = `${basicPromptTemplate}\n${detailedPromptTemplate}`;
+    }
 
     return fullPrompt.replace(/{(.*?)}/g, (match, tag) => {
         return tagsMap[tag] || match; // Use tagsMap for both sets of placeholders
