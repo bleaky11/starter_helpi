@@ -18,15 +18,14 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers}: { apiKey:
   const [message, setMessage] = useState<string>("Default");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const generatePrompt = (taggedAnswers: taggedAnswer[], detailedAnswers: detailedAnswer[]): string => { //Helper function that takes in the array of key:value paired answers and replaces each key in prompt template with the correlated value.
+  const generatePrompt = (taggedAnswers: taggedAnswer[], detailedAnswers: detailedAnswer[]): string => {
     const tagsMap: { [key: string]: string } = {};
     taggedAnswers.forEach(({ answer, tag }) => {
-      tagsMap[tag] = answer;
+        tagsMap[tag] = answer; // Keys from taggedAnswers are strings
     });
 
-    const indexMap: { [key: string]: string } = {};
-  detailedAnswers.forEach(({ response, tag }) => {
-      tagsMap[tag] = response;
+    detailedAnswers.forEach(({ response, tag }) => {
+        tagsMap[tag.toString()] = response; // Convert numeric tag to string
     });
 
     const basicPromptTemplate = `
@@ -45,10 +44,10 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers}: { apiKey:
 
     const fullPrompt = `${basicPromptTemplate}\n${detailedPromptTemplate}`;
 
-    return fullPrompt.replace(/{(.*?)}/g, (match, tag) => { //Returns above template with user's answers in place of placeholders.
-      return tagsMap[tag] || indexMap[tag] || match;
+    return fullPrompt.replace(/{(.*?)}/g, (match, tag) => {
+        return tagsMap[tag] || match; // Use tagsMap for both sets of placeholders
     });
-  };
+};
 
   const handleSendMessage = async () => { //Handles sending and receiving response from chatGPT
     setIsLoading(true);
