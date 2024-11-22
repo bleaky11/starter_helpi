@@ -26,6 +26,10 @@ function App() {
   const [isKeyEntered] = useState<boolean>(JSON.parse(sessionStorage.getItem('isKeyEntered') || 'false')); // To track if user has entered an API Key
   const [question, setQuestion] = useState<string>('');
   const [answerVals, setAnswerVals] = useState<{answer: string, tag: string}[]>([]); // To track user's quiz responses
+<<<<<<< Updated upstream
+=======
+  const [responses, setResponses] = useState<{response: string, tag: number}[]>([]); // track detailed responses
+>>>>>>> Stashed changes
 
   function handleSubmit() {
     localStorage.setItem(saveKeyData, JSON.stringify(key));
@@ -95,7 +99,11 @@ interface MainContentProps {
 }
 
 function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered,
+<<<<<<< Updated upstream
    savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, apiKey, answerVals, setAnswerVals }: MainContentProps) {
+=======
+   savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, apiKey, answerVals, setAnswerVals}: MainContentProps) {
+>>>>>>> Stashed changes
   const location = useLocation();
   const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : (location.pathname === "/detailed-questions" ? "Detailed-Questions": "Results-Page"));
 
@@ -105,7 +113,11 @@ function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, to
       <Routes>
         <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}  savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
         setPage={setPage}/>} />
+<<<<<<< Updated upstream
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed} />} />
+=======
+        <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
+>>>>>>> Stashed changes
         <Route path="/results-page" element={<ResultPage basicComplete={basicComplete} detailedComplete={detailedComplete} apiKey={apiKey} answerVals={answerVals}></ResultPage>} />
         <Route path="/" element={<MainPage setPage={setPage} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} apiKey={apiKey}/>} />
         <Route path="*" element={<Navigate to="/" replace />} /> {/*Navigate to homepage if route is unrecognized*/}
