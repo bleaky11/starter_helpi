@@ -41,12 +41,22 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers}: { apiKey:
     teach someone about it is {5}. The best words to describe me are {6}. What would be some ideal career paths for me and why? Include career name, salary, how to get started, 
     and why it would appeal to me as an individual.`;
 
-    let fullPrompt = basicPromptTemplate;
+    let fullPrompt: string = '';
 
-    if(detailedAnswers.length > 0)
+    if(detailedAnswers.length > 0 && taggedAnswers.length > 0) // both quizzes are complete
     {
       fullPrompt = `${basicPromptTemplate}\n${detailedPromptTemplate}`;
     }
+    else if(detailedAnswers.length > 0 && taggedAnswers.length === 0) // detailed quiz only complete
+    {
+      fullPrompt = detailedPromptTemplate;
+    }
+    else
+    {
+      fullPrompt = basicPromptTemplate; // basic questions only complete
+    }
+
+    console.log(fullPrompt);
 
     return fullPrompt.replace(/{(.*?)}/g, (match, tag) => {
         return tagsMap[tag] || match; // Use tagsMap for both sets of placeholders
