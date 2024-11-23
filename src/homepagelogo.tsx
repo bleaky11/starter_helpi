@@ -55,6 +55,10 @@ export const HomePage = () => {
             const allUsers = getAllRequest.result;
             const defaultAccount = { username: "Select a saved user", password: "", remember: true, quiz: [], ivUser: "", ivPass: "" };
             const user = findUser(userInfo.username);
+            if(sessionStorage.getItem("loggedIn"))
+            {
+              setIsLoggedIn(true);
+            }
             if(user && isLoggedIn)
             {
               user.quiz = JSON.parse(localStorage.getItem("basicQuizAnswers") || "[]");
@@ -100,8 +104,7 @@ const decryptPassword = (encryptedPassword: string, iv: string) => { // decrypt 
   return bytes.toString(CryptoJS.enc.Utf8); 
 };
 
-const findUser = (username: string) => {
-  // Find the matching account by decrypting usernames
+const findUser = (username: string) => { // Find the matching account by decrypting usernames
   return accounts.find((account) => {
     try {
       const decryptedUsername = decryptUsername(account.username, account.ivUser);
@@ -214,6 +217,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
           if (isValid) {
             setIsLoggedIn(true);
+            sessionStorage.setItem("loggedIn", "true");
             if (remember !== remembered) {  // Update remembered status if needed
               matchingUser.remembered = remember;
               const updateRequest = store.put(matchingUser);
@@ -245,12 +249,14 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           password: encryptedPassword,
           ivPass: ivPass,
           remembered: remember,
+          quiz: [],
           ivUser: ivUser,
         };
 
         store.put(newUser).onsuccess = () => {
           alert("Account created successfully!");
           setIsLoggedIn(true);
+          sessionStorage.setItem("loggedIn", "true");
           updateSavedUsers();
         };
       } else {
