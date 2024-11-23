@@ -48,39 +48,9 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}]);
 
-    //const [userQuiz, setQuiz] = useState<Question[]>(questions);
-
     const handleBasicSave = () => {
       localStorage.setItem("basicQuizProgress", JSON.stringify(progress));
       localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
-      // if (db) {
-      //   const transaction = db.transaction("users", "readwrite");
-      //   const store = transaction.objectStore("users");
-  
-      //   const userRequest = store.get(accounts.map((account) => account.username));
-  
-      //   userRequest.onsuccess = function (event) {
-      //     const user = (event.target as IDBRequest).result;
-  
-      //     if (user) {
-      //       user.quiz = {
-      //         ...user.quiz,
-      //         progress,
-      //         answers: questions,
-      //       };
-  
-      //       const putRequest = store.put(user);
-  
-      //       putRequest.onsuccess = function () {
-      //         alert("Quiz progress saved successfully!");
-      //       };
-      //     }
-      //   };
-  
-      //   userRequest.onerror = function () {
-      //     alert("Database not available.");
-      //   };
-      // }
       if (progress < 100) {
         alert("Quiz saved!");
       }

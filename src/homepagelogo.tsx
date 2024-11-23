@@ -103,7 +103,6 @@ const findUser = () => { // Find the matching account by decrypting usernames
       const decryptedUsername = decryptUsername(account.username, account.ivUser);
       return decryptedUsername === userInfo.username;
     } catch (error) {
-      console.error("Decryption failed for account:", account, error);
       return false; // Skip this account
     }
   });
