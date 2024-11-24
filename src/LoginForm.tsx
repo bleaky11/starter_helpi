@@ -75,6 +75,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             password: decryptedPassword,
             remembered: selectedAccount.remembered ?? false,
           });
+          console.log(accounts);
         }
       }
     }
@@ -141,17 +142,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <>
           <Form.Label>Saved Usernames</Form.Label>
           <Form.Select value={selectedUser} onChange={handleUserSelect}>
-          <option value="">Select a saved user</option> {/* Default placeholder */}
+          <option value="">Select a saved user</option>
           {accounts
-            .filter((account) => account.remembered) // Show remembered accounts
-            .map((user) => {
-              const decryptedUsername = decryptUsername(user.username, user.ivUser);
-              return (
-                <option key={user.username} value={user.username}>
-                  {decryptedUsername} {/* Display decrypted username */}
-                </option>
-              );
-            })}
+          .filter(account => account.remembered && account.username?.trim()) 
+          .map(user => {
+            const decryptedUsername = decryptUsername(user.username, user.ivUser);
+            return (
+              <option key={user.username} value={user.username}>
+                {decryptedUsername}
+              </option>
+            );
+          })}
         </Form.Select>
         </>
       )}

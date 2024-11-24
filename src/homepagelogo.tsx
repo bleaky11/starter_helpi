@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import detective from './Images/detective-profile.png';
+import { initializeDatabase } from './db';
 import { LoginForm } from './LoginForm';
 import { Button } from 'react-bootstrap';
 import { Question } from './basicCareer';
@@ -30,51 +31,33 @@ export const HomePage = () => {
   }, [secretKey]);
 
   useEffect(() => {
-    const initializeDatabase = async () => {
-      const indexedDB = window.indexedDB;
-      const request = indexedDB.open("UserDatabase", 2);
-  
-      request.onerror = (event) => {
-        console.error("Error opening user database!", event);
-      };
-  
-      request.onupgradeneeded = (event) => {
-        const dbInstance = (event.target as IDBOpenDBRequest).result;
-        dbInstance.createObjectStore("users", { keyPath: "username" }); // creates or updates database: creates an objectStore if not found
-      };
-  
-      request.onsuccess = () => {
-        const dbInstance = request.result;
-        if (dbInstance) {
-          setDb(dbInstance); // save current db instance
-          const transaction = dbInstance.transaction("users", "readonly");
-          const store = transaction.objectStore("users");
-          const getAllRequest = store.getAll();
-  
-          getAllRequest.onsuccess = () => {
-            const allUsers = getAllRequest.result;
-            const defaultAccount = { username: "Select a saved user", password: "", remember: true, quiz: [], ivUser: "", ivPass: "" };
-            const user = findUser(userInfo.username);
-            if(sessionStorage.getItem("loggedIn"))
-            {
-              setIsLoggedIn(true);
-            }
-            if(user && isLoggedIn)
-            {
-              user.quiz = JSON.parse(localStorage.getItem("basicQuizAnswers") || "[]");
-            }
-            setAccounts([defaultAccount, ...allUsers]);
-          };
-        } else {
-          if (!localStorage.getItem("homeVisit")) { // save user visit to refresh saved accounts for next surf
-            localStorage.setItem("homeVisit", "true");
-          }
-        }
-      };
+    const fetchData = async () => {
+      try {
+        const dbInstance = await initializeDatabase();
+        const db = dbInstance as IDBDatabase;
+        setDb(db);
+    
+        const transaction = db.transaction("users", "readonly");
+        const store = transaction.objectStore("users");
+    
+        const getAllUsers = () =>
+          new Promise((resolve, reject) => {
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = (error) => reject(error);
+          });
+    
+        const allUsers = (await getAllUsers()) as typeof accounts;
+    
+        setAccounts(allUsers); // Avoid prepending the default account to the actual accounts);
+        console.log(accounts);
+      } catch (error) {
+        console.error("Error initializing the database:", error);
+      }
     };
-    initializeDatabase(); // create/update database
+    fetchData();    
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, userInfo.username]);
+  }, []);  
 
 /* Encrypt password and store both encrypted password and IV
     Secret Key: A private password for Advanced Encryption Standard (AES)
@@ -110,7 +93,6 @@ const findUser = (username: string) => { // Find the matching account by decrypt
       const decryptedUsername = decryptUsername(account.username, account.ivUser);
       return decryptedUsername === username;
     } catch (error) {
-      console.error("Decryption failed for account:", account, error);
       return false; // Skip this account
     }
   });
@@ -353,41 +335,33 @@ const updateSavedUsers = () => {
 
     request.onsuccess = () => {
       const allAccounts = request.result;
-      if (!allAccounts || allAccounts.length === 0) { // Ensure that request.result is not empty
-        return;
-      }
 
-      setAccounts(allAccounts); // Set all users for general access
+      // Filter accounts that are remembered and have valid data
+      const validAccounts = allAccounts.filter(
+        account =>
+          account.username?.trim() &&
+          account.password?.trim() &&
+          account.ivUser &&
+          account.remembered
+      );
 
-      const rememberedAccounts = allAccounts.filter(account => account.remembered);
+      setAccounts(validAccounts);
 
-      if (rememberedAccounts.length > 0) { // Check if there are any remembered accounts and if data is valid
-        const account = rememberedAccounts[0];  
-        
-        if (account.password && account.iv && account.username && account.iv) {  // Check if account properties exist before decrypting
-          const decryptedPassword = decryptPassword(account.password, account.iv);
-          const decryptedUsername = decryptUsername(account.username, account.iv);
-
-          setUserInfo({
-            username: decryptedUsername,
-            password: decryptedPassword,
-            remembered: account.remembered,
-          });
-          setSelect(account.username);  // Update the dropdown to show the remembered username
-        } 
+      // Update the selected user if remembered users exist
+      const rememberedAccount = validAccounts.find(account => account.remembered);
+      if (rememberedAccount) {
+        const decryptedUsername = decryptUsername(rememberedAccount.username, rememberedAccount.ivUser);
+        setSelect(decryptedUsername);
       } else {
-        // If no remembered accounts, reset user info
-        setUserInfo({
-          username: userInfo.username,
-          password: userInfo.password,
-          remembered: false,
-        });
+        setSelect(""); // Clear dropdown selection if no remembered accounts
       }
     };
 
     request.onerror = () => {
       console.error("Error fetching users from the database.");
     };
+  } else {
+    console.error("Database not initialized.");
   }
 };
 
@@ -415,14 +389,14 @@ const updateSavedUsers = () => {
   };   
 
   const handleLogout = () => {
-    setTimeout(() =>
-    {
+    setTimeout(() => {
       alert("Logging out...");
-      clearForm();
-      setIsLoggedIn(false);
-      setIsFormOpen(false);
+      sessionStorage.removeItem("loggedIn"); // Clear session storage flag
+      clearForm(); 
+      setIsLoggedIn(false); 
+      setIsFormOpen(false); 
     }, 1500);
-}; 
+  };  
   
   const handleRemember = () => {
     const newRememberState = !remember; // switch remember on check mark click/unclick

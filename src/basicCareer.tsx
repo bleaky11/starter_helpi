@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
+//import { initializeDatabase } from "./db";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 import { Link } from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
-
-// export interface AccountProps {
-//   accounts: { username: string; password: string; quiz: Question[]; remembered: boolean; iv: string }[];
-//   db: IDBDatabase | null;
-// }
 
 export interface SubmitButton {
   basicComplete: boolean;
@@ -28,15 +24,15 @@ export interface Question
   selected: boolean[];
 }
 
+export interface Pages 
+{
+  setPage: (page: string) => void;
+}
+
 interface Answers
 {
   answers: {answer: string, tag: string}[];
   setAnswerVals: (newState: {answer: string, tag: string}[]) => void;
-}
-
-export interface Pages 
-{
-  setPage: (page: string) => void;
 }
 
 export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage}: SubmitButton & saveButton & Answers & Pages): JSX.Element 
@@ -53,39 +49,10 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}]);
 
-    //const [userQuiz, setQuiz] = useState<Question[]>(questions);
-
-    const handleBasicSave = () => {
+    async function handleBasicSave() 
+    { 
       localStorage.setItem("basicQuizProgress", JSON.stringify(progress));
       localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
-      // if (db) {
-      //   const transaction = db.transaction("users", "readwrite");
-      //   const store = transaction.objectStore("users");
-  
-      //   const userRequest = store.get(accounts.map((account) => account.username));
-  
-      //   userRequest.onsuccess = function (event) {
-      //     const user = (event.target as IDBRequest).result;
-  
-      //     if (user) {
-      //       user.quiz = {
-      //         ...user.quiz,
-      //         progress,
-      //         answers: questions,
-      //       };
-  
-      //       const putRequest = store.put(user);
-  
-      //       putRequest.onsuccess = function () {
-      //         alert("Quiz progress saved successfully!");
-      //       };
-      //     }
-      //   };
-  
-      //   userRequest.onerror = function () {
-      //     alert("Database not available.");
-      //   };
-      // }
       if (progress < 100) {
         alert("Quiz saved!");
       }
