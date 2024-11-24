@@ -36,28 +36,26 @@ export const HomePage = () => {
         const dbInstance = await initializeDatabase();
         const db = dbInstance as IDBDatabase;
         setDb(db);
-    
+  
         const transaction = db.transaction("users", "readonly");
         const store = transaction.objectStore("users");
-    
+  
         const getAllUsers = () =>
           new Promise((resolve, reject) => {
             const request = store.getAll();
             request.onsuccess = () => resolve(request.result);
             request.onerror = (error) => reject(error);
           });
-    
-        const allUsers = (await getAllUsers()) as typeof accounts;
-    
-        setAccounts(allUsers); // Avoid prepending the default account to the actual accounts);
-        console.log(accounts);
+  
+        const allUsers = await getAllUsers() as typeof accounts; // Await the result of the promise
+        setAccounts(allUsers); // Update accounts state with the resolved value
+        console.log("Fetched and updated accounts:", allUsers);
       } catch (error) {
         console.error("Error initializing the database:", error);
       }
     };
-    fetchData();    
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);  
+    fetchData();
+  }, []); // Dependency array ensures this runs once  
 
 /* Encrypt password and store both encrypted password and IV
     Secret Key: A private password for Advanced Encryption Standard (AES)
@@ -91,9 +89,12 @@ const findUser = (username: string) => { // Find the matching account by decrypt
   return accounts.find((account) => {
     try {
       const decryptedUsername = decryptUsername(account.username, account.ivUser);
-      return decryptedUsername === username;
+      // Log for debugging decryption success
+      console.log(`Decrypted Username: ${decryptedUsername}, Comparing with: ${username}`);
+      return decryptedUsername === username;  // Compare decrypted username with input username
     } catch (error) {
-      return false; // Skip this account
+      console.error("Decryption failed for account:", account, "Error:", error);  // Log decryption failure
+      return false; // Skip this account if decryption fails
     }
   });
 };
@@ -112,7 +113,9 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // Upda
     password: encryptedPassword,
   }));
 
+  console.log("username:", userInfo.username);
   const usernameToUpdate = findUser(userInfo.username)?.username;
+  console.log("to update: ", usernameToUpdate);
 
   if (db && usernameToUpdate) {
     const transaction = db.transaction("users", "readwrite");
@@ -182,7 +185,11 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const getAllRequest = store.getAll();
 
     getAllRequest.onsuccess = () => {
+      console.log("Fetching accounts in handleSubmit:", accounts);  // Log accounts before calling findUser
+
+      // Proceed only after accounts are loaded
       const matchingUser = findUser(userInfo.username);
+      console.log("Matching user in handleSubmit:", matchingUser);  // Log matching user
 
       if (matchingUser) {
         const { username: storedEncryptedUsername, password: storedEncryptedPassword, ivPass, remembered, ivUser } = matchingUser;
@@ -200,17 +207,17 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           if (isValid) {
             setIsLoggedIn(true);
             sessionStorage.setItem("loggedIn", "true");
+
             if (remember !== remembered) {  // Update remembered status if needed
               matchingUser.remembered = remember;
               const updateRequest = store.put(matchingUser);
               updateRequest.onsuccess = () => updateSavedUsers();
-              updateRequest.onerror = (event) =>
-                console.error("Error updating remembered status:", event);
+              updateRequest.onerror = (event) => console.error("Error updating remembered status:", event);
             } else {
               updateSavedUsers();
             }
 
-            if (!remember) {   // Remove from dropdown if "Remember me" is not checked
+            if (!remember) {  // Remove from dropdown if "Remember me" is not checked
               removeFromDropdown(userInfo.username);
             }
           } else {
@@ -220,9 +227,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           alert("Account already exists. Please log in.");
           clearForm();
         }
-      }
-      else if (formTitle === "Create Account") 
-      {
+      } else if (formTitle === "Create Account") {
         const { encryptedPassword, ivPass } = encryptPassword(userInfo.password);
         const { encryptedUsername, ivUser } = encryptUsername(userInfo.username);
 
@@ -293,7 +298,7 @@ const deleteAccount = async (username: string) => {
       try {
         const getRequest = store.getAll();
 
-        getRequest.onsuccess = async () => {
+        getRequest.onsuccess = () => {
           const userAccount = findUser(userInfo.username);
           if (userAccount) 
             {
@@ -336,32 +341,36 @@ const updateSavedUsers = () => {
     request.onsuccess = () => {
       const allAccounts = request.result;
 
-      // Filter accounts that are remembered and have valid data
-      const validAccounts = allAccounts.filter(
-        account =>
-          account.username?.trim() &&
-          account.password?.trim() &&
-          account.ivUser &&
-          account.remembered
-      );
-
-      setAccounts(validAccounts);
-
-      // Update the selected user if remembered users exist
-      const rememberedAccount = validAccounts.find(account => account.remembered);
-      if (rememberedAccount) {
-        const decryptedUsername = decryptUsername(rememberedAccount.username, rememberedAccount.ivUser);
-        setSelect(decryptedUsername);
-      } else {
-        setSelect(""); // Clear dropdown selection if no remembered accounts
+      if (!allAccounts || allAccounts.length === 0) {
+        console.warn("No accounts found in the database.");
+        setAccounts([]); // Explicitly set an empty array to avoid stale state
+        return;
       }
+
+      setAccounts(allAccounts); // grants general access to fetched accounts
+
+      const rememberedAccounts = allAccounts.filter(account => account.remembered);
+
+      if (rememberedAccounts.length > 0) {
+        const account = rememberedAccounts[0];
+
+        if (account.password && account.iv && account.username && account.iv) {
+          const decryptedPassword = decryptPassword(account.password, account.iv);
+          const decryptedUsername = decryptUsername(account.username, account.iv);
+
+          setUserInfo({
+            username: decryptedUsername,
+            password: decryptedPassword,
+            remembered: account.remembered,
+          });
+          setSelect(account.username);
+        }
+      } 
     };
 
     request.onerror = () => {
       console.error("Error fetching users from the database.");
     };
-  } else {
-    console.error("Database not initialized.");
   }
 };
 

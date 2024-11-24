@@ -59,7 +59,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   useEffect(() => {
     // Displays saved credentials for dropdown for selected user
-    if (formTitle === "Log in" && selectedUser && accounts.length > 1) {
+    if (formTitle === "Log in" && selectedUser && accounts.length > 0) {
       const selectedAccount = accounts.find(account => account.username === selectedUser // Compare decrypted username
       );
       if (selectedAccount) {
