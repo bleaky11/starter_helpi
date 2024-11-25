@@ -13,7 +13,7 @@ export const HomePage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
-  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, quiz: Question[], ivUser: string, ivPass: string }[]>([]);
+  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, loggedIn: boolean, quiz: Question[], ivUser: string, ivPass: string }[]>([]);
   const [selectedUser, setSelect] = useState("Select a saved user");
   const [passwordPlaceholder, setPlaceholder] = useState<string>(""); // a blank input space for the reset form
   const [newPassword, setNewPassword] = useState<string>("");
@@ -54,6 +54,10 @@ export const HomePage = () => {
         console.error("Error initializing the database:", error);
       }
     };
+    if(sessionStorage.getItem("loggedIn"))
+    {
+      setIsLoggedIn(true);
+    }
     fetchData();
   }, []); // Dependency array ensures this runs once  
 
@@ -241,6 +245,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           password: encryptedPassword,
           ivPass: ivPass,
           remembered: remember,
+          loggedIn: isLoggedIn,
           quiz: [],
           ivUser: ivUser,
         };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-//import { initializeDatabase } from "./db";
+import { initializeDatabase } from "./db";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 import { Link } from "react-router-dom";
@@ -37,6 +37,7 @@ interface Answers
 
 export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage}: SubmitButton & saveButton & Answers & Pages): JSX.Element 
 {
+  const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
@@ -49,10 +50,57 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
     { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}]);
 
+    useEffect(() => {
+      const fetchLoggedInUser = async () => {
+        try {
+          const dbInstance = await initializeDatabase();
+          const db = dbInstance as IDBDatabase;
+          setDb(db);
+    
+          const transaction = db.transaction("users", "readonly");
+          const store = transaction.objectStore("users");
+    
+          const getLoggedInUserRequest = store.index("loggedIn").get("true"); // Use an index for `loggedIn`
+          getLoggedInUserRequest.onsuccess = () => {
+            const loggedInUser = getLoggedInUserRequest.result;
+            if (loggedInUser) {
+              console.log("Logged-in user:", loggedInUser);
+              // Use loggedInUser for quiz loading
+            }
+          };
+          getLoggedInUserRequest.onerror = (event) => {
+            console.error("Error fetching logged-in user:", event);
+          };
+        } catch (error) {
+          console.error("Error initializing database:", error);
+        }
+      };
+      fetchLoggedInUser();
+    }, []);
+    
     async function handleBasicSave() 
     { 
-      localStorage.setItem("basicQuizProgress", JSON.stringify(progress));
+      localStorage.setItem("basicQuizProgress", JSON.stringify(progress)); // default save for guest account
       localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+      if (db) {
+        const transaction = db.transaction("users", "readwrite");
+        const store = transaction.objectStore("users");
+    
+        const getLoggedInUserRequest = store.index("loggedIn").get("true"); // Query the logged-in user
+        getLoggedInUserRequest.onsuccess = () => {
+          const user = getLoggedInUserRequest.result;
+          if (user) {
+            const savedQuiz = JSON.parse(JSON.stringify(questions));
+            user.quiz = savedQuiz; // Save the quiz to the user record
+            store.put(user);
+            alert("Quiz saved!");
+          }
+        };
+        getLoggedInUserRequest.onerror = (event) => {
+          console.error("Error fetching logged-in user for saving quiz:", event);
+        };
+    }
+
       if (progress < 100) {
         alert("Quiz saved!");
       }

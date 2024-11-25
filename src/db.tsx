@@ -1,6 +1,6 @@
 export const initializeDatabase = async () => {
     return new Promise<IDBDatabase>((resolve, reject) => {
-      const request = window.indexedDB.open("myDatabase", 1);
+      const request = window.indexedDB.open("userDatabase", 1);
       
       request.onerror = (event) => reject(event);
       
