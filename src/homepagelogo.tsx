@@ -158,7 +158,12 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // Upda
 };
 
 const updateCalledUser = (event: React.ChangeEvent<HTMLInputElement>) => {
-  setCalled(event.target.value);
+  const username = event.target.value;
+  setCalled(username);
+  setUserInfo((prevState) => ({
+    ...prevState,
+    username, // Sync with userInfo
+  }));
 };
 
 const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: string, savedUsernameIV: string, savedPasswordIV: string, userInput: string, passInput: string) => {
