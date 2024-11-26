@@ -68,7 +68,7 @@ export const HomePage = () => {
       setIsLoggedIn(loggedIn);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
+  }, [isLoggedIn]); 
   
 
   const loadAccounts = async () => {
@@ -248,15 +248,21 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           );
 
           if (isValid) {
-            handleLogin(userInfo.username);
             if (remember !== remembered) {  // Update remembered status if needed
               matchingUser.remembered = remember;
-              const updateRequest = store.put(matchingUser);
-              updateRequest.onsuccess = () => updateSavedUsers();
-              updateRequest.onerror = (event) => console.error("Error updating remembered status:", event);
-            } else {
-              updateSavedUsers();
             }
+              const decryptedUsername = decryptUsername(matchingUser.username, matchingUser.ivUser);
+              setUserInfo({
+                username: decryptedUsername,
+                password: matchingUser.password,
+                remembered: matchingUser.remembered,
+              });
+              sessionStorage.setItem("username", decryptedUsername); 
+              sessionStorage.setItem("loggedIn", "true");
+              setIsLoggedIn(true);
+              matchingUser.loggedIn = true;
+              store.put(matchingUser);
+              updateSavedUsers();
 
             if (!remember) {  // Remove from dropdown if "Remember me" is not checked
               removeFromDropdown(userInfo.username);
@@ -281,13 +287,13 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           quiz: [],
           ivUser: ivUser,
         };
+        sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.setItem("username", userInfo.username);
+        setIsLoggedIn(true); // React state updates
         store.put(newUser).onsuccess = () => {
           alert("Account created successfully!");
           updateSavedUsers();
         };
-        sessionStorage.setItem("loggedIn", "true");
-        sessionStorage.setItem("username", userInfo.username);
-        setIsLoggedIn(true); // React state updates
       } else {
         alert("Username doesn't exist!");
         clearForm();
@@ -441,29 +447,6 @@ const updateSavedUsers = () => {
       [name]: type === "checkbox" ? checked : value, // takes name as generic key... updates field based on type
     }));
   };   
-
-  const handleLogin = async (username: string) => {
-    if (db) {
-      const dbInstance = db.transaction("users", "readwrite");
-      const store = dbInstance.objectStore("users");
-      const matchingUser = findUser(username);
-        if (matchingUser) {
-          const decryptedUsername = decryptUsername(matchingUser.username, matchingUser.ivUser);
-          setUserInfo({
-            username: decryptedUsername,
-            password: "",
-            remembered: matchingUser.remembered,
-          });
-          sessionStorage.setItem("username", decryptedUsername); 
-          sessionStorage.setItem("loggedIn", "true");
-          setIsLoggedIn(true);
-          store.put(matchingUser);
-        }
-       else {
-        alert("User not found!");
-      }
-    }
-  };    
   
   const handleLogout = async (username: string) => {
     console.log("Logging out user:", username);
