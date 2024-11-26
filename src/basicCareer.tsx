@@ -37,7 +37,7 @@ interface Answers
 export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage}: SubmitButton & saveButton & Answers & Pages): JSX.Element 
 {
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
-  const [loggedUser, setUser] = useState<{ username: string; password: string, remembered: boolean, loggedIn: boolean, quiz: Question[], ivUser: string, ivPass: string} | null>(null);
+  const [loggedUser, setLoggedUser] = useState<{ username: string; password: string, remembered: boolean, loggedIn: boolean, quiz: Question[], ivUser: string, ivPass: string} | null>(null);
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
@@ -52,17 +52,20 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
 
     useEffect(() => {
       const fetchLoggedInUser = async () => {
-        try {
-          console.log("Initializing database...");
-          const dbInstance = await initializeDatabase();
-          const db = dbInstance as IDBDatabase;
-          setDb(db);
-    
-          if (!loggedUser) {
+        if (db) {
+          try {
+            console.log("Database already initialized.");
+        
+            if (loggedUser) {
+              console.log("Logged-in user already set:", loggedUser);
+              return; // If the logged-in user is already set, no need to check localStorage
+            }
+        
+            // Handle no logged-in user scenario
             console.log("No logged-in user detected; checking localStorage...");
             const savedBasicProgress = localStorage.getItem("basicQuizProgress");
             const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
-    
+        
             if (!savedBasicProgress && !savedBasicAnswers) {
               console.log("No saved progress or answers in localStorage.");
               clearStorage();
@@ -72,59 +75,84 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
               setProgress(JSON.parse(savedBasicProgress || "0"));
               setQuestions(JSON.parse(savedBasicAnswers || "[]"));
             }
-          } else if (db && loggedUser) {
-            console.log("Logged-in user detected; fetching from database...");
+        
+            // Now, fetch logged-in user from IndexedDB
+            console.log("No logged-in user found in state, fetching from database...");
             const transaction = db.transaction("users", "readonly");
             const store = transaction.objectStore("users");
-    
+        
             const getLoggedInUserRequest = store.index("loggedIn").get("true");
+        
             getLoggedInUserRequest.onsuccess = () => {
-              const loggedInUser = getLoggedInUserRequest.result;
-              if (loggedInUser) {
-                console.log("Fetched logged-in user:", loggedInUser);
-                setQuestions(loggedInUser.quiz || []);
-                setProgress(loggedInUser.progress || 0);
-                setUser(loggedInUser);
+              const user = getLoggedInUserRequest.result;
+              console.log("Logged-in user fetched from DB:", user);
+        
+              if (user) {
+                console.log("Current Quiz: ", user.quiz);
+                setLoggedUser(user); // Immediately set the logged-in user state
+                setQuestions(user.quiz.length ? user.quiz : questions);
+                setProgress(user.progress || 0);
               } else {
                 console.log("No logged-in user found in database.");
               }
             };
+        
             getLoggedInUserRequest.onerror = (event) => {
               console.error("Error fetching logged-in user:", event);
             };
+        
+          } catch (error) {
+            console.error("Error initializing database:", error);
           }
-        } catch (error) {
-          console.error("Error initializing database:", error);
         }
       };
-    
-      fetchLoggedInUser();
-    }, [loggedUser]);    
-    
+      
+      if (!db) {
+        console.log("Initializing database...");
+        const initDb = async () => {
+          try {
+            const dbInstance = await initializeDatabase();
+            setDb(dbInstance as IDBDatabase); // Set the database instance
+          } catch (error) {
+            console.error("Error initializing database:", error);
+          }
+        };
+        initDb();
+      } else {
+        // Run fetchLoggedInUser if db is already initialized
+        fetchLoggedInUser();
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [db, loggedUser]); // Re-run effect when db or loggedUser changes    
+
     function handleBasicSave() {
       console.log("Saving quiz progress...");
+    
       if (loggedUser && db) {
-        console.log("Saving for logged-in user:", loggedUser.username);
+        console.log("Saving progress for logged-in user:", loggedUser.username);
+    
         const transaction = db.transaction("users", "readwrite");
         const store = transaction.objectStore("users");
     
         const updatedUser = {
           ...loggedUser,
-          quiz: [...questions],
-          progress,
+          quiz: [...questions],  // Save updated quiz answers
+          progress,              // Save quiz progress
         };
     
         const updateRequest = store.put(updatedUser);
         updateRequest.onsuccess = () => {
           console.log("Quiz progress saved for user:", updatedUser.username);
-          setUser(updatedUser);
+          //setLoggedUser(updatedUser);
           alert("Quiz Saved!");
         };
+    
         updateRequest.onerror = (event) => {
           console.error("Failed to save quiz progress:", event);
         };
       } else {
-        console.log("No logged user; saving to localStorage...");
+        console.log("No logged-in user found; saving progress to localStorage...");
+        // If no logged-in user, save progress and answers to localStorage
         localStorage.setItem("basicQuizProgress", JSON.stringify(progress));
         localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
         console.log("Quiz progress and answers saved to localStorage.");
@@ -134,7 +162,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
         console.log("Progress is less than 100%; showing alert.");
         alert("Quiz saved!");
       }
-    }    
+    }
 
   function handleClear(){ //Clears user's saved progress and resets quiz
     localStorage.removeItem("basicQuizProgress");

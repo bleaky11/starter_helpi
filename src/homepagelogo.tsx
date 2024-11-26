@@ -31,11 +31,22 @@ export const HomePage = () => {
   }, [secretKey]);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      loadAccounts();
+    // Initialize the database when the component mounts
+    const initializeDb = async () => {
+      if (!db) {
+        const initializedDb = await initializeDatabase();
+        setDb(initializedDb); // Store the initialized database instance
+      }
+    };
+  
+    initializeDb(); // Only initialize the DB once
+  
+    if (isLoggedIn && db) {
+      loadAccounts(); // Load accounts only if the user is logged in and DB is initialized
     }
+  
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, db]);
+  }, [isLoggedIn, db]); // Dependency array to handle re-renders on db or isLoggedIn change  
   
   useEffect(() => {
     const loggedIn = sessionStorage.getItem("loggedIn") === "true";
@@ -70,13 +81,7 @@ export const HomePage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]); 
   
-
   const loadAccounts = async () => {
-    if (!db) {
-      const initializedDb = await initializeDatabase();
-      setDb(initializedDb); // Store the initialized database instance
-    }
-  
     if (db) {
       const transaction = db.transaction("users", "readonly");
       const store = transaction.objectStore("users");
@@ -93,7 +98,7 @@ export const HomePage = () => {
       };
     }
   };
-
+  
 /* Encrypt password and store both encrypted password and IV
     Secret Key: A private password for Advanced Encryption Standard (AES)
     Initialized Vector (IV): unique random string used to control encyption output. Prevents hackers from recognizing patterns.
