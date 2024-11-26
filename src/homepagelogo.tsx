@@ -31,61 +31,70 @@ export const HomePage = () => {
   }, [secretKey]);
 
   useEffect(() => {
+    loadAccounts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [db]); 
+  
+  useEffect(() => {
     const loggedIn = sessionStorage.getItem("loggedIn") === "true";
     const storedUsername = sessionStorage.getItem("username");
-    console.log("Session loggedIn:", loggedIn, "Stored username:", storedUsername);
-  
-    if (loggedIn !== isLoggedIn) {
-      setIsLoggedIn(loggedIn); // Sync isLoggedIn with sessionStorage state
-    }
   
     if (loggedIn && storedUsername) {
       console.log("Fetching user with username:", storedUsername);
-      const userAccount = findUser(storedUsername);
-      console.log("Found userAccount:", userAccount);
   
-      // if (userAccount) {
-      //   setUserInfo({
-      //     username: userAccount.username,
-      //     password: userAccount.password,
-      //     remembered: userAccount.remembered,
-      //   });
-      // }
+      // Ensure accounts are loaded before trying to find the user
+      if (accounts.length > 0) {
+        const userAccount = findUser(storedUsername);
+        console.log("Found userAccount:", userAccount);
+        if (userAccount) {
+          const decryptedUsername = decryptUsername(userAccount.username, userAccount.ivUser);
+          setUserInfo({
+            username: decryptedUsername,
+            password: userAccount.password,
+            remembered: userAccount.remembered,
+          });
+        }
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn]);
-  
+  }, [accounts]);  // Run only when accounts are updated  
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dbInstance = await initializeDatabase();
-        const db = dbInstance as IDBDatabase;
-        setDb(db);
+    const loggedIn = sessionStorage.getItem("loggedIn") === "true";
+    if(loggedIn !== isLoggedIn)
+    {
+      setIsLoggedIn(loggedIn);
+    }
+  }, [isLoggedIn]); 
   
-        const transaction = db.transaction("users", "readonly");
-        const store = transaction.objectStore("users");
-  
-        const getAllUsers = () =>
-          new Promise((resolve, reject) => {
-            const request = store.getAll();
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = (error) => reject(error);
-          });
-  
-        const allUsers = await getAllUsers() as typeof accounts; // Await the result of the promise
-        setAccounts(allUsers); // Update accounts state with the resolved value
-        console.log("Fetched and updated accounts:", allUsers);
-      } catch (error) {
-        console.error("Error initializing the database:", error);
-      }
-    };
-    fetchData();
-  }, []); // Dependency array ensures this runs once  
 
 /* Encrypt password and store both encrypted password and IV
     Secret Key: A private password for Advanced Encryption Standard (AES)
     Initialized Vector (IV): unique random string used to control encyption output. Prevents hackers from recognizing patterns.
 */
+
+const loadAccounts = async () => {
+  if (!db) {
+    const initializedDb = await initializeDatabase();
+    setDb(initializedDb); // Store the initialized database instance
+  }
+
+  if (db) {
+    const transaction = db.transaction("users", "readonly");
+    const store = transaction.objectStore("users");
+    const request = store.getAll();
+
+    request.onsuccess = () => {
+      const accounts = request.result;
+      console.log("Accounts loaded:", accounts);
+      updateSavedUsers(); // Optional: Sync UI if necessary
+    };
+
+    request.onerror = () => {
+      console.error("Failed to fetch accounts from database.");
+    };
+  }
+};
 
 const encryptUsername = (username: string) => 
 {
@@ -100,26 +109,27 @@ const encryptPassword = (password: string) => {
   return { encryptedPassword: encrypted, ivPass: iv.toString() };
 };
 
-const decryptUsername = (encryptedUsername: string, iv: string) => { 
-  const bytes = CryptoJS.AES.decrypt(encryptedUsername, secretKey, { iv: CryptoJS.enc.Hex.parse(iv) }); // parse IV into readable form
-  return bytes.toString(CryptoJS.enc.Utf8); 
-}
+const decryptUsername = (encryptedUsername: string, iv: string) => {
+  try {
+    const decrypted = CryptoJS.AES.decrypt(encryptedUsername, secretKey, { iv });
+    const username = decrypted.toString(CryptoJS.enc.Utf8);
+    console.log(`Decrypted username: ${username}`);
+    return username;
+  } catch (error) {
+    console.error("Error decrypting username:", error);
+    return null;
+  }
+};
 
 const decryptPassword = (encryptedPassword: string, iv: string) => { // decrypt the user password for log in purposes
   const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey, { iv: CryptoJS.enc.Hex.parse(iv) }); // parse IV into readable form
   return bytes.toString(CryptoJS.enc.Utf8); 
 };
 
-const findUser = (username: string) => { // Find the matching account by decrypting usernames
-  return accounts.find((account) => {
-    try {
-      const decryptedUsername = decryptUsername(account.username, account.ivUser);
-      console.log(`Decrypted Username: ${decryptedUsername}, Comparing with: ${username}`);
-      return decryptedUsername === username;  // Compare decrypted username with input username
-    } catch (error) {
-      console.error("Decryption failed for account:", account, "Error:", error);  // Log decryption failure
-      return false; // Skip this account if decryption fails
-    }
+const findUser = (username: string) => {
+  return accounts.find(account => {
+    const decryptedUsername = decryptUsername(account.username, account.ivUser);
+    return decryptedUsername === username;  // Compare decrypted username
   });
 };
 
@@ -201,6 +211,10 @@ const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: strin
 
 const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
+
+  if (!accounts.length) {
+    loadAccounts();
+  }
 
   if (!userInfo.username || !userInfo.password) {
     alert("Username and password are required.");
