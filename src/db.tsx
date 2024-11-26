@@ -1,6 +1,6 @@
 export const initializeDatabase = async () => {
   return new Promise<IDBDatabase>((resolve, reject) => {
-    const request = window.indexedDB.open("userDatabase", 2);
+    const request = window.indexedDB.open("userDatabase", 3);
 
     request.onerror = (event) => reject(event);
 
@@ -8,9 +8,12 @@ export const initializeDatabase = async () => {
 
     request.onupgradeneeded = (event) => {
       const db = request.result;
-      const objectStore = db.createObjectStore("users", { keyPath: "username" }); // Ensure keyPath is correct
-      objectStore.createIndex("username", "username", { unique: true }); // Index for username
-      objectStore.createIndex("loggedIn", "loggedIn", { unique: true }); // Index for loggedIn
+
+      if (!db.objectStoreNames.contains("users")) {
+        const objectStore = db.createObjectStore("users", { keyPath: "username" });
+        objectStore.createIndex("username", "username", { unique: true });
+        objectStore.createIndex("loggedIn", "loggedIn", { unique: false });
+      } 
     };
   });
 };

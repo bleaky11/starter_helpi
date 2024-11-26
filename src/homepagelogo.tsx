@@ -13,7 +13,7 @@ export const HomePage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);  
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
-  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, loggedIn: boolean, quiz: Question[], ivUser: string, ivPass: string }[]>([]);
+  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, loggedIn: string, quiz: Question[], ivUser: string, ivPass: string }[]>([]);
   const [selectedUser, setSelect] = useState("Select a saved user");
   const [passwordPlaceholder, setPlaceholder] = useState<string>(""); // a blank input space for the reset form
   const [newPassword, setNewPassword] = useState<string>("");
@@ -260,7 +260,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               sessionStorage.setItem("username", decryptedUsername); 
               sessionStorage.setItem("loggedIn", "true");
               setIsLoggedIn(true);
-              matchingUser.loggedIn = true;
+              matchingUser.loggedIn = "true";
               store.put(matchingUser);
               updateSavedUsers();
 
@@ -283,7 +283,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           password: encryptedPassword,
           ivPass: ivPass,
           remembered: remember,
-          loggedIn: true,
+          loggedIn: "true",
           quiz: [],
           ivUser: ivUser,
         };
@@ -460,7 +460,7 @@ const updateSavedUsers = () => {
       getRequest.onsuccess = () => {
         const userAccount = findUser(username);  // Use the findUser function to decrypt and match the username
         if (userAccount) {
-          userAccount.loggedIn = false;  // Set the user's loggedIn status to false
+          userAccount.loggedIn = "false";  // Set the user's loggedIn status to false
           store.put(userAccount);  // Update the user record in IndexedDB
           setTimeout(() => {
             clearForm();
