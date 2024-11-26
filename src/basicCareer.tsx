@@ -5,7 +5,6 @@ import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 import { Link } from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
-import { log } from "console";
 
 export interface SubmitButton {
   basicComplete: boolean;
@@ -58,76 +57,75 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
         if (db) {
           try {
             console.log("Database already initialized.");
-        
+            const savedBasicProgress = localStorage.getItem("basicQuizProgress");
+            const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
+    
             if (loggedUser) {
               console.log("Logged-in user already set:", loggedUser);
               return; // If the logged-in user is already set, no need to check localStorage
-            }
-        
-            // Handle no logged-in user scenario
-            console.log("No logged-in user detected; checking localStorage...");
-            const savedBasicProgress = localStorage.getItem("basicQuizProgress");
-            const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
-        
-            if (!savedBasicProgress && !savedBasicAnswers) {
+            }  
+    
+            // Guest user logic (not logged in)
+            else if (!savedBasicProgress && !savedBasicAnswers) {
               console.log("No saved progress or answers in localStorage.");
-              clearStorage();
               sessionStorage.setItem("quizAttempt", "true");
+              // Clear quiz state for a fresh start
+              setProgress(0); // Set to initial progress (0)
+              setQuestions(questions); // Set to empty questions array
             } else {
               console.log("Loading progress and answers from localStorage...");
+              // If there's saved data in localStorage, load it
               setProgress(JSON.parse(savedBasicProgress || "0"));
               setQuestions(JSON.parse(savedBasicAnswers || "[]"));
             }
-        
-            // Now, fetch logged-in user from IndexedDB
+    
             console.log("No logged-in user found in state, fetching from database...");
             const transaction = db.transaction("users", "readonly");
             const store = transaction.objectStore("users");
-        
+    
             const getLoggedInUserRequest = store.index("loggedIn").get("true");
-        
+    
             getLoggedInUserRequest.onsuccess = () => {
               const user = getLoggedInUserRequest.result;
               console.log("Logged-in user fetched from DB:", user);
-        
+    
               if (user) {
-                console.log("Current Quiz: ", user.quiz);
-                setLoggedUser(user); // Immediately set the logged-in user state
-                setQuestions(user.quiz.length ? user.quiz : questions);
-                setProgress(user.progress || 0);
+                setLoggedUser(user); // Set logged-in user state
+                setQuestions(user.quiz.length ? user.quiz : questions); // Load user-specific questions
+                setProgress(user.progress || 0); // Load user-specific progress
               } else {
                 console.log("No logged-in user found in database.");
               }
             };
-        
+    
             getLoggedInUserRequest.onerror = (event) => {
               console.error("Error fetching logged-in user:", event);
             };
-        
+    
           } catch (error) {
             console.error("Error initializing database:", error);
           }
         }
       };
-      
+    
       if (!db) {
         console.log("Initializing database...");
         const initDb = async () => {
           try {
             const dbInstance = await initializeDatabase();
-            setDb(dbInstance as IDBDatabase); // Set the database instance
+            setDb(dbInstance as IDBDatabase);
           } catch (error) {
             console.error("Error initializing database:", error);
           }
         };
         initDb();
       } else {
-        // Run fetchLoggedInUser if db is already initialized
-        fetchLoggedInUser();
+        fetchLoggedInUser(); // Fetch user if db initialized
       }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [db, loggedUser]); // Re-run effect when db or loggedUser changes    
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [db, loggedUser]);
 
+    
     function handleBasicSave() {
       console.log("Saving quiz progress...");
     
@@ -150,7 +148,6 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
         };
       } else {
         console.log("No logged-in user found; saving progress to localStorage...");
-        // If no logged-in user, save progress and answers to localStorage
         localStorage.setItem("basicQuizProgress", JSON.stringify(progress));
         localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
         console.log("Quiz progress and answers saved to localStorage.");
@@ -235,12 +232,12 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     alert("Thanks for completing the Basic Career quiz!");
   }
 
-  const clearStorage = () => 
-    {
-      localStorage.removeItem("basicQuizProgress");
-      localStorage.removeItem("basicQuizAnswers");
-      sessionStorage.removeItem("quizAttempt");
-}
+//   const clearStorage = () => 
+//     {
+//       localStorage.removeItem("basicQuizProgress");
+//       localStorage.removeItem("basicQuizAnswers");
+//       sessionStorage.removeItem("quizAttempt");
+// }
 
 useEffect(() => { //Populates and tags array of answers each time an answer is selected
   if (promptValues.length > 0) {

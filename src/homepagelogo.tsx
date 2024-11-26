@@ -98,8 +98,7 @@ export const HomePage = () => {
   
       request.onsuccess = () => {
         const accounts = request.result;
-        console.log("Accounts loaded:", accounts);
-        updateSavedUsers(); // Optional: Sync UI if necessary
+        updateSavedUsers(); 
         resolve(accounts); // Resolve with loaded accounts
       };
   
@@ -132,7 +131,6 @@ const decryptUsername = (encryptedUsername: string, iv: string) => {
   try {
     const decrypted = CryptoJS.AES.decrypt(encryptedUsername, secretKey, { iv });
     const username = decrypted.toString(CryptoJS.enc.Utf8);
-    console.log(`Decrypted username: ${username}`);
     return username;
   } catch (error) {
     console.error("Error decrypting username:", error);
@@ -171,9 +169,7 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // Upda
     password: encryptedPassword,
   }));
 
-  console.log("username:", userInfo.username);
   const usernameToUpdate = findUser(userInfo.username, accounts)?.username;
-  console.log("to update: ", usernameToUpdate);
 
   if (db && usernameToUpdate) {
     const transaction = db.transaction("users", "readwrite");
@@ -251,9 +247,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     const getAllRequest = store.getAll();
 
     getAllRequest.onsuccess = () => {
-      console.log("Fetching accounts in handleSubmit:", accounts);  
       const matchingUser = findUser(userInfo.username, accounts);
-      console.log("Matching user in handleSubmit:", matchingUser);  // Log matching user
 
       if (matchingUser) {
         const { username: storedEncryptedUsername, password: storedEncryptedPassword, ivPass, remembered, ivUser } = matchingUser;
@@ -470,26 +464,25 @@ const updateSavedUsers = () => {
   };   
   
   const handleLogout = async (username: string) => {
-    console.log("Logging out user:", username);
-  
+    
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
       
-      const getRequest = store.getAll();  // Get all users from the store
+      const getRequest = store.getAll();  
   
       getRequest.onsuccess = () => {
-        const userAccount = findUser(username, accounts);  // Use the findUser function to decrypt and match the username
+        const userAccount = findUser(username, accounts);  
         if (userAccount) {
-          userAccount.loggedIn = "false";  // Set the user's loggedIn status to false
-          store.put(userAccount);  // Update the user record in IndexedDB
+          userAccount.loggedIn = "false";  
+          store.put(userAccount);  
           setTimeout(() => {
             clearForm();
-            sessionStorage.setItem("loggedIn", "false");  // Clear session storage
+            sessionStorage.setItem("loggedIn", "false");  
             sessionStorage.removeItem("username");
-            setIsLoggedIn(false);  // Update React state
+            setIsLoggedIn(false);  
             setIsFormOpen(false);
-            alert("Logged out successfully!");  // Notify user
+            alert("Logged out successfully!");  
           }, 1500);
         } else {
           alert("User not found!");  // In case the user is not found
