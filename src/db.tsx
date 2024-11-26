@@ -10,7 +10,7 @@ export const initializeDatabase = async () => {
       const db = request.result;
       const objectStore = db.createObjectStore("users", { keyPath: "username" }); // Ensure keyPath is correct
       objectStore.createIndex("username", "username", { unique: true }); // Index for username
-      objectStore.createIndex("loggedIn", "loggedIn", { unique: false }); // Index for loggedIn
+      objectStore.createIndex("loggedIn", "loggedIn", { unique: true }); // Index for loggedIn
     };
   });
 };

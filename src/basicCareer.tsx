@@ -80,8 +80,6 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     
     async function handleBasicSave() 
     { 
-      localStorage.setItem("basicQuizProgress", JSON.stringify(progress)); // default save for guest account
-      localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
       if (db) {
         const transaction = db.transaction("users", "readwrite");
         const store = transaction.objectStore("users");
@@ -92,12 +90,15 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
           if (user) {
             const savedQuiz = JSON.parse(JSON.stringify(questions));
             user.quiz = savedQuiz; // Save the quiz to the user record
+            console.log(user);
             store.put(user);
             alert("Quiz saved!");
           }
         };
         getLoggedInUserRequest.onerror = (event) => {
           console.error("Error fetching logged-in user for saving quiz:", event);
+          localStorage.setItem("basicQuizProgress", JSON.stringify(progress)); // default save for guest account
+          localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
         };
     }
       if (progress < 100) {

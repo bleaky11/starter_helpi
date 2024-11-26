@@ -31,9 +31,11 @@ export const HomePage = () => {
   }, [secretKey]);
 
   useEffect(() => {
-    loadAccounts();
+    if (isLoggedIn) {
+      loadAccounts();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db]); 
+  }, [isLoggedIn, db]);
   
   useEffect(() => {
     const loggedIn = sessionStorage.getItem("loggedIn") === "true";
@@ -65,36 +67,37 @@ export const HomePage = () => {
     {
       setIsLoggedIn(loggedIn);
     }
-  }, [isLoggedIn]); 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); 
   
+
+  const loadAccounts = async () => {
+    if (!db) {
+      const initializedDb = await initializeDatabase();
+      setDb(initializedDb); // Store the initialized database instance
+    }
+  
+    if (db) {
+      const transaction = db.transaction("users", "readonly");
+      const store = transaction.objectStore("users");
+      const request = store.getAll();
+  
+      request.onsuccess = () => {
+        const accounts = request.result;
+        console.log("Accounts loaded:", accounts);
+        updateSavedUsers(); // Optional: Sync UI if necessary
+      };
+  
+      request.onerror = () => {
+        console.error("Failed to fetch accounts from database.");
+      };
+    }
+  };
 
 /* Encrypt password and store both encrypted password and IV
     Secret Key: A private password for Advanced Encryption Standard (AES)
     Initialized Vector (IV): unique random string used to control encyption output. Prevents hackers from recognizing patterns.
 */
-
-const loadAccounts = async () => {
-  if (!db) {
-    const initializedDb = await initializeDatabase();
-    setDb(initializedDb); // Store the initialized database instance
-  }
-
-  if (db) {
-    const transaction = db.transaction("users", "readonly");
-    const store = transaction.objectStore("users");
-    const request = store.getAll();
-
-    request.onsuccess = () => {
-      const accounts = request.result;
-      console.log("Accounts loaded:", accounts);
-      updateSavedUsers(); // Optional: Sync UI if necessary
-    };
-
-    request.onerror = () => {
-      console.error("Failed to fetch accounts from database.");
-    };
-  }
-};
 
 const encryptUsername = (username: string) => 
 {
@@ -209,11 +212,11 @@ const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: strin
   }
 };
 
-const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
 
   if (!accounts.length) {
-    loadAccounts();
+    await loadAccounts();
   }
 
   if (!userInfo.username || !userInfo.password) {
