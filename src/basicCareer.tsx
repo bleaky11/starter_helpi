@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { initializeDatabase } from "./db";
+import { Account } from "./homepagelogo";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 import { Link } from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
+import { log } from "console";
+
 export interface SubmitButton {
   basicComplete: boolean;
   toggleBasic: (notBasic: boolean) => void;
@@ -37,7 +40,7 @@ interface Answers
 export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage}: SubmitButton & saveButton & Answers & Pages): JSX.Element 
 {
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
-  const [loggedUser, setLoggedUser] = useState<{ username: string; password: string, remembered: boolean, loggedIn: boolean, quiz: Question[], ivUser: string, ivPass: string} | null>(null);
+  const [loggedUser, setLoggedUser] = useState<Account| null>(null);
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
@@ -141,11 +144,6 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
         };
     
         const updateRequest = store.put(updatedUser);
-        updateRequest.onsuccess = () => {
-          console.log("Quiz progress saved for user:", updatedUser.username);
-          //setLoggedUser(updatedUser);
-          alert("Quiz Saved!");
-        };
     
         updateRequest.onerror = (event) => {
           console.error("Failed to save quiz progress:", event);
@@ -165,17 +163,21 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     }
 
   function handleClear(){ //Clears user's saved progress and resets quiz
-    localStorage.removeItem("basicQuizProgress");
-    localStorage.removeItem("basicQuizAnswers");
+    if(!loggedUser)
+    {
+      localStorage.removeItem("basicQuizProgress");
+      localStorage.removeItem("basicQuizAnswers");
+    }
     const clearedQuestions = questions.map(question => ({
       ...question,
       selected: question.selected.map(() => false) // Reset all selected states to false
     }));
+    
     setQuestions(clearedQuestions);
     setProgress(0);
     setTimeout(() => {
-      alert("Quiz Cleared!");
-  }, 0);
+        alert("Quiz Cleared!");
+    }, 0);
   }
 
   const getSelectedAnswer = (questions: Question[]) => { // Helper function to grab the user's selected answer string from each question

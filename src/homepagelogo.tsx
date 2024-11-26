@@ -6,6 +6,17 @@ import { LoginForm } from './LoginForm';
 import { Button } from 'react-bootstrap';
 import { Question } from './basicCareer';
 
+export interface Account
+{
+  username: string;
+  password: string;
+  remembered: boolean;
+  loggedIn: string;
+  quiz: Question[];
+  ivUser: string;
+  ivPass: string;
+}
+
 export const HomePage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: false});
@@ -13,7 +24,7 @@ export const HomePage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);  
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
-  const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, loggedIn: string, quiz: Question[], ivUser: string, ivPass: string }[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedUser, setSelect] = useState("Select a saved user");
   const [passwordPlaceholder, setPlaceholder] = useState<string>(""); // a blank input space for the reset form
   const [newPassword, setNewPassword] = useState<string>("");
@@ -31,46 +42,39 @@ export const HomePage = () => {
   }, [secretKey]);
 
   useEffect(() => {
-    // Initialize the database when the component mounts
-    const initializeDb = async () => {
-      if (!db) {
-        const initializedDb = await initializeDatabase();
-        setDb(initializedDb); // Store the initialized database instance
-      }
+    const fetchAccounts = async () => {
+      try {
+        if (!db) {
+          const initializedDb = await initializeDatabase();
+          setDb(initializedDb);
+        }
+        if (db) {
+          const allAccounts = await loadAccounts();
+          setAccounts(allAccounts);
+    
+          const loggedIn = sessionStorage.getItem("loggedIn") === "true";
+          const storedUsername = sessionStorage.getItem("username");
+    
+          if (loggedIn && storedUsername) {
+            const user = findUser(storedUsername, allAccounts); // Explicitly pass accounts
+            if (user) {
+              setUserInfo({
+                username: decryptUsername(user.username, user.ivUser),
+                password: user.password,
+                remembered: user.remembered,
+              });
+              setIsLoggedIn(true);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error in fetchAccountsAndCheckLogin:", error);
+      }    
     };
   
-    initializeDb(); // Only initialize the DB once
-  
-    if (isLoggedIn && db) {
-      loadAccounts(); // Load accounts only if the user is logged in and DB is initialized
-    }
-  
+    fetchAccounts();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, db]); // Dependency array to handle re-renders on db or isLoggedIn change  
-  
-  useEffect(() => {
-    const loggedIn = sessionStorage.getItem("loggedIn") === "true";
-    const storedUsername = sessionStorage.getItem("username");
-  
-    if (loggedIn && storedUsername) {
-      console.log("Fetching user with username:", storedUsername);
-  
-      // Ensure accounts are loaded before trying to find the user
-      if (accounts.length > 0) {
-        const userAccount = findUser(storedUsername);
-        console.log("Found userAccount:", userAccount);
-        if (userAccount) {
-          const decryptedUsername = decryptUsername(userAccount.username, userAccount.ivUser);
-          setUserInfo({
-            username: decryptedUsername,
-            password: userAccount.password,
-            remembered: userAccount.remembered,
-          });
-        }
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts]);  // Run only when accounts are updated  
+  }, [db]);  
 
   useEffect(() => {
     const loggedIn = sessionStorage.getItem("loggedIn") === "true";
@@ -81,8 +85,13 @@ export const HomePage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]); 
   
-  const loadAccounts = async () => {
-    if (db) {
+  const loadAccounts = async (): Promise<typeof accounts> => {
+    if (!db) {
+      console.error("Database not initialized.");
+      return [];
+    }
+  
+    return new Promise((resolve, reject) => {
       const transaction = db.transaction("users", "readonly");
       const store = transaction.objectStore("users");
       const request = store.getAll();
@@ -91,13 +100,15 @@ export const HomePage = () => {
         const accounts = request.result;
         console.log("Accounts loaded:", accounts);
         updateSavedUsers(); // Optional: Sync UI if necessary
+        resolve(accounts); // Resolve with loaded accounts
       };
   
       request.onerror = () => {
         console.error("Failed to fetch accounts from database.");
+        reject("Failed to fetch accounts.");
       };
-    }
-  };
+    });
+  };  
   
 /* Encrypt password and store both encrypted password and IV
     Secret Key: A private password for Advanced Encryption Standard (AES)
@@ -134,10 +145,15 @@ const decryptPassword = (encryptedPassword: string, iv: string) => { // decrypt 
   return bytes.toString(CryptoJS.enc.Utf8); 
 };
 
-const findUser = (username: string) => {
+const findUser = (username: string, accounts: Account[]) => {
   return accounts.find(account => {
-    const decryptedUsername = decryptUsername(account.username, account.ivUser);
-    return decryptedUsername === username;  // Compare decrypted username
+    try {
+      const decryptedUsername = decryptUsername(account.username, account.ivUser);
+      return decryptedUsername === username;
+    } catch (error) {
+      console.error("Failed to decrypt username:", error);
+      return false; // Skip this account if decryption fails
+    }
   });
 };
 
@@ -156,7 +172,7 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // Upda
   }));
 
   console.log("username:", userInfo.username);
-  const usernameToUpdate = findUser(userInfo.username)?.username;
+  const usernameToUpdate = findUser(userInfo.username, accounts)?.username;
   console.log("to update: ", usernameToUpdate);
 
   if (db && usernameToUpdate) {
@@ -236,7 +252,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
     getAllRequest.onsuccess = () => {
       console.log("Fetching accounts in handleSubmit:", accounts);  
-      const matchingUser = findUser(userInfo.username);
+      const matchingUser = findUser(userInfo.username, accounts);
       console.log("Matching user in handleSubmit:", matchingUser);  // Log matching user
 
       if (matchingUser) {
@@ -292,8 +308,8 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           quiz: [],
           ivUser: ivUser,
         };
-        sessionStorage.setItem("loggedIn", "true");
         sessionStorage.setItem("username", userInfo.username);
+        sessionStorage.setItem("loggedIn", "true");
         setIsLoggedIn(true); // React state updates
         store.put(newUser).onsuccess = () => {
           alert("Account created successfully!");
@@ -351,7 +367,7 @@ const deleteAccount = async (username: string) => {
         const getRequest = store.getAll();
 
         getRequest.onsuccess = () => {
-          const userAccount = findUser(userInfo.username);
+          const userAccount = findUser(userInfo.username, accounts);
           if (userAccount) 
             {
             if (userAccount.remembered) {
@@ -463,7 +479,7 @@ const updateSavedUsers = () => {
       const getRequest = store.getAll();  // Get all users from the store
   
       getRequest.onsuccess = () => {
-        const userAccount = findUser(username);  // Use the findUser function to decrypt and match the username
+        const userAccount = findUser(username, accounts);  // Use the findUser function to decrypt and match the username
         if (userAccount) {
           userAccount.loggedIn = "false";  // Set the user's loggedIn status to false
           store.put(userAccount);  // Update the user record in IndexedDB
@@ -472,7 +488,7 @@ const updateSavedUsers = () => {
             sessionStorage.setItem("loggedIn", "false");  // Clear session storage
             sessionStorage.removeItem("username");
             setIsLoggedIn(false);  // Update React state
-            toggleForm();
+            setIsFormOpen(false);
             alert("Logged out successfully!");  // Notify user
           }, 1500);
         } else {
@@ -533,7 +549,7 @@ const updateSavedUsers = () => {
           </div>
         </div>
       ) : (
-        <div style={{ }}>
+        <div>
           <img
             src={userProfile}
             alt="User Profile"
