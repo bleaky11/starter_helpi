@@ -10,7 +10,7 @@ export const HomePage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: false});
   const [remember, setRemember] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);  
   const [formTitle, setFormTitle] = useState("Create Account");
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [accounts, setAccounts] = useState<{ username: string; password: string, remembered: boolean, loggedIn: boolean, quiz: Question[], ivUser: string, ivPass: string }[]>([]);
@@ -29,6 +29,15 @@ export const HomePage = () => {
       console.error("Missing secret key in environment variables");
     }
   }, [secretKey]);
+
+  useEffect(() => {
+    const loggedIn = sessionStorage.getItem("loggedIn") === "true";
+    if(loggedIn !== isLoggedIn)
+    {
+      setIsLoggedIn(loggedIn); // Ensure state reflects sessionStorage 
+    }
+    console.log("SessionStorage loggedIn:", loggedIn);
+  }, [isLoggedIn]); // This runs only once when the component mounts  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,10 +63,6 @@ export const HomePage = () => {
         console.error("Error initializing the database:", error);
       }
     };
-    if(sessionStorage.getItem("loggedIn"))
-    {
-      setIsLoggedIn(true);
-    }
     fetchData();
   }, []); // Dependency array ensures this runs once  
 
@@ -214,9 +219,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           );
 
           if (isValid) {
-            setIsLoggedIn(true);
-            sessionStorage.setItem("loggedIn", "true");
-
+            handleLogin(userInfo.username);
             if (remember !== remembered) {  // Update remembered status if needed
               matchingUser.remembered = remember;
               const updateRequest = store.put(matchingUser);
@@ -245,17 +248,16 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           password: encryptedPassword,
           ivPass: ivPass,
           remembered: remember,
-          loggedIn: isLoggedIn,
+          loggedIn: true,
           quiz: [],
           ivUser: ivUser,
         };
-
         store.put(newUser).onsuccess = () => {
           alert("Account created successfully!");
-          setIsLoggedIn(true);
-          sessionStorage.setItem("loggedIn", "true");
           updateSavedUsers();
         };
+        sessionStorage.setItem("loggedIn", "true");
+        setIsLoggedIn(true); // React state updates
       } else {
         alert("Username doesn't exist!");
         clearForm();
@@ -319,7 +321,10 @@ const deleteAccount = async (username: string) => {
             const deleteRequest = store.delete(userAccount.username);  // Delete the account using its encrypted username
 
             deleteRequest.onsuccess = () => {
-              handleLogout(); // Reset the login state
+              clearForm();
+              sessionStorage.setItem("loggedIn", "false");  // Clear session storage
+              setIsLoggedIn(false);  // Update React state
+              toggleForm();
               updateSavedUsers(); // Update saved accounts
               alert("Account deleted!");
             };
@@ -407,14 +412,61 @@ const updateSavedUsers = () => {
     }));
   };   
 
-  const handleLogout = () => {
-    setTimeout(() => {
-      alert("Logging out...");
-      sessionStorage.removeItem("loggedIn"); // Clear session storage flag
-      clearForm(); 
-      setIsLoggedIn(false); 
-      setIsFormOpen(false); 
-    }, 1500);
+  const handleLogin = async (username: string) => {
+    if (db) {
+      // Start transaction and access object store
+      const dbInstance = db.transaction("users", "readwrite");
+      const store = dbInstance.objectStore("users");
+  
+      // Use findUser to locate the correct account (assuming it handles decryption)
+      const userToUpdate = findUser(username); 
+  
+      if (userToUpdate) {
+        // Update the loggedIn status
+        userToUpdate.loggedIn = true;
+        store.put(userToUpdate); // Update the user in IndexedDB
+  
+        // Update sessionStorage and React state
+        sessionStorage.setItem("loggedIn", "true");
+        setIsLoggedIn(true); // React state updates
+        alert("Logged in successfully!");
+      } else {
+        alert("User not found!");
+      }
+    }
+  };    
+  
+  const handleLogout = async (username: string) => {
+    console.log("Logging out user:", username);
+  
+    if (db) {
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+      
+      const getRequest = store.getAll();  // Get all users from the store
+  
+      getRequest.onsuccess = () => {
+        const userAccount = findUser(username);  // Use the findUser function to decrypt and match the username
+        if (userAccount) {
+          userAccount.loggedIn = false;  // Set the user's loggedIn status to false
+          store.put(userAccount);  // Update the user record in IndexedDB
+  
+          setTimeout(() => {
+            clearForm();
+            sessionStorage.setItem("loggedIn", "false");  // Clear session storage
+            setIsLoggedIn(false);  // Update React state
+            toggleForm();
+            alert("Logged out successfully!");  // Notify user
+          }, 1500);
+        } else {
+          alert("User not found!");  // In case the user is not found
+        }
+      };
+  
+      getRequest.onerror = (error) => {
+        console.error("Error fetching users for logout:", error);
+      };
+    }
   };  
   
   const handleRemember = () => {
@@ -448,7 +500,7 @@ const updateSavedUsers = () => {
           <div style={{ gap: "10px" }}>
             <Button
               style={{ borderRadius: "20px", backgroundColor: "salmon" }}
-              onClick={handleLogout}
+              onClick={() => handleLogout(userInfo.username)}
             >
               Log out
             </Button>
