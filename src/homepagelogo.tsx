@@ -32,13 +32,29 @@ export const HomePage = () => {
 
   useEffect(() => {
     const loggedIn = sessionStorage.getItem("loggedIn") === "true";
-    if(loggedIn !== isLoggedIn)
-    {
-      setIsLoggedIn(loggedIn); // Ensure state reflects sessionStorage 
+    const storedUsername = sessionStorage.getItem("username");
+    console.log("Session loggedIn:", loggedIn, "Stored username:", storedUsername);
+  
+    if (loggedIn !== isLoggedIn) {
+      setIsLoggedIn(loggedIn); // Sync isLoggedIn with sessionStorage state
     }
-    console.log("SessionStorage loggedIn:", loggedIn);
-  }, [isLoggedIn]); // This runs only once when the component mounts  
-
+  
+    if (loggedIn && storedUsername) {
+      console.log("Fetching user with username:", storedUsername);
+      const userAccount = findUser(storedUsername);
+      console.log("Found userAccount:", userAccount);
+  
+      // if (userAccount) {
+      //   setUserInfo({
+      //     username: userAccount.username,
+      //     password: userAccount.password,
+      //     remembered: userAccount.remembered,
+      //   });
+      // }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -98,7 +114,6 @@ const findUser = (username: string) => { // Find the matching account by decrypt
   return accounts.find((account) => {
     try {
       const decryptedUsername = decryptUsername(account.username, account.ivUser);
-      // Log for debugging decryption success
       console.log(`Decrypted Username: ${decryptedUsername}, Comparing with: ${username}`);
       return decryptedUsername === username;  // Compare decrypted username with input username
     } catch (error) {
@@ -136,9 +151,8 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // Upda
       const existingUser = getUserRequest.result;
 
       if (existingUser) {
-        // Update the password and IV in the database
         existingUser.password = encryptedPassword;
-        existingUser.ivPass = encrypted.ivPass; // Use the IV generated during encryption
+        existingUser.ivPass = encrypted.ivPass; 
 
         const updateRequest = store.put(existingUser);
 
@@ -199,9 +213,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const getAllRequest = store.getAll();
 
     getAllRequest.onsuccess = () => {
-      console.log("Fetching accounts in handleSubmit:", accounts);  // Log accounts before calling findUser
-
-      // Proceed only after accounts are loaded
+      console.log("Fetching accounts in handleSubmit:", accounts);  
       const matchingUser = findUser(userInfo.username);
       console.log("Matching user in handleSubmit:", matchingUser);  // Log matching user
 
@@ -257,6 +269,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
           updateSavedUsers();
         };
         sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.setItem("username", userInfo.username);
         setIsLoggedIn(true); // React state updates
       } else {
         alert("Username doesn't exist!");
@@ -286,7 +299,6 @@ const removeFromDropdown = (username: string) => {
 
               updateRequest.onsuccess = () => {
                   updateSavedUsers(); // Refresh the accounts list after updating
-                  // Trigger a re-render for the dropdown or selected user change.
               };
 
               updateRequest.onerror = (event) => {
@@ -323,6 +335,7 @@ const deleteAccount = async (username: string) => {
             deleteRequest.onsuccess = () => {
               clearForm();
               sessionStorage.setItem("loggedIn", "false");  // Clear session storage
+              sessionStorage.removeItem("username");
               setIsLoggedIn(false);  // Update React state
               toggleForm();
               updateSavedUsers(); // Update saved accounts
@@ -414,23 +427,22 @@ const updateSavedUsers = () => {
 
   const handleLogin = async (username: string) => {
     if (db) {
-      // Start transaction and access object store
       const dbInstance = db.transaction("users", "readwrite");
       const store = dbInstance.objectStore("users");
-  
-      // Use findUser to locate the correct account (assuming it handles decryption)
-      const userToUpdate = findUser(username); 
-  
-      if (userToUpdate) {
-        // Update the loggedIn status
-        userToUpdate.loggedIn = true;
-        store.put(userToUpdate); // Update the user in IndexedDB
-  
-        // Update sessionStorage and React state
-        sessionStorage.setItem("loggedIn", "true");
-        setIsLoggedIn(true); // React state updates
-        alert("Logged in successfully!");
-      } else {
+      const matchingUser = findUser(username);
+        if (matchingUser) {
+          const decryptedUsername = decryptUsername(matchingUser.username, matchingUser.ivUser);
+          setUserInfo({
+            username: decryptedUsername,
+            password: "",
+            remembered: matchingUser.remembered,
+          });
+          sessionStorage.setItem("username", decryptedUsername); 
+          sessionStorage.setItem("loggedIn", "true");
+          setIsLoggedIn(true);
+          store.put(matchingUser);
+        }
+       else {
         alert("User not found!");
       }
     }
@@ -450,10 +462,10 @@ const updateSavedUsers = () => {
         if (userAccount) {
           userAccount.loggedIn = false;  // Set the user's loggedIn status to false
           store.put(userAccount);  // Update the user record in IndexedDB
-  
           setTimeout(() => {
             clearForm();
             sessionStorage.setItem("loggedIn", "false");  // Clear session storage
+            sessionStorage.removeItem("username");
             setIsLoggedIn(false);  // Update React state
             toggleForm();
             alert("Logged out successfully!");  // Notify user
@@ -562,7 +574,6 @@ const updateSavedUsers = () => {
         updateCalledUser={updateCalledUser}
       />
     )}
-    {/* Fixed Career Quiz Link */}
     <div style={{flexGrow:'1', textAlign:'center', position:'relative', zIndex: 1, marginTop: '15px'}}>
       <a
         href="https://bleaky11.github.io/starter_helpi/"
