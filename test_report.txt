@@ -69,14 +69,15 @@ File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #
 All files            |       0 |        0 |       0 |       0 |                   
  src                 |       0 |        0 |       0 |       0 |                   
   App.tsx            |       0 |        0 |       0 |       0 | 12-102            
-  LoginForm.tsx      |       0 |        0 |       0 |       0 | 33-259            
-  basicCareer.tsx    |       0 |        0 |       0 |       0 | 44-305            
+  LoginForm.tsx      |       0 |        0 |       0 |       0 | 33-260            
+  basicCareer.tsx    |       0 |        0 |       0 |       0 | 41-346            
   chatGpt.ts         |       0 |        0 |       0 |       0 | 4-34              
+  db.tsx             |       0 |        0 |       0 |       0 | 1-15              
   detailedCareer.tsx |       0 |        0 |       0 |       0 | 22-217            
   gptResponse.tsx    |       0 |        0 |       0 |       0 | 14-69             
   header.tsx         |       0 |        0 |       0 |       0 | 11-57             
   home.tsx           |       0 |        0 |       0 |       0 | 24-182            
-  homepagelogo.tsx   |       0 |        0 |       0 |       0 | 7-473             
+  homepagelogo.tsx   |       0 |        0 |       0 |       0 | 20-553            
   index.tsx          |       0 |      100 |     100 |       0 | 7-19              
   notification.tsx   |       0 |        0 |       0 |       0 | 11-47             
   reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10              
@@ -89,5 +90,5 @@ All files            |       0 |        0 |       0 |       0 |
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.122 s
+Time:        5.276 s
 Ran all test suites.
