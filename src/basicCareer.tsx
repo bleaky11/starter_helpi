@@ -38,51 +38,43 @@ interface Answers
 
 export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage}: SubmitButton & saveButton & Answers & Pages): JSX.Element 
 {
+  const defaultQuestions = [{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
+  { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
+  { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
+  { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Somewhat" }, { id: 3, label: "More often than not" }, { id: 4, label: "Extremely" }], selected: [false, false, false, false] },
+  { text: "How much would you like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasionally" }, { id: 4, label: "Fairly often" }, { id: 5, label: "All the time" }], selected: [false, false, false, false, false] },
+  { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
+  { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
+  { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
+  { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}];
+
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [loggedUser, setLoggedUser] = useState<Account| null>(null);
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
-  const [questions, setQuestions] = useState<Question[]>([{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
-    { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
-    { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
-    { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Somewhat" }, { id: 3, label: "More often than not" }, { id: 4, label: "Extremely" }], selected: [false, false, false, false] },
-    { text: "How much would you like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasionally" }, { id: 4, label: "Fairly often" }, { id: 5, label: "All the time" }], selected: [false, false, false, false, false] },
-    { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
-    { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
-    { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
-    { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}]);
+  const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
 
     useEffect(() => {
       const fetchLoggedInUser = async () => {
         if (db) {
           try {
-            console.log("Database already initialized.");
             const savedBasicProgress = localStorage.getItem("basicQuizProgress");
             const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
     
             if (loggedUser) {
-              console.log("Logged-in user already set:", loggedUser);
               return; // If the logged-in user is already set, no need to check localStorage
             }  
-    
-            // Guest user logic (not logged in)
-            else if (!savedBasicProgress && !savedBasicAnswers) {
-              console.log("No saved progress or answers in localStorage.");
+            else if (!savedBasicProgress && !savedBasicAnswers) { // blank quiz on start
               sessionStorage.setItem("quizAttempt", "true");
-              // Clear quiz state for a fresh start
-              setProgress(0); // Set to initial progress (0)
-              setQuestions(questions); // Set to empty questions array
+              setProgress(0); 
+              setQuestions(questions); 
             } else {
-              console.log("Loading progress and answers from localStorage...");
-              // If there's saved data in localStorage, load it
-              setProgress(JSON.parse(savedBasicProgress || "0"));
+              setProgress(JSON.parse(savedBasicProgress || "0")); // Load guest data
               setQuestions(JSON.parse(savedBasicAnswers || "[]"));
             }
     
-            console.log("No logged-in user found in state, fetching from database...");
             const transaction = db.transaction("users", "readonly");
             const store = transaction.objectStore("users");
-    
             const getLoggedInUserRequest = store.index("loggedIn").get("true");
     
             getLoggedInUserRequest.onsuccess = () => {
@@ -91,7 +83,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     
               if (user) {
                 setLoggedUser(user); // Set logged-in user state
-                setQuestions(user.quiz.length ? user.quiz : questions); // Load user-specific questions
+                setQuestions(user.quiz.length ? user.quiz : defaultQuestions); // Load user-specific questions
                 setProgress(user.progress || 0); // Load user-specific progress
               } else {
                 console.log("No logged-in user found in database.");
@@ -109,7 +101,6 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
       };
     
       if (!db) {
-        console.log("Initializing database...");
         const initDb = async () => {
           try {
             const dbInstance = await initializeDatabase();
@@ -127,8 +118,6 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
 
     
     function handleBasicSave() {
-      console.log("Saving quiz progress...");
-    
       if (loggedUser && db) {
         console.log("Saving progress for logged-in user:", loggedUser.username);
     
@@ -147,16 +136,10 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
           console.error("Failed to save quiz progress:", event);
         };
       } else {
-        console.log("No logged-in user found; saving progress to localStorage...");
         localStorage.setItem("basicQuizProgress", JSON.stringify(progress));
         localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
-        console.log("Quiz progress and answers saved to localStorage.");
       }
-    
-      if (progress < 100) {
-        console.log("Progress is less than 100%; showing alert.");
-        alert("Quiz saved!");
-      }
+      alert("Quiz saved!");
     }
 
   function handleClear(){ //Clears user's saved progress and resets quiz

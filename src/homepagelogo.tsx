@@ -32,7 +32,6 @@ export const HomePage = () => {
   const [isPasswordReset, setIsPasswordReset] = React.useState<boolean>(false);
 
   const CryptoJS = require("crypto-js");
-
   const secretKey = process.env.REACT_APP_SECRET_KEY;
 
   useEffect(() => {
@@ -82,7 +81,6 @@ export const HomePage = () => {
     {
       setIsLoggedIn(loggedIn);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]); 
   
   const loadAccounts = async (): Promise<typeof accounts> => {
