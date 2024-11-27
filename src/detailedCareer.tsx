@@ -18,32 +18,39 @@ interface Question // Interface to handle question attributes
   tip?: string;
 }
 
-export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: submitButton): JSX.Element {
+export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
   const [questions, setQuestions] = useState<Question[]>([]);
   const [progress, setProgress] = useState<number>(0);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
-
+  const [prompts, setPrompts] = useState<string[]>([]);
 
   const currentQuestion = questions.find(q => q.page === questionPage); //Variable to track which question is displayed
   if(sessionStorage.getItem("quizAnswers") === null){
     sessionStorage.setItem("quizAnswers", JSON.stringify({}))
   }
 
-  const updateProgress = useCallback(() => { //When an answer to a question is saved, update progress
+  const updateProgress = useCallback(() => {
     const totalQuestions = questions.length;
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
     sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
+  
+    const updatedTags = assignTags(prompts);  // Map answers to tags
+    setPrompts(updatedTags.map(tag => tag.response));
+
     const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
     const progressPercentage = (answeredQuestions / totalQuestions) * 100;
     setProgress(progressPercentage);
-  }, [questions]);
+  }, [prompts, questions.length]);  
 
-  useEffect(() => { //Allows for each question to have a different answerbox while still being editable
+  useEffect(() => {
     const storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
-    if (storedQuestions.length > 0){
-      setQuestions(storedQuestions)
+    if (storedQuestions.length > 0) {
+      setQuestions(storedQuestions);
+      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+      const updatedPrompts = Object.keys(savedAnswers).map((key) => savedAnswers[key]); 
+      setPrompts(updatedPrompts); // Set the prompts after updating with saved answers
     } else {
       const defaultQuestions = [
         { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
@@ -53,28 +60,23 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
         { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
         { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
         { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
-      ]
-      setQuestions(defaultQuestions)
+      ];
+      setQuestions(defaultQuestions);
       sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
     }
-
-    // Load saved answers from session storage when the component mounts
+  
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
     const updatedTempAnswers = new Array(7).fill("");
-
-    // Populate tempAnswers with saved answers
     Object.keys(savedAnswers).forEach((key) => {
       updatedTempAnswers[parseInt(key)] = savedAnswers[key];
     });
     setTempAnswers(updatedTempAnswers);
   
-    // Calculate progress after setting questions
     const totalQuestions = storedQuestions.length;
-    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
-    const progressPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
+    const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0;
     setProgress(progressPercentage);
-  
-  }, []);
+  }, []); // Make sure prompts are set first  
 
   function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
     if (currentQuestion) {
@@ -91,13 +93,20 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed }: su
     }
   }
 
-  function handleAnswerChange(event: React.ChangeEvent<HTMLTextAreaElement>) { //Function to place a user's new answer in a temp variable to hold before recording
+  function assignTags(prompts: string[]): { response: string, tag: number }[] {
+    return prompts.map((response, index) => ({
+      tag: index,
+      response
+    }));
+  }  
+  
+  function handleAnswerChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     setTempAnswers(prevAnswers => {
       const updatedAnswers = [...prevAnswers];
       updatedAnswers[questionPage] = event.target.value;
       return updatedAnswers;
     });
-  }
+  }  
 
   function toggleExplanation() { //Turns explanation blurb on and off
     setShowExplanation(prev => !prev);
@@ -154,10 +163,10 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
     </div>)
   }
 
-  function getSavedAnswer(page: number) { //Helper function to get and display the user's saved answer from storage
-    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+  function getSavedAnswer(page: number) {
+    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");  
     return savedAnswers[page] || ""; // Return the saved answer or an empty string if not present
-  }
+  }  
   
   return (
     <div className="Background">
