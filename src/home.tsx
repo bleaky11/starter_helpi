@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { NotifBell } from "./notification";
 import magGlass from "./Images/magnifying-glass.jpg";
 import detective from "./Images/Detective.png";
-import theme from "./Images/themeHome.png";
 import { HomeBackground } from "./homeBackground";
 
 interface HomeComponentProps {
@@ -30,7 +29,6 @@ export function MainPage({
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
         ></NotifBell>
-        <HomeBackground/>
         <Container>
           <Col className="ResultBorder" >
               <div style={{ flex: 2 }}>

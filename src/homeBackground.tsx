@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import theme from "./Images/themeHome.png";  // Assuming the PNG image is used
+import theme from "./Images/themeHome.png"
 
 export function HomeBackground(): JSX.Element {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ export function HomeBackground(): JSX.Element {
             xmlns="http://www.w3.org/2000/svg"
             width={svgDimensions.width}
             height={svgDimensions.height}
-            viewBox="0 0 1920 1080"
+            className="home-background"
         >
 
             <image href={theme} x="0" y="0" width="100%" height="100%" />
