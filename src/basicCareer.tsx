@@ -290,7 +290,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
             alt="detective-walking"
             style={{
               position: "relative",
-              left: `${(progress / 100) * 270 - 320}px`,
+              left: `${(progress / 100) * 270 - 315}px`,
               transition: "left 1s ease-in",
               width: "45px",
               height: "auto", // Maintain aspect ratio
