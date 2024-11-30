@@ -67,7 +67,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
             else if (!savedBasicProgress && !savedBasicAnswers) { // blank quiz on start
               sessionStorage.setItem("quizAttempt", "true");
               setProgress(0); 
-              setQuestions(questions); 
+              setQuestions(defaultQuestions); 
             } else {
               setProgress(JSON.parse(savedBasicProgress || "0")); // Load guest data
               setQuestions(JSON.parse(savedBasicAnswers || "[]"));
