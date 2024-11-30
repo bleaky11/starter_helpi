@@ -160,6 +160,13 @@
   border-style: inset
 }
 
+.Button:focus {
+  background: #c47937;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: outset
+}
+
 .Centered {
   display: flex;
   justify-content: center;
