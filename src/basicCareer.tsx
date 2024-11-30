@@ -289,8 +289,8 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
             src={detectiveWalk}
             alt="detective-walking"
             style={{
-              position: "absolute",
-              left: `${(progress / 100) * 270 - 310}px`,
+              position: "relative",
+              left: `${(progress / 100) * 270 - 320}px`,
               transition: "left 1s ease-in",
               width: "45px",
               height: "auto", // Maintain aspect ratio
