@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import detective from './Images/detective-profile.png';
 import { initializeDatabase } from './db';
+import { Database } from './db';
 import { LoginForm } from './LoginForm';
 import { Button } from 'react-bootstrap';
 import { Question } from './basicCareer';
@@ -18,13 +19,12 @@ export interface Account
   ivPass: string;
 }
 
-export const HomePage = () => {
+export const HomePage = ({db, setDb}: Database) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: false});
   const [remember, setRemember] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);  
   const [formTitle, setFormTitle] = useState("Create Account");
-  const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedUser, setSelect] = useState("Select a saved user");
   const [passwordPlaceholder, setPlaceholder] = useState<string>(""); // a blank input space for the reset form

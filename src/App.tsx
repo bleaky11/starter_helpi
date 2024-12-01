@@ -19,6 +19,7 @@ if (prevKey !== null) {
 function App() {
   const [key, setKey] = useState<string>(keyData); // For API key input
   const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
+  const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [basicComplete, toggleBasic] = useState<boolean>(false)// To track basic question completion
   const [detailedComplete, toggleDetailed] = useState<boolean>(false) // To track detailed question completion
   const [savedBasicCareer, setBasicCareer] = useState<string>(""); //To track saved quiz data
@@ -44,6 +45,8 @@ function App() {
         setAnswerVals={setAnswerVals}
         apiKey={key}
         setPage={setPage}
+        db = {db}
+        setDb = {setDb}
         basicComplete={basicComplete}
         toggleBasic={toggleBasic}
         detailedComplete={detailedComplete}
@@ -78,6 +81,8 @@ function App() {
 // Define an interface for the props
 interface MainContentProps {
   setPage: React.Dispatch<React.SetStateAction<string>>;
+  db: IDBDatabase | null;
+  setDb: React.Dispatch<React.SetStateAction<IDBDatabase | null>>; 
   basicComplete: boolean;
   toggleBasic: React.Dispatch<React.SetStateAction<boolean>>;
   detailedComplete: boolean;
@@ -94,16 +99,16 @@ interface MainContentProps {
   setAnswerVals: React.Dispatch<React.SetStateAction<{answer:string, tag: string}[]>>;
 }
 
-function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered,
+function MainContent({ setPage, db, setDb, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered,
    savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, apiKey, answerVals, setAnswerVals}: MainContentProps) {
   const location = useLocation();
   const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : (location.pathname === "/detailed-questions" ? "Detailed-Questions": "Results-Page"));
 
   return (
     <>
-      <HeaderComponent setPage={setPage} page={currentPage} />
+      <HeaderComponent db = {db} setDb = {setDb} setPage={setPage} page={currentPage} />
       <Routes>
-        <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}  savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
+        <Route path="/basic-questions" element={<BasicCareerComponent db = {db} setDb = {setDb} basicComplete={basicComplete} toggleBasic={toggleBasic} savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
         setPage={setPage}/>} />
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
         <Route path="/results-page" element={<ResultPage basicComplete={basicComplete} detailedComplete={detailedComplete} apiKey={apiKey} answerVals={answerVals}></ResultPage>} />

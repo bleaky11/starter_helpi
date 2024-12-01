@@ -12,6 +12,29 @@ export function NotifBell({basicComplete, detailedComplete}: submitButton): JSX.
     const [image, changeImage] = useState<boolean>(false);
     const [notification, setNotification] = useState<boolean>(false);
 
+    /*
+        if(db)
+        {
+            const transaction = db.transaction("users", "read");
+            const store = transication.objectStore("users");
+            const userRequest = store.get(loggedUser);
+            userRequest.onsuccess = () => {
+                if(loggedUser.basicComplete)
+                {
+                    then set bell 
+                }
+                else if(basicComplete) // checking guest completion
+                {
+                    then set bell
+                }
+                else
+                {
+                    otherwise compeltely clear in general
+                }
+            }
+        }
+    */
+
     useEffect(() => { //Runs on basicComplete or detailedComplete update
         if (basicComplete && sessionStorage.getItem("basicCount") === null) { //if basicQs completed for the first time, notify user
             setNotification(true);
