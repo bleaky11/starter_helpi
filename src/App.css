@@ -196,6 +196,17 @@
   animation: hoverBorderColorChange 1s linear infinite;
 }
 
+.flashy-button:focus {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #DDA15E;
+  border: 4px outset #bc6c25; /* Initial border color */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s ease; /* Smooth transition */
+  animation: hoverBorderColorChange 2s linear infinite;
+}
+
 
 @keyframes hoverBorderColorChange {
   0% {
