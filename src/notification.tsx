@@ -1,81 +1,95 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import { Database } from "./db";
 import { Account } from "./homepagelogo";
-import bell from "./Images/bell.png"
-import notificationBell from "./Images/notificationBell.png"
+import bell from "./Images/bell.png";
+import notificationBell from "./Images/notificationBell.png";
 
-export interface submitButton{ // Interface for keeping track of Basic Question Completion
+export interface submitButton { // Interface for keeping track of Basic Question Completion
     basicComplete: boolean;
     detailedComplete: boolean;
 }
 
-export interface BasicProps
-{
+export interface BasicProps {
     loggedUser: Account | null;
 }
 
-
-export function NotifBell({basicComplete, detailedComplete, db, setDb, loggedUser}: submitButton & Database & BasicProps): JSX.Element{
+export function NotifBell({
+    basicComplete,
+    detailedComplete,
+    db,
+    setDb,
+    loggedUser,
+}: submitButton & Database & BasicProps): JSX.Element {
     const [notifBar, toggleBar] = useState<boolean>(false);
     const [image, changeImage] = useState<boolean>(false);
     const [notification, setNotification] = useState<boolean>(false);
 
-    useEffect(() => { //Runs on basicComplete or detailedComplete update
-
-        if(db && loggedUser)
-        {
+    // Track the completion status and sync it across sessions
+    useEffect(() => {
+        if (loggedUser && db) {
             const transaction = db.transaction("users", "readonly");
             const store = transaction.objectStore("users");
             const userRequest = store.get(loggedUser.username);
-            userRequest.onsuccess = () => {                    
-                if(loggedUser.basicComplete)
-                {
+
+            userRequest.onsuccess = () => {
+                const userRecord = userRequest.result;
+                if (userRecord && userRecord.basicComplete) {
                     setNotification(true);
                 }
-            }
-        }
-        else if(basicComplete && sessionStorage.getItem("basicCount") === null)
-        {
+            };
+        } else if (basicComplete && sessionStorage.getItem("basicCount") === null) {
             setNotification(true);
-        }
-        else if (detailedComplete && sessionStorage.getItem("detailedCount") === null){//if detailedQs completed for the first time, notify user
+        } else if (detailedComplete && sessionStorage.getItem("detailedCount") === null) {
             setNotification(true);
-        }
-        else
-        {
+        } else {
             setNotification(false);
         }
     }, [basicComplete, db, detailedComplete, loggedUser]);
 
-    useEffect(() => { //Changes image of bell to notification bell when notification is updated
-        if(notification){
+    // Handle changing the bell icon based on notification state
+    useEffect(() => {
+        if (notification) {
             changeImage(true);
-        }
-        else{
+        } else {
             changeImage(false);
         }
-    }, [notification])
+    }, [notification]);
 
-    function basicToggle(): void{ //Function to handle toggling the notification bar on and off
+    const basicToggle = (): void => {
         toggleBar(!notifBar);
-        if(notification === true){
-            setNotification(false); //set notification to false if it equals true when clicked
-            if(basicComplete){
-                sessionStorage.setItem("basicCount", "1") //update counter so notification doesn't keep getting displayed after being viewed
+        if (notification) {
+            setNotification(false);
+            if (basicComplete) {
+                sessionStorage.setItem("basicCount", "1"); // update counter so notification doesn't show again
             }
-            
-            if(detailedComplete){ //update counter so notification doesn't keep getting displayed after being viewed
-                sessionStorage.setItem("detailedCount", "1")
+
+            if (detailedComplete) {
+                sessionStorage.setItem("detailedCount", "1");
             }
         }
-    }
-    return (<div className="container">
-        <div>
-            <img src={image === true ? notificationBell : bell} onClick={basicToggle} alt="Bell here" className="notif-bell"></img>
-        </div>
-        {(basicComplete && detailedComplete)? (notifBar && <div className="notif-bar">Basic Questions are complete! <br></br> Detailed Questions are complete! <br></br> Check out the results page! </div>) :
-        ((basicComplete && !detailedComplete)? (notifBar && <div className="notif-bar">Basic Questions are complete! <br></br> Check out the results page!</div>) :
-        ((detailedComplete && !basicComplete)?  (notifBar && <div className="notif-bar">Detailed Questions are complete! <br></br> Check out the results page! </div> ): (notifBar && <div className="notif-bar">No questions finished yet</div>)))}
+    };
 
-    </div>)
+    return (
+        <div className="container">
+            <div>
+                <img
+                    src={image ? notificationBell : bell}
+                    onClick={basicToggle}
+                    alt="Bell here"
+                    className="notif-bell"
+                />
+            </div>
+            {notifBar && (
+                <div className="notif-bar">
+                    {basicComplete && detailedComplete
+                        ? "Both Basic and Detailed Questions are complete! Check out the results page!"
+                        : basicComplete
+                        ? "Basic Questions are complete! Check out the results page!"
+                        : detailedComplete
+                        ? "Detailed Questions are complete! Check out the results page!"
+                        : "No questions finished yet"}
+                </div>
+            )}
+        </div>
+    );
 }

@@ -211,7 +211,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     }));
   }
 
-  function handleSubmit({basicComplete, toggleBasic}: SubmitButton) //Handles user submission of quiz
+  function handleSubmit({toggleBasic}: SubmitButton) //Handles user submission of quiz
   {
     if (db && loggedUser) {
       const transaction = db.transaction("users", "readwrite");
