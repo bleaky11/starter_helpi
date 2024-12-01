@@ -280,7 +280,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
         <progress
           id="question"
           value={progress}
-          style={{ height: "45px", width: "300px", position: "relative", transition: "left 1s ease-out" }}
+          style = {{height: "45px", width: "300px"}}
           max="100"
         ></progress>
         </div>
@@ -290,7 +290,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
             alt="detective-walking"
             style={{
               position: "relative",
-              left: `${(progress / 100) * 270 - 315}px`,
+              left: `${(progress / 100) * 300 - 325}px`,
               transition: "left 1s ease-in",
               width: "45px",
               height: "auto", // Maintain aspect ratio
