@@ -196,7 +196,7 @@
   animation: hoverBorderColorChange 1s linear infinite;
 }
 
-.flashy-button:focus {
+.flashy-button:disabled {
   padding: 10px 20px;
   font-size: 16px;
   background-color: #DDA15E;
