@@ -208,9 +208,30 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
 
   function handleSubmit({basicComplete, toggleBasic}: SubmitButton) //Handles user submission of quiz
   {
+    if (db && loggedUser) {
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+      const submitRequest = store.get(loggedUser.username);
+  
+      submitRequest.onsuccess = () => {
+        const userRecord = submitRequest.result;
+        if (userRecord) {
+          const updatedUser = { ...userRecord, basicComplete: true };
+          store.put(updatedUser); // Update the database
+        } else {
+          console.error("User not found in the database.");
+        }
+      };
+      submitRequest.onerror = () => {
+        console.error("Failed to retrieve user record from the database.");
+      };
+    }
+    else
+    {
+      setBasicCareer("basicQuizAnswers"); //Sets state that tracks guest's saved answers
+    }
     toggleBasic(true); //Sets state that tracks basic quiz completion to true
     handleBasicSave(); //Saves user's progress
-    setBasicCareer("basicQuizAnswers"); //Sets state that tracks user's saved answers
     handleUpdateValues(); //Populates array to track user's answers to each question
     alert("Thanks for completing the Basic Career quiz!");
   }

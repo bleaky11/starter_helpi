@@ -12,6 +12,7 @@ export interface Account
   password: string;
   remembered: boolean;
   loggedIn: string;
+  basicComplete: string;
   quiz: Question[];
   ivUser: string;
   ivPass: string;
@@ -297,6 +298,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           ivPass: ivPass,
           remembered: remember,
           loggedIn: "true",
+          basicComplete: "false",
           quiz: [],
           ivUser: ivUser,
         };
