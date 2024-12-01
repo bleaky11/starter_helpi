@@ -58,11 +58,11 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
       const fetchLoggedInUser = async () => {
         if (db) {
           try {
-            const savedBasicProgress = localStorage.getItem("basicQuizProgress");
-            const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
+            const savedBasicProgress = sessionStorage.getItem("basicQuizProgress");
+            const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
     
             if (loggedUser) {
-              return; // If the logged-in user is already set, no need to check localStorage
+              return; // If the logged-in user is already set, no need to check sessionStorage
             }  
             else if (!savedBasicProgress && !savedBasicAnswers) { // blank quiz on start
               sessionStorage.setItem("quizAttempt", "true");
@@ -136,8 +136,8 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
           console.error("Failed to save quiz progress:", event);
         };
       } else {
-        localStorage.setItem("basicQuizProgress", JSON.stringify(progress));
-        localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+        sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
+        sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
       }
       alert("Quiz saved!");
     }
@@ -145,8 +145,8 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
   function handleClear(){ //Clears user's saved progress and resets quiz
     if(!loggedUser)
     {
-      localStorage.removeItem("basicQuizProgress");
-      localStorage.removeItem("basicQuizAnswers");
+      sessionStorage.removeItem("basicQuizProgress");
+      sessionStorage.removeItem("basicQuizAnswers");
     }
     const clearedQuestions = questions.map(question => ({
       ...question,
@@ -214,13 +214,6 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     handleUpdateValues(); //Populates array to track user's answers to each question
     alert("Thanks for completing the Basic Career quiz!");
   }
-
-//   const clearStorage = () => 
-//     {
-//       localStorage.removeItem("basicQuizProgress");
-//       localStorage.removeItem("basicQuizAnswers");
-//       sessionStorage.removeItem("quizAttempt");
-// }
 
 useEffect(() => { //Populates and tags array of answers each time an answer is selected
   if (promptValues.length > 0) {
