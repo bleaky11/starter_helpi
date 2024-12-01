@@ -7,6 +7,7 @@ import { DetailedCareerComponent } from './detailedCareer';
 import { HeaderComponent } from './header';
 import { MainPage } from './home';
 import { ResultPage } from './resultPage';
+import { Account } from './homepagelogo';
 
 // Local storage and API Key
 let keyData = "";
@@ -20,6 +21,7 @@ function App() {
   const [key, setKey] = useState<string>(keyData); // For API key input
   const [page, setPage] = useState<string>("Home"); // Visibility for accessing basic questions
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
+  const [loggedUser, setLoggedUser] = useState<Account | null>(null);
   const [basicComplete, toggleBasic] = useState<boolean>(false)// To track basic question completion
   const [detailedComplete, toggleDetailed] = useState<boolean>(false) // To track detailed question completion
   const [savedBasicCareer, setBasicCareer] = useState<string>(""); //To track saved quiz data
@@ -58,6 +60,8 @@ function App() {
         savedDetailedCareer={savedDetailedCareer}
         question={question}
         setQuestion={setQuestion}
+        loggedUser={loggedUser}
+        setLoggedUser = {setLoggedUser}
       />
       {page === "Home" && (
         <div className='Header-footer' style={{paddingLeft:"20%",paddingRight:"20%"}}>
@@ -97,10 +101,12 @@ interface MainContentProps {
   setQuestion: React.Dispatch<React.SetStateAction<string>>;
   answerVals: {answer: string, tag:string}[];
   setAnswerVals: React.Dispatch<React.SetStateAction<{answer:string, tag: string}[]>>;
+  loggedUser: Account | null;
+  setLoggedUser: React.Dispatch<React.SetStateAction<Account|null>>;
 }
 
 function MainContent({ setPage, db, setDb, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered,
-   savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, apiKey, answerVals, setAnswerVals}: MainContentProps) {
+   savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, apiKey, answerVals, setAnswerVals, loggedUser, setLoggedUser}: MainContentProps) {
   const location = useLocation();
   const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : (location.pathname === "/detailed-questions" ? "Detailed-Questions": "Results-Page"));
 
@@ -109,10 +115,10 @@ function MainContent({ setPage, db, setDb, basicComplete, toggleBasic, detailedC
       <HeaderComponent db = {db} setDb = {setDb} setPage={setPage} page={currentPage} />
       <Routes>
         <Route path="/basic-questions" element={<BasicCareerComponent db = {db} setDb = {setDb} basicComplete={basicComplete} toggleBasic={toggleBasic} savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
-        setPage={setPage}/>} />
+        loggedUser = {loggedUser} setLoggedUser = {setLoggedUser} setPage={setPage}/>} />
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
         <Route path="/results-page" element={<ResultPage basicComplete={basicComplete} detailedComplete={detailedComplete} apiKey={apiKey} answerVals={answerVals}></ResultPage>} />
-        <Route path="/" element={<MainPage setPage={setPage} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} apiKey={apiKey}/>} />
+        <Route path="/" element={<MainPage setPage={setPage} page={currentPage} db = {db} setDb = {setDb} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} apiKey={apiKey} loggedUser={loggedUser}/>} />
         <Route path="*" element={<Navigate to="/" replace />} /> {/*Navigate to homepage if route is unrecognized*/}
       </Routes>
     </>

@@ -1,6 +1,8 @@
 import { Button, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { NotifBell } from "./notification";
+import { Database } from "./db";
+import { BasicProps } from "./notification";
 import magGlass from "./Images/magnifying-glass.jpg";
 import detective from "./Images/Detective.png";
 
@@ -20,13 +22,19 @@ export function MainPage({
   detailedComplete,
   isKeyEntered,
   apiKey,
-}: HomeComponentProps): JSX.Element {
+  db,
+  setDb,
+  loggedUser
+}: HomeComponentProps & Database & BasicProps): JSX.Element {
   return (
     <div className="App">
       <header className="App-header"> 
         <NotifBell
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
+          db = {db}
+          setDb = {setDb}
+          loggedUser={loggedUser}
         ></NotifBell>
         <Container>
           <Col className="ResultBorder" >
