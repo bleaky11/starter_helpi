@@ -13,7 +13,7 @@ export interface Account
   password: string;
   remembered: boolean;
   loggedIn: string;
-  basicComplete: string;
+  basicComplete: boolean;
   quiz: Question[];
   ivUser: string;
   ivPass: string;
@@ -308,7 +308,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           ivPass: ivPass,
           remembered: remember,
           loggedIn: "true",
-          basicComplete: "false",
+          basicComplete: false,
           quiz: [],
           ivUser: ivUser,
         };
@@ -485,8 +485,6 @@ const updateSavedUsers = () => {
         const userAccount = findUser(username, accounts);  
         if (userAccount) {
           userAccount.loggedIn = "false";  // Mark user as logged out in the database
-          setLoggedUser(null);  // Reset logged-in user state
-          
           // Update the database with the new logged-in status
           const putRequest = store.put(userAccount);
           
@@ -497,6 +495,7 @@ const updateSavedUsers = () => {
               sessionStorage.setItem("loggedIn", "false");  
               sessionStorage.removeItem("username");
               setIsLoggedIn(false);  // Set the React state for logged-in status
+              setLoggedUser(null);  // Reset logged-in user state
               setIsFormOpen(false);  // Close the login form if open
               alert("Logged out successfully!");  // Notify the user
             }, 1500);

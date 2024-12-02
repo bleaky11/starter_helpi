@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { initializeDatabase } from "./db";
 import { Database } from "./db";
 import { Account } from "./homepagelogo";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
@@ -40,9 +39,10 @@ interface Answers
 interface Users
 {
   loggedUser: Account | null;
+  setLoggedUser: React.Dispatch<React.SetStateAction<Account | null>>;
 }
 
-export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage, loggedUser}: SubmitButton & saveButton & Answers & Pages & Users & Database): JSX.Element 
+export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage, loggedUser, setLoggedUser}: SubmitButton & saveButton & Answers & Pages & Users & Database): JSX.Element 
 {
   const defaultQuestions = [{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
   { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
@@ -60,8 +60,28 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
 
   useEffect(() => {
     const fetchLoggedInUser = async () => {
-      if (!db) return;
-  
+      if (!db)
+      {
+        return;
+      }
+
+      const initializeGuestSession = () => {
+        // Ensure no existing session data is used incorrectly
+        const savedBasicProgress = sessionStorage.getItem("basicQuizProgress");
+        const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
+    
+        if (!savedBasicProgress && !savedBasicAnswers) {
+          sessionStorage.setItem("quizAttempt", "true");
+          setProgress(0);
+          setQuestions(defaultQuestions); // Default guest questions
+        }
+        else
+        {
+          setProgress(JSON.parse(savedBasicProgress || "0")); // Load guest data
+          setQuestions(JSON.parse(savedBasicAnswers || "[]"));
+        }
+      };
+
       try {
         const transaction = db.transaction("users", "readonly");
         const store = transaction.objectStore("users");
@@ -87,35 +107,9 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
         initializeGuestSession();
       }
     };
-  
-    const initializeGuestSession = () => {
-      // Ensure no existing session data is used incorrectly
-      const savedBasicProgress = sessionStorage.getItem("basicQuizProgress");
-      const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
-  
-      if (!savedBasicProgress && !savedBasicAnswers) {
-        sessionStorage.setItem("quizAttempt", "true");
-        setProgress(0);
-        setQuestions(defaultQuestions); // Default guest questions
-      }
-      else
-      {
-        setProgress(JSON.parse(savedBasicProgress || "0")); // Load guest data
-        setQuestions(JSON.parse(savedBasicAnswers || "[]"));
-      }
-    };
-  
-    if (!db) {
-      const initDb = async () => {
-        const dbInstance = await initializeDatabase();
-        setDb(dbInstance);
-      };
-      initDb();
-    } else {
-      fetchLoggedInUser();
-    }
+    fetchLoggedInUser();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db]);  
+  }, [db]);
     
   function handleBasicSave() {
     if (loggedUser && db) {
@@ -209,8 +203,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     }));
   }
 
-  function handleSubmit({toggleBasic}: SubmitButton) //Handles user submission of quiz
-  {
+  function handleSubmit({ toggleBasic }: SubmitButton) {
     if (db && loggedUser) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
@@ -220,24 +213,51 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
         const userRecord = submitRequest.result;
         if (userRecord) {
           const updatedUser = { ...userRecord, basicComplete: true };
-          store.put(updatedUser); // Update the database
+          console.log(updatedUser);
+  
+          // Update the database
+          const updateRequest = store.put(updatedUser);
+  
+          updateRequest.onsuccess = () => {
+            console.log("Database updated successfully");
+  
+            // Re-fetch the updated user to synchronize state
+            const fetchUpdatedUser = store.get(loggedUser.username);
+            fetchUpdatedUser.onsuccess = () => {
+              localStorage.setItem("userBasicComplete", "true");
+            };
+  
+            fetchUpdatedUser.onerror = () => {
+              console.error("Failed to fetch updated user after update.");
+            };
+  
+            // Proceed with post-update actions
+            toggleBasic(true);
+            handleBasicSave();
+            handleUpdateValues();
+            alert("Thanks for completing the Basic Career quiz!");
+          };
+  
+          updateRequest.onerror = () => {
+            console.error("Failed to update user in the database.");
+          };
         } else {
           console.error("User not found in the database.");
         }
       };
+  
       submitRequest.onerror = () => {
         console.error("Failed to retrieve user record from the database.");
       };
+    } else {
+      // Handle case for guests
+      setBasicCareer("basicQuizAnswers"); // Sets state that tracks guest's saved answers
+      toggleBasic(true); // Sets state that tracks basic quiz completion to true
+      handleBasicSave();
+      handleUpdateValues();
+      alert("Thanks for completing the Basic Career quiz!");
     }
-    else
-    {
-      setBasicCareer("basicQuizAnswers"); //Sets state that tracks guest's saved answers
-    }
-    toggleBasic(true); //Sets state that tracks basic quiz completion to true
-    handleBasicSave(); //Saves user's progress
-    handleUpdateValues(); //Populates array to track user's answers to each question
-    alert("Thanks for completing the Basic Career quiz!");
-  }
+  }  
 
 useEffect(() => { //Populates and tags array of answers each time an answer is selected
   if (promptValues.length > 0) {

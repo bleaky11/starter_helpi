@@ -19,7 +19,6 @@ export const initializeDatabase = async () => {
         const objectStore = db.createObjectStore("users", { keyPath: "username" });
         objectStore.createIndex("username", "username", { unique: true });
         objectStore.createIndex("loggedIn", "loggedIn", { unique: false });
-        objectStore.createIndex("basicComplete", "basicComplete", {unique: false});
       } 
     };
   });

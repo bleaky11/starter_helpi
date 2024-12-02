@@ -45,7 +45,7 @@ export function MainPage({
                 </h6>
               </div>
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
-                {!basicComplete && !detailedComplete ? (
+                {(!basicComplete && !detailedComplete) || !loggedUser?.basicComplete ? (
                   <div>
                     <Button className="Button" disabled={true}>Results</Button>
                     <h6>Please complete a Quiz!</h6>

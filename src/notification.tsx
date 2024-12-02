@@ -33,16 +33,21 @@ export function NotifBell({
 
             userRequest.onsuccess = () => {
                 const userRecord = userRequest.result;
-                if (userRecord && userRecord.basicComplete === "true") {
+                console.log("Here");
+                if (userRecord && userRecord.basicComplete) {
+                    console.log("Here");
                     setNotification(true);
                 }
             };
         } else if (basicComplete && sessionStorage.getItem("basicCount") === null) {
+            console.log("In Here");
             setNotification(true);
         } else if (detailedComplete && sessionStorage.getItem("detailedCount") === null) {
             setNotification(true);
+            console.log("im Here");
         } else {
             setNotification(false);
+            console.log("Here else");
         }
     }, [basicComplete, db, detailedComplete, loggedUser]);
 
