@@ -379,15 +379,31 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
       </div>
   
       <div style={{ justifyContent: "center", marginTop: "80px" }}>
-        {basicComplete && (
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-              <Button className="flashy-button">Results</Button>
-            </Link>
-          </div>
-        )}
+  {!loggedUser ? ( // User is not logged in
+    basicComplete ? ( // Guest condition: basic quiz complete
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+          <Button className="flashy-button">Results</Button>
+        </Link>
       </div>
-  
+    ) : (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Button className="Button" disabled={true}>
+          Results
+        </Button>
+        <h6>Please complete the basic quiz!</h6>
+      </div>
+    )
+  ) : ( // User is logged in
+    loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+          <Button className="flashy-button">Results</Button>
+        </Link>
+      </div>
+    ) : null
+  )}
+</div>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "2px" }}>
         <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
         <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic} />

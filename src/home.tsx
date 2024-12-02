@@ -46,25 +46,40 @@ export function MainPage({
                 </h6>
               </div>
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
-              {!loggedUser?.basicComplete ? (
-              <div>
-                <Button className="Button" disabled={true}>
-                  Results
-                </Button>
-                <h6>Please complete a Quiz!</h6>
-              </div>
-            ) : !basicComplete && !detailedComplete ? (
-              <div>
-                <Button className="Button" disabled={true}>
-                  Results
-                </Button>
-                <h6>Please complete a Quiz!</h6>
-              </div>
-            ) : (
-              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-                <Button className="flashy-button">Results</Button>
-              </Link>
-            )}
+              {!loggedUser ? ( // User is not logged in
+              !basicComplete && !detailedComplete ? (
+                <div>
+                  <Button className="Button" disabled={true}>
+                    Results
+                  </Button>
+                  <h6>Please complete a Quiz!</h6>
+                </div>
+              ) : (
+                <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                  <Button className="flashy-button">Results</Button>
+                </Link>
+              )
+            ) : ( // User is logged in
+                  !loggedUser.basicComplete ? (
+                    <div>
+                      <Button className="Button" disabled={true}>
+                        Results
+                      </Button>
+                      <h6>Please complete a Quiz!</h6>
+                    </div>
+                  ) : !basicComplete && !detailedComplete ? (
+                    <div>
+                      <Button className="Button" disabled={true}>
+                        Results
+                      </Button>
+                      <h6>Please complete a Quiz!</h6>
+                    </div>
+                  ) : (
+                    <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                      <Button className="flashy-button">Results</Button>
+                    </Link>
+                  )
+                )}
             </nav>
             </Col>
             
