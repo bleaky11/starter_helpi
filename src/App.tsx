@@ -7,6 +7,7 @@ import { DetailedCareerComponent } from './detailedCareer';
 import { HeaderComponent } from './header';
 import { MainPage } from './home';
 import { ResultPage } from './resultPage';
+import { QuizInterface } from './interface';
 
 // Local storage and API Key
 let keyData = "";
@@ -97,7 +98,7 @@ interface MainContentProps {
 function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered,
    savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, apiKey, answerVals, setAnswerVals}: MainContentProps) {
   const location = useLocation();
-  const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : (location.pathname === "/detailed-questions" ? "Detailed-Questions": "Results-Page"));
+  const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : (location.pathname === "/detailed-questions" ? "Detailed-Questions": (location.pathname === "/interface" ? "Interface": "Results-Page")));
 
   return (
     <>
@@ -105,6 +106,7 @@ function MainContent({ setPage, basicComplete, toggleBasic, detailedComplete, to
       <Routes>
         <Route path="/basic-questions" element={<BasicCareerComponent basicComplete={basicComplete} toggleBasic={toggleBasic}  savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
         setPage={setPage}/>} />
+        <Route path="/interface" element={<QuizInterface/>} />
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
         <Route path="/results-page" element={<ResultPage basicComplete={basicComplete} detailedComplete={detailedComplete} apiKey={apiKey} answerVals={answerVals}></ResultPage>} />
         <Route path="/" element={<MainPage setPage={setPage} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} apiKey={apiKey}/>} />

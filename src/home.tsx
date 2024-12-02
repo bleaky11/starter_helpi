@@ -23,9 +23,9 @@ export function MainPage({
   apiKey,
 }: HomeComponentProps): JSX.Element {
   return (
-    <div className="App">
+    <div>
       <header className="App-header"> 
-        <NotifBell
+        {/* <NotifBell
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
         ></NotifBell>
@@ -89,14 +89,14 @@ export function MainPage({
               </div>
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 <nav>
-                  {/* Case 1: First visit (no progress saved, no API key entered) */}
-                  {!localStorage.getItem("quizProgress") &&
+                  {
+                  !localStorage.getItem("quizProgress") &&
                   !sessionStorage.getItem("isKeyEntered") ? (
                     <div>
                       <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Basic Career Questions</Button>
                       <h6>Please enter an API Key</h6>
                     </div>
-                  ) : /* Case 2: First visit, API key entered but no saved progress */
+                  ) :
                   !localStorage.getItem("quizProgress") &&
                     sessionStorage.getItem("isKeyEntered") ? (
                     <Link
@@ -105,7 +105,7 @@ export function MainPage({
                     >
                       <Button className="Button">Basic Questions</Button>
                     </Link>
-                  ) : /* Case 3: Returning visit with saved progress but no API key entered */
+                  ) :
                   localStorage.getItem("quizProgress") &&
                     !sessionStorage.getItem("isKeyEntered") ? (
                     <div>
@@ -114,7 +114,7 @@ export function MainPage({
                       </Button>
                       <h6>Please enter an API Key</h6>
                     </div>
-                  ) : /* Case 4: Returning visit with saved progress and API key entered */
+                  ) :
                   localStorage.getItem("quizProgress") &&
                     sessionStorage.getItem("isKeyEntered") ? (
                     <Link
@@ -187,7 +187,8 @@ export function MainPage({
               </nav>
             </Col>
           </Row>
-        </Container>
+        </Container> */}
+        <HomeBackground/>
       </header>
     </div>
   );

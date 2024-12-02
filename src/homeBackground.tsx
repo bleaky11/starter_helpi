@@ -1,20 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import theme from "./Images/themeHome.png"
+import theme from "./Images/themeHome.png";
 
 export function HomeBackground(): JSX.Element {
     const navigate = useNavigate();
 
     // SVG dimensions
-    const svgDimensions = { width: "100vw", height: "100vh" };
-    
-    // Circle position and size (example)
-    const scaledCx = window.innerWidth * 0.2;  // 20% from the left
-    const scaledCy = window.innerHeight * 0.3; // 30% from the top
-    const scaledRadius = 100;
-    
-    const handleHome = () => {
-        navigate("/home");
+    const svgDimensions = { width: "100%", height: "100%" };
+    const handleNav = () => {
+        navigate("/interface");
     };
 
     return (
@@ -22,20 +16,31 @@ export function HomeBackground(): JSX.Element {
             xmlns="http://www.w3.org/2000/svg"
             width={svgDimensions.width}
             height={svgDimensions.height}
+            preserveAspectRatio='none'
+            viewBox="0 0 1920 900"
             className="home-background"
         >
-
-            <image href={theme} x="0" y="0" width="100%" height="100%" />
+            {/* Image fill the SVG container */}
+            <image 
+                href={theme} 
+                x="0" 
+                y="0" 
+                width="100%" 
+                height="100%" 
+                preserveAspectRatio="xMidYMid slice"  // Ensures the image fills the SVG
+            />
             
             {/* Clickable circle area */}
-            <circle
-                cx={scaledCx}
-                cy={scaledCy}
-                r={scaledRadius}
+            <ellipse
+                cx={1190}
+                cy={382}
+                rx={245}
+                ry={210}
+                r={225}
                 fill="transparent"
                 stroke="red"
                 strokeWidth="2"
-                onClick={handleHome}
+                onClick={handleNav}
                 style={{ cursor: 'pointer' }}
             />
         </svg>
