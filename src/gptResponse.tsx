@@ -100,8 +100,8 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers}: { apiKey:
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-      <Button onClick={handleSendMessage} disabled={isLoading} style={{ marginBottom: '20px', background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid" }}>
-        GPT Test: {isLoading ? "loading" : "send"}
+      <Button onClick={handleSendMessage} disabled={isLoading} className="flashy-button">
+        {isLoading ? "Loading" : "Sending to Chatgpt"}
       </Button>
       
       <div>
