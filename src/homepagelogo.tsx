@@ -48,53 +48,50 @@ export const HomePage = ({db, setDb, loggedUser, setLoggedUser}: Users & Databas
   }, [secretKey]);
 
   useEffect(() => {
-    const fetchAccounts = async () => {
+    const fetchAccountsAndCheckLogin = async () => {
       try {
+        // Initialize the database if not yet initialized
         if (!db) {
           const initializedDb = await initializeDatabase();
           setDb(initializedDb);
         }
+        
+        // Fetch accounts once the db is initialized
         if (db) {
           const allAccounts = await loadAccounts();
           setAccounts(allAccounts);
-    
+          
+          // Check login status from sessionStorage
           const loggedIn = sessionStorage.getItem("loggedIn") === "true";
           const storedUsername = sessionStorage.getItem("username");
-    
+  
           if (loggedIn && storedUsername) {
-            const user = findUser(storedUsername, allAccounts); // Explicitly pass accounts
+            // Find the user in the accounts
+            const user = findUser(storedUsername, allAccounts);
             if (user) {
+              // Set user info and login state
               setUserInfo({
                 username: decryptUsername(user.username, user.ivUser),
                 password: user.password,
                 remembered: user.remembered,
               });
               setIsLoggedIn(true);
+              setLoggedUser(user); // Set the logged-in user directly here
+            } else {
+              setIsLoggedIn(false);
             }
+          } else {
+            setIsLoggedIn(false); // Ensure you're setting it to false when not logged in
           }
         }
       } catch (error) {
         console.error("Error in fetchAccountsAndCheckLogin:", error);
-      }    
+      }
     };
   
-    fetchAccounts();
+    fetchAccountsAndCheckLogin();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db]);  
-
-  useEffect(() => {
-    const loggedIn = sessionStorage.getItem("loggedIn") === "true";
-    if(loggedIn !== isLoggedIn)
-    {
-      setIsLoggedIn(loggedIn);
-      const fetchedAccount = findUser(userInfo.username, accounts);
-      if(fetchedAccount)
-      {
-        setLoggedUser(fetchedAccount);
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn]); 
+  }, [db]);  // Only depend on 'db' as we are already handling login logic inside this useEffect 
   
   const loadAccounts = async (): Promise<typeof accounts> => {
     if (!db) {
