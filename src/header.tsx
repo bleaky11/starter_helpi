@@ -1,6 +1,7 @@
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { HomePage } from "./homepagelogo";
+import { Account } from "./homepagelogo";
 
 interface HeaderComponentProps {
     page: string;
@@ -12,7 +13,13 @@ interface DatabaseProps {
     setDb: React.Dispatch<React.SetStateAction<IDBDatabase | null>>;
 }
 
-export function HeaderComponent({ setPage, page, db, setDb }: HeaderComponentProps & DatabaseProps): JSX.Element | null { 
+interface UserProps
+{
+  loggedUser: Account | null;
+  setLoggedUser: React.Dispatch<React.SetStateAction<Account | null>>;
+}
+
+export function HeaderComponent({ setPage, page, db, setDb, loggedUser, setLoggedUser }: HeaderComponentProps & DatabaseProps & UserProps): JSX.Element | null { 
     if (page === "Basic-Questions") {
         return (
             <div className='Header-footer'>
@@ -58,7 +65,7 @@ export function HeaderComponent({ setPage, page, db, setDb }: HeaderComponentPro
     } else { 
         return (
             <div className='Header-footer' style={{ textAlign: "center" }}>
-                <HomePage db={db} setDb={setDb} />
+                <HomePage db={db} setDb={setDb} loggedUser={loggedUser} setLoggedUser={setLoggedUser} />
             </div>
         );
     }

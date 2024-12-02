@@ -33,13 +33,16 @@ export function NotifBell({
 
             userRequest.onsuccess = () => {
                 const userRecord = userRequest.result;
-                if (userRecord && userRecord.basicComplete) {
+                if (userRecord && userRecord.basicComplete === "true") {
+                    console.log("Noti here");
                     setNotification(true);
                 }
             };
         } else if (basicComplete && sessionStorage.getItem("basicCount") === null) {
+            console.log("Notif here");
             setNotification(true);
         } else if (detailedComplete && sessionStorage.getItem("detailedCount") === null) {
+            console.log("nah in here");
             setNotification(true);
         } else {
             setNotification(false);

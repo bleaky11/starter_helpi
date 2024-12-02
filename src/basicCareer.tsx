@@ -40,10 +40,9 @@ interface Answers
 interface Users
 {
   loggedUser: Account | null;
-  setLoggedUser: React.Dispatch<React.SetStateAction<Account | null>>;
 }
 
-export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage, loggedUser, setLoggedUser}: SubmitButton & saveButton & Answers & Pages & Users & Database): JSX.Element 
+export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage, loggedUser}: SubmitButton & saveButton & Answers & Pages & Users & Database): JSX.Element 
 {
   const defaultQuestions = [{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
   { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
@@ -59,93 +58,98 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
 
-    useEffect(() => {
-      const fetchLoggedInUser = async () => {
-        if (db) {
-          try {
-            const savedBasicProgress = sessionStorage.getItem("basicQuizProgress");
-            const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
-    
-            if (loggedUser) {
-              return; // If the logged-in user is already set, no need to check sessionStorage
-            }  
-            else if (!savedBasicProgress && !savedBasicAnswers) { // blank quiz on start
-              sessionStorage.setItem("quizAttempt", "true");
-              setProgress(0); 
-              setQuestions(defaultQuestions); 
-            } else {
-              setProgress(JSON.parse(savedBasicProgress || "0")); // Load guest data
-              setQuestions(JSON.parse(savedBasicAnswers || "[]"));
-            }
-    
-            const transaction = db.transaction("users", "readonly");
-            const store = transaction.objectStore("users");
-            const getLoggedInUserRequest = store.index("loggedIn").get("true");
-    
-            getLoggedInUserRequest.onsuccess = () => {
-              const user = getLoggedInUserRequest.result;
-              console.log("Logged-in user fetched from DB:", user);
-    
-              if (user) {
-                setLoggedUser(user); // Set logged-in user state
-                setQuestions(user.quiz.length ? user.quiz : defaultQuestions); // Load user-specific questions
-                setProgress(user.progress || 0); // Load user-specific progress
-              } else {
-                console.log("No logged-in user found in database.");
-              }
-            };
-    
-            getLoggedInUserRequest.onerror = (event) => {
-              console.error("Error fetching logged-in user:", event);
-            };
-    
-          } catch (error) {
-            console.error("Error initializing database:", error);
-          }
-        }
-      };
-    
-      if (!db) {
-        const initDb = async () => {
-          try {
-            const dbInstance = await initializeDatabase();
-            setDb(dbInstance as IDBDatabase);
-          } catch (error) {
-            console.error("Error initializing database:", error);
-          }
-        };
-        initDb();
-      } else {
-        fetchLoggedInUser(); // Fetch user if db initialized
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [db, loggedUser]);
-
-    
-    function handleBasicSave() {
-      if (loggedUser && db) {
-        console.log("Saving progress for logged-in user:", loggedUser.username);
-    
-        const transaction = db.transaction("users", "readwrite");
+  useEffect(() => {
+    const fetchLoggedInUser = async () => {
+      if (!db) return;
+  
+      try {
+        const transaction = db.transaction("users", "readonly");
         const store = transaction.objectStore("users");
-    
-        const updatedUser = {
-          ...loggedUser,
-          quiz: [...questions],  // Save updated quiz answers
-          progress,              // Save quiz progress
+        const getLoggedInUserRequest = store.index("loggedIn").get("true");
+  
+        getLoggedInUserRequest.onsuccess = () => {
+          const user = getLoggedInUserRequest.result;
+  
+          if (user) {
+            console.log("Logged-in user fetched from DB:", user);
+            setQuestions(user.quiz.length ? user.quiz : defaultQuestions);
+            setProgress(user.progress || 0);
+          } else {
+            console.log("No accounts found in the database. Initializing guest session.");
+            initializeGuestSession();
+          }
         };
-    
-        const updateRequest = store.put(updatedUser);
-    
-        updateRequest.onerror = (event) => {
-          console.error("Failed to save quiz progress:", event);
+  
+        getLoggedInUserRequest.onerror = (event) => {
+          console.error("Error fetching user from DB:", event);
+          initializeGuestSession();
         };
-      } else {
-        sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
-        sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+      } catch (error) {
+        console.error("Error during user fetch:", error);
+        initializeGuestSession();
       }
-      alert("Quiz saved!");
+    };
+  
+    const initializeGuestSession = () => {
+      // Ensure no existing session data is used incorrectly
+      const savedBasicProgress = sessionStorage.getItem("basicQuizProgress");
+      const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
+  
+      if (!savedBasicProgress && !savedBasicAnswers) {
+        console.log("No progress found in sessionStorage. Initializing blank quiz.");
+        sessionStorage.setItem("quizAttempt", "true");
+        setProgress(0);
+        setQuestions(defaultQuestions); // Default guest questions
+      }
+      else
+      {
+        setProgress(JSON.parse(savedBasicProgress || "0")); // Load guest data
+        setQuestions(JSON.parse(savedBasicAnswers || "[]"));
+      }
+    };
+  
+    if (!db) {
+      const initDb = async () => {
+        const dbInstance = await initializeDatabase();
+        setDb(dbInstance);
+      };
+      initDb();
+    } else {
+      fetchLoggedInUser();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [db]);  
+    
+  function handleBasicSave() {
+    if (loggedUser && db) {
+      console.log("Saving progress for logged-in user:", loggedUser.username);
+  
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+  
+      const updatedUser = {
+        ...loggedUser,
+        quiz: [...questions],
+        progress,
+      };
+  
+      const updateRequest = store.put(updatedUser);
+  
+      updateRequest.onsuccess = () => {
+        console.log("User progress saved successfully.");
+        alert("Quiz progress saved!");
+      };
+  
+      updateRequest.onerror = (event) => {
+        console.error("Failed to save quiz progress:", event);
+      };
+    } else {
+      console.log("Saving to sessionStorage for guest user.");
+      sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
+      sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+      alert("Quiz saved to session storage!");
+    }
+  }  
 
   function handleClear(){ //Clears user's saved progress and resets quiz
     if(!loggedUser)

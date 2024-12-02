@@ -19,7 +19,13 @@ export interface Account
   ivPass: string;
 }
 
-export const HomePage = ({db, setDb}: Database) => {
+interface Users
+{
+  loggedUser: Account | null;
+  setLoggedUser: React.Dispatch<React.SetStateAction<Account | null>>;
+}
+
+export const HomePage = ({db, setDb, loggedUser, setLoggedUser}: Users & Database) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: false});
   const [remember, setRemember] = useState(false);
@@ -81,7 +87,13 @@ export const HomePage = ({db, setDb}: Database) => {
     if(loggedIn !== isLoggedIn)
     {
       setIsLoggedIn(loggedIn);
+      const fetchedAccount = findUser(userInfo.username, accounts);
+      if(fetchedAccount)
+      {
+        setLoggedUser(fetchedAccount);
+      }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]); 
   
   const loadAccounts = async (): Promise<typeof accounts> => {
@@ -274,6 +286,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               sessionStorage.setItem("username", decryptedUsername); 
               sessionStorage.setItem("loggedIn", "true");
               setIsLoggedIn(true);
+              setLoggedUser(matchingUser);
               matchingUser.loggedIn = "true";
               store.put(matchingUser);
               updateSavedUsers();
@@ -305,6 +318,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         sessionStorage.setItem("username", userInfo.username);
         sessionStorage.setItem("loggedIn", "true");
         setIsLoggedIn(true); // React state updates
+        setLoggedUser(newUser);
         store.put(newUser).onsuccess = () => {
           alert("Account created successfully!");
           updateSavedUsers();
@@ -464,7 +478,6 @@ const updateSavedUsers = () => {
   };   
   
   const handleLogout = async (username: string) => {
-    
     if (db) {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
@@ -474,18 +487,29 @@ const updateSavedUsers = () => {
       getRequest.onsuccess = () => {
         const userAccount = findUser(username, accounts);  
         if (userAccount) {
-          userAccount.loggedIn = "false";  
-          store.put(userAccount);  
-          setTimeout(() => {
-            clearForm();
-            sessionStorage.setItem("loggedIn", "false");  
-            sessionStorage.removeItem("username");
-            setIsLoggedIn(false);  
-            setIsFormOpen(false);
-            alert("Logged out successfully!");  
-          }, 1500);
+          userAccount.loggedIn = "false";  // Mark user as logged out in the database
+          setLoggedUser(null);  // Reset logged-in user state
+          
+          // Update the database with the new logged-in status
+          const putRequest = store.put(userAccount);
+          
+          putRequest.onsuccess = () => {
+            // After successful database update, perform UI updates
+            setTimeout(() => {
+              clearForm();
+              sessionStorage.setItem("loggedIn", "false");  
+              sessionStorage.removeItem("username");
+              setIsLoggedIn(false);  // Set the React state for logged-in status
+              setIsFormOpen(false);  // Close the login form if open
+              alert("Logged out successfully!");  // Notify the user
+            }, 1500);
+          };
+  
+          putRequest.onerror = (error) => {
+            console.error("Error updating user status in the database:", error);
+          };
         } else {
-          alert("User not found!");  // In case the user is not found
+          alert("User not found!");  // Handle the case where the user is not found
         }
       };
   
@@ -493,7 +517,7 @@ const updateSavedUsers = () => {
         console.error("Error fetching users for logout:", error);
       };
     }
-  };  
+  };   
   
   const handleRemember = () => {
     const newRememberState = !remember; // switch remember on check mark click/unclick
