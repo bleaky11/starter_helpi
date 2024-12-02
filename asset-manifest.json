@@ -1,9 +1,9 @@
 {
   "files": {
-    "main.css": "/starter_helpi/static/css/main.4fd23cde.css",
-    "main.js": "/starter_helpi/static/js/main.10950e77.js",
+    "main.css": "/starter_helpi/static/css/main.46bece77.css",
+    "main.js": "/starter_helpi/static/js/main.e51f718c.js",
     "static/js/453.dda23872.chunk.js": "/starter_helpi/static/js/453.dda23872.chunk.js",
-    "static/media/detective-walking-unscreen.gif": "/starter_helpi/static/media/detective-walking-unscreen.329f355672ac0e0e8fd8.gif",
+    "static/media/detective-walking-unscreen.gif": "/starter_helpi/static/media/detective-walking-unscreen.704a485db434b0ba83a7.gif",
     "static/media/detective-profile.png": "/starter_helpi/static/media/detective-profile.47c139e74c55522bc773.png",
     "static/media/Questions.png": "/starter_helpi/static/media/Questions.baf323050048168249fe.png",
     "static/media/user-profile.png": "/starter_helpi/static/media/user-profile.7ab529588e42fc95ea7b.png",
@@ -11,12 +11,12 @@
     "static/media/Detective2.png": "/starter_helpi/static/media/Detective2.e82d437746508369f2f7.png",
     "static/media/Detective.png": "/starter_helpi/static/media/Detective.36a652c320ea41a8d242.png",
     "index.html": "/starter_helpi/index.html",
-    "main.4fd23cde.css.map": "/starter_helpi/static/css/main.4fd23cde.css.map",
-    "main.10950e77.js.map": "/starter_helpi/static/js/main.10950e77.js.map",
+    "main.46bece77.css.map": "/starter_helpi/static/css/main.46bece77.css.map",
+    "main.e51f718c.js.map": "/starter_helpi/static/js/main.e51f718c.js.map",
     "453.dda23872.chunk.js.map": "/starter_helpi/static/js/453.dda23872.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4fd23cde.css",
-    "static/js/main.10950e77.js"
+    "static/css/main.46bece77.css",
+    "static/js/main.e51f718c.js"
   ]
 }
