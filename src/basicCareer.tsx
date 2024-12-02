@@ -71,11 +71,9 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
           const user = getLoggedInUserRequest.result;
   
           if (user) {
-            console.log("Logged-in user fetched from DB:", user);
             setQuestions(user.quiz.length ? user.quiz : defaultQuestions);
             setProgress(user.progress || 0);
           } else {
-            console.log("No accounts found in the database. Initializing guest session.");
             initializeGuestSession();
           }
         };
@@ -96,7 +94,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
   
       if (!savedBasicProgress && !savedBasicAnswers) {
-        console.log("No progress found in sessionStorage. Initializing blank quiz.");
         sessionStorage.setItem("quizAttempt", "true");
         setProgress(0);
         setQuestions(defaultQuestions); // Default guest questions
@@ -122,7 +119,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     
   function handleBasicSave() {
     if (loggedUser && db) {
-      console.log("Saving progress for logged-in user:", loggedUser.username);
   
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
@@ -136,7 +132,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       const updateRequest = store.put(updatedUser);
   
       updateRequest.onsuccess = () => {
-        console.log("User progress saved successfully.");
         alert("Quiz progress saved!");
       };
   
@@ -144,7 +139,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
         console.error("Failed to save quiz progress:", event);
       };
     } else {
-      console.log("Saving to sessionStorage for guest user.");
       sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
       sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
       alert("Quiz saved to session storage!");
