@@ -36,6 +36,7 @@ export function MainPage({
           setDb = {setDb}
           loggedUser={loggedUser}
         ></NotifBell>
+
         <Container>
           <Col className="ResultBorder" >
               <div style={{ flex: 2 }}>
@@ -45,20 +46,26 @@ export function MainPage({
                 </h6>
               </div>
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
-                {(!basicComplete && !detailedComplete) || !loggedUser?.basicComplete ? (
-                  <div>
-                    <Button className="Button" disabled={true}>Results</Button>
-                    <h6>Please complete a Quiz!</h6>
-                  </div>
-                ) : (
-                  <Link
-                    to="/results-page"
-                    onClick={() => setPage("Results-Page")}
-                  >
-                    <Button className="flashy-button">Results</Button>
-                  </Link>
-                )}
-              </nav>
+              {!loggedUser?.basicComplete ? (
+              <div>
+                <Button className="Button" disabled={true}>
+                  Results
+                </Button>
+                <h6>Please complete a Quiz!</h6>
+              </div>
+            ) : !basicComplete && !detailedComplete ? (
+              <div>
+                <Button className="Button" disabled={true}>
+                  Results
+                </Button>
+                <h6>Please complete a Quiz!</h6>
+              </div>
+            ) : (
+              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                <Button className="flashy-button">Results</Button>
+              </Link>
+            )}
+            </nav>
             </Col>
             
         </Container>

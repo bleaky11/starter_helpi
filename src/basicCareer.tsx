@@ -150,6 +150,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       selected: question.selected.map(() => false) // Reset all selected states to false
     }));
     
+    toggleBasic(false);
     setQuestions(clearedQuestions);
     setProgress(0);
     setTimeout(() => {
