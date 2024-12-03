@@ -3,7 +3,7 @@ import { Database } from "./db";
 import { Account } from "./homepagelogo";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
 
 export interface SubmitButton {
@@ -57,6 +57,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
+  const [userBasicComplete, setBasicCompletition] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchLoggedInUser = async () => {
@@ -110,6 +111,28 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     fetchLoggedInUser();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db]);
+
+  useEffect(() => 
+  {
+    if(userBasicComplete !== loggedUser?.basicComplete)
+    {
+      console.log("Does this ever run????");
+      if(db && loggedUser)
+      {
+        const transaction = db.transaction("users", "readwrite");
+        const store = transaction.objectStore("users");
+        if(loggedUser)
+        {
+          const updatedUser = {...loggedUser, basicComplete: true};
+          const updateRequest = store.put(updatedUser);
+          updateRequest.onsuccess = () =>
+          {
+            console.log("worked!");
+          }
+        }
+      }
+    }
+  }, [db, loggedUser, loggedUser?.basicComplete, userBasicComplete])
     
   function handleBasicSave() {
     if (loggedUser && db) {
@@ -205,44 +228,23 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   }
 
   function handleSubmit({ toggleBasic }: SubmitButton) {
-    if (db && loggedUser) {
+    if (db && loggedUser) 
+    {
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
       const submitRequest = store.get(loggedUser.username);
   
-      submitRequest.onsuccess = () => {
+      submitRequest.onsuccess = () => 
+      {
         const userRecord = submitRequest.result;
-        if (userRecord) {
-          const updatedUser = { ...userRecord, basicComplete: true };
-          console.log(updatedUser);
-  
-          // Update the database
-          const updateRequest = store.put(updatedUser);
-  
-          updateRequest.onsuccess = () => {
-            console.log("Database updated successfully");
-  
-            // Re-fetch the updated user to synchronize state
-            const fetchUpdatedUser = store.get(loggedUser.username);
-  
-            fetchUpdatedUser.onerror = () => {
-              console.error("Failed to fetch updated user after update.");
-            };
-  
-            toggleBasic(true);
-           // handleBasicSave();
+        if (userRecord) 
+        {
+            setBasicCompletition(true);
+            handleBasicSave();
             handleUpdateValues();
             alert("Thanks for completing the Basic Career quiz!");
-          };
-  
-          updateRequest.onerror = () => {
-            console.error("Failed to update user in the database.");
-          };
-        } else {
-          console.error("User not found in the database.");
-        }
-      };
-  
+        };
+      }
       submitRequest.onerror = () => {
         console.error("Failed to retrieve user record from the database.");
       };
@@ -250,10 +252,10 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       // Handle case for guests
       setBasicCareer("basicQuizAnswers"); // Sets state that tracks guest's saved answers
       toggleBasic(true); // Sets state that tracks basic quiz completion to true
-      //handleBasicSave();
+      handleBasicSave();
       handleUpdateValues();
-      alert("Thanks for completing the Basic Career quiz!");
     }
+    alert("Thanks for completing the Basic Career quiz!");
   }  
 
 useEffect(() => { //Populates and tags array of answers each time an answer is selected

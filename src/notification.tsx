@@ -33,21 +33,20 @@ export function NotifBell({
 
             userRequest.onsuccess = () => {
                 const userRecord = userRequest.result;
-                console.log("Here");
-                if (userRecord && userRecord.basicComplete) {
-                    console.log("Here");
+                if (userRecord && userRecord.basicComplete && sessionStorage.getItem("userBasicCount") === null) {
+                    setNotification(true);
+                }
+                else if(userRecord && userRecord.detailedComplete && sessionStorage.getItem("userDetailedCount") === null)
+                {
                     setNotification(true);
                 }
             };
         } else if (basicComplete && sessionStorage.getItem("basicCount") === null) {
-            console.log("In Here");
             setNotification(true);
         } else if (detailedComplete && sessionStorage.getItem("detailedCount") === null) {
             setNotification(true);
-            console.log("im Here");
         } else {
             setNotification(false);
-            console.log("Here else");
         }
     }, [basicComplete, db, detailedComplete, loggedUser]);
 
@@ -67,9 +66,16 @@ export function NotifBell({
             if (basicComplete) {
                 sessionStorage.setItem("basicCount", "1"); // update counter so notification doesn't show again
             }
-
             if (detailedComplete) {
                 sessionStorage.setItem("detailedCount", "1");
+            }
+            if(loggedUser?.basicComplete)
+            {
+                sessionStorage.setItem("userBasicCount", "1");
+            }
+            if(loggedUser?.detailedComplete)
+            {
+                sessionStorage.setItem("userDetailedCount", "1");
             }
         }
     };
@@ -86,13 +92,22 @@ export function NotifBell({
             </div>
             {notifBar && (
                 <div className="notif-bar">
-                    {basicComplete && detailedComplete
+                   {
+                    loggedUser
+                        ? loggedUser.basicComplete && loggedUser.detailedComplete // logged in logic
                         ? "Both Basic and Detailed Questions are complete! Check out the results page!"
-                        : basicComplete
+                        : loggedUser.basicComplete
+                        ? "Basic Questions are complete! Check out the results page!"
+                        : loggedUser.detailedComplete
+                        ? "Detailed Questions are complete! Check out the results page!"
+                        : "No questions finished yet"
+                        : basicComplete // Guest logic
                         ? "Basic Questions are complete! Check out the results page!"
                         : detailedComplete
                         ? "Detailed Questions are complete! Check out the results page!"
-                        : "No questions finished yet"}
+                        : basicComplete && detailedComplete
+                        ? "Both Basic and Detailed Questions are complete! Check out the results page"
+                        : "No questions finished yet!"}
                 </div>
             )}
         </div>
