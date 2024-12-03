@@ -14,7 +14,7 @@ interface detailedAnswer {
 
 // Function that takes in an API key (entered on homepage) and an array of key:value paired answers (provided by basic quiz), then
 // places the answers into a prompt. Prompt is sent to chatGPT and first response is returned.
-export function GptResponse({ apiKey, taggedAnswers }: { apiKey: string, taggedAnswers: taggedAnswer[] }): JSX.Element {
+export function GptResponse({ apiKey, taggedAnswers, detailedAnswers }: { apiKey: string, taggedAnswers: taggedAnswer[], detailedAnswers:detailedAnswer[] }): JSX.Element {
   const [message, setMessage] = useState<string>("Press the button to see your results!");
   const [keyState, setKeyState] = useState<string>("Valid");
   const [isLoading, setIsLoading] = useState<boolean>(false);
