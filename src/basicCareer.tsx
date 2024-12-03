@@ -224,17 +224,13 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   
             // Re-fetch the updated user to synchronize state
             const fetchUpdatedUser = store.get(loggedUser.username);
-            fetchUpdatedUser.onsuccess = () => {
-              localStorage.setItem("userBasicComplete", "true");
-            };
   
             fetchUpdatedUser.onerror = () => {
               console.error("Failed to fetch updated user after update.");
             };
   
-            // Proceed with post-update actions
             toggleBasic(true);
-            handleBasicSave();
+           // handleBasicSave();
             handleUpdateValues();
             alert("Thanks for completing the Basic Career quiz!");
           };
@@ -254,7 +250,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       // Handle case for guests
       setBasicCareer("basicQuizAnswers"); // Sets state that tracks guest's saved answers
       toggleBasic(true); // Sets state that tracks basic quiz completion to true
-      handleBasicSave();
+      //handleBasicSave();
       handleUpdateValues();
       alert("Thanks for completing the Basic Career quiz!");
     }
