@@ -72,7 +72,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
         const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
     
         if (!savedBasicProgress && !savedBasicAnswers) {
-          sessionStorage.setItem("quizAttempt", "true");
           setProgress(0);
           setQuestions(defaultQuestions); // Default guest questions
         }

@@ -3,6 +3,7 @@ import { Button, Container } from "react-bootstrap";
 import questionMarks from "./Images/Questions.png";
 import detective2 from "./Images/Detective2.png";
 import { Account } from "./homepagelogo";
+import { log } from "console";
 
 interface submitButton{ // Interface for keeping track of Detailed Question Completion
   detailedComplete: boolean;
@@ -88,12 +89,12 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, db, 
   function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
     if (currentQuestion) {
       const updatedQuestions = [...questions];
-      updatedQuestions[questionPage].answered = true; //Updates the answered status of the question to true
-      updatedQuestions[questionPage].answer = tempAnswers[questionPage]; //Sets the answer value of the question to the user's answer
-      setQuestions(updatedQuestions); //Update the questions state to include user's answer
-      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}"); //Creates an array from "quizAnswers" in storage, or returns an empty array if it doesn't exist
-      savedAnswers[questionPage] = tempAnswers[questionPage]; //Populate array with user's answer
-      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers)); //Update "quizAnswers" in storage with the new array
+      updatedQuestions[questionPage].answered = true;
+      updatedQuestions[questionPage].answer = tempAnswers[questionPage]; 
+      setQuestions(updatedQuestions); 
+      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}"); 
+      savedAnswers[questionPage] = tempAnswers[questionPage]; 
+      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers)); 
       updateProgress();
     }if(tempAnswers[questionPage]){
       setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))
@@ -135,12 +136,15 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, db, 
 {
   if(loggedUser && db)
   {
-    const transaction = db.transaction("users", "readwrite");
+    const transaction = db.transaction("users", "readwrite"); // user logic
     const store = transaction.objectStore("users");
     const updatedUser = {...loggedUser, detailedComplete: true};
     store.put(updatedUser);
   }
-  toggleDetailed(true);
+  else
+  {
+    toggleDetailed(true); // guest logic
+  }
   alert("Thanks for completing the Detailed Career quiz!");
 }
 
