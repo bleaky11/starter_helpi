@@ -23,7 +23,7 @@ export function MainPage({
 }: HomeComponentProps): JSX.Element {
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header"> 
         <NotifBell
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
@@ -55,10 +55,10 @@ export function MainPage({
             
         </Container>
         <Container>
-          <Row style={{width: "100%", height: "auto"}}>
+          <Row>
             <Col
               className="Bordered"
-              style={{ display: "flex", flexDirection: "column", width: "45%", height: "auto" }}
+              style={{ display: "flex", flexDirection: "column" }}
             >
               <div style={{ flex: 1 }}>
                 <div><h2>Basic Career Assessment</h2></div>
@@ -80,9 +80,10 @@ export function MainPage({
                 src={magGlass}
                 alt="Magnifying Glass"
                 style={{
-                  margin: "3px",
+                  margin: "0 auto",
                   paddingBottom: "30px",
-                  width: "35%",
+                  width: "200px",
+                  height: "230px",
                 }}
               />
               </div>
@@ -128,7 +129,7 @@ export function MainPage({
             </Col>
             <Col
               className="Bordered"
-              style={{ display: "flex", flexDirection: "column", width: "45%", height: "auto" }}
+              style={{ display: "flex", flexDirection: "column" }}
             >
               <div style={{ flex: 1 }}>
                 <h2>Detailed Career Assessment</h2>
@@ -146,30 +147,28 @@ export function MainPage({
                   justifyContent: "center",
                 }}
               >
-                <Row style={{width: "90%", verticalAlign: ""}}>
-                  <Col>
                 <img
                   src={detective}
                   alt="Detective"
                   style={{
-                    margin: "3px",
+                    margin: "0 auto",
                     paddingBottom: "30px",
-                    width: "75%",
+                    width: "200px",
+                    height: "230px",
                     marginRight: "10px",
                   }}
-                /></Col>
-                <Col>
+                />
                 <img
                   src={detective}
                   alt="Detective"
                   style={{
-                    margin: "3px",
+                    margin: "0 auto",
                     paddingBottom: "30px",
-                    width: "75%",
+                    width: "200px",
+                    height: "230px",
                     marginRight: "40px",
                   }}
-                /></Col>
-                </Row>
+                />
               </div>
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
                 {!isKeyEntered ? (
