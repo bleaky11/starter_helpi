@@ -60,14 +60,7 @@ export function MainPage({
                 </Link>
               )
             ) : ( // User is logged in
-                  !loggedUser.basicComplete ? (
-                    <div>
-                      <Button className="Button" disabled={true}>
-                        Results
-                      </Button>
-                      <h6>Please complete a Quiz!</h6>
-                    </div>
-                  ) : !basicComplete && !detailedComplete ? (
+                  !loggedUser.basicComplete && !loggedUser.detailedComplete ? (
                     <div>
                       <Button className="Button" disabled={true}>
                         Results

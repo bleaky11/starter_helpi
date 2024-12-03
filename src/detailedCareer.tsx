@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import questionMarks from "./Images/Questions.png";
 import detective2 from "./Images/Detective2.png";
+import { Account } from "./homepagelogo";
 
 interface submitButton{ // Interface for keeping track of Detailed Question Completion
   detailedComplete: boolean;
@@ -18,7 +19,13 @@ interface Question // Interface to handle question attributes
   tip?: string;
 }
 
-export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: submitButton): JSX.Element {
+interface UserProps
+{
+  db: IDBDatabase | null;
+  loggedUser: Account | null;
+}
+
+export function DetailedCareerComponent({ detailedComplete, toggleDetailed, db, loggedUser}: submitButton & UserProps): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -126,6 +133,13 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
 
   function handleSubmit({detailedComplete, toggleDetailed}: submitButton)
 {
+  if(loggedUser && db)
+  {
+    const transaction = db.transaction("users", "readwrite");
+    const store = transaction.objectStore("users");
+    const updatedUser = {...loggedUser, detailedComplete: true};
+    store.put(updatedUser);
+  }
   toggleDetailed(true);
   alert("Thanks for completing the Detailed Career quiz!");
 }
