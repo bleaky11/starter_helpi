@@ -107,7 +107,7 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers }: { apiKey
         {isLoading ? "Loading" : "Sending to Chatgpt"}
       </Button>
       
-      <div>
+      <div style={{marginLeft:"9%",marginRight:"9%",marginBottom:"5%"}}>
         <h2>Results:</h2>
         {keyState === "Valid" ?
         <div
