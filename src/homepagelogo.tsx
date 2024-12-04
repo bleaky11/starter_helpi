@@ -6,6 +6,7 @@ import { Database } from './db';
 import { LoginForm } from './LoginForm';
 import { Button } from 'react-bootstrap';
 import { Question } from './basicCareer';
+import { DetailedQuestion } from './detailedCareer';
 
 export interface Account
 {
@@ -15,7 +16,8 @@ export interface Account
   loggedIn: string;
   basicComplete: boolean;
   detailedComplete: boolean;
-  quiz: Question[];
+  quiz: Question[]; // basic career questions
+  detailedQuiz: DetailedQuestion[];
   ivUser: string;
   ivPass: string;
 }
@@ -306,13 +308,14 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         const newUser = { // store used with encrypted username and password for security
           username: encryptedUsername,
           password: encryptedPassword,
+          ivUser: ivUser,
           ivPass: ivPass,
           remembered: remember,
           loggedIn: "true",
           basicComplete: false,
           detailedComplete: false,
           quiz: [],
-          ivUser: ivUser,
+          detailedQuiz: []
         };
         sessionStorage.setItem("username", userInfo.username);
         sessionStorage.setItem("loggedIn", "true");

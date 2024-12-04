@@ -3,14 +3,8 @@ import { Button, Container } from "react-bootstrap";
 import questionMarks from "./Images/Questions.png";
 import detective2 from "./Images/Detective2.png";
 import { Account } from "./homepagelogo";
-import { log } from "console";
 
-interface submitButton{ // Interface for keeping track of Detailed Question Completion
-  detailedComplete: boolean;
-  toggleDetailed: (notDetailed: boolean) => void;
-}
-
-interface Question // Interface to handle question attributes
+export interface DetailedQuestion // Interface to handle question attributes
 {
   text: string;
   type: string;
@@ -18,6 +12,11 @@ interface Question // Interface to handle question attributes
   page: number;
   answer: string;
   tip?: string;
+}
+
+interface submitButton{ // Interface for keeping track of Detailed Question Completion
+  detailedComplete: boolean;
+  toggleDetailed: (notDetailed: boolean) => void;
 }
 
 interface UserProps
@@ -29,7 +28,7 @@ interface UserProps
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed, db, loggedUser}: submitButton & UserProps): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<DetailedQuestion[]>([]);
   const [progress, setProgress] = useState<number>(0);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
   const [prompts, setPrompts] = useState<string[]>([]);
@@ -92,9 +91,20 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, db, 
       updatedQuestions[questionPage].answered = true;
       updatedQuestions[questionPage].answer = tempAnswers[questionPage]; 
       setQuestions(updatedQuestions); 
-      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}"); 
-      savedAnswers[questionPage] = tempAnswers[questionPage]; 
-      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers)); 
+      if(loggedUser && db){
+        const userSavedAnswers = loggedUser.detailedQuiz.length ? JSON.parse(JSON.stringify(loggedUser.detailedQuiz)): "{}";
+        userSavedAnswers[questionPage] = tempAnswers[questionPage]; 
+        const userToUpdate = {...loggedUser, detailedQuiz: userSavedAnswers};
+        const transaction = db.transaction("users", "readwrite");
+        const store = transaction.objectStore("users");
+        store.put(userToUpdate);
+      }
+      else
+      {
+        const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}"); 
+        savedAnswers[questionPage] = tempAnswers[questionPage]; 
+        sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers)); 
+      }
       updateProgress();
     }if(tempAnswers[questionPage]){
       setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))
