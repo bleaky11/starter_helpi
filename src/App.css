@@ -150,7 +150,7 @@
   background: #f39440;
   border: 5px;
   border-color: #e3822d;
-  border-style: outset
+  border-style: inset
 }
 
 .Button:active {

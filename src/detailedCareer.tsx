@@ -209,7 +209,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
               <textarea 
                 value={tempAnswers[questionPage]} 
                 onChange={handleAnswerChange} 
-                style={{ width: '25%', height: '5em', resize: 'none' }} 
+                style={{ width: '25%', resize: 'none', minHeight:"5em" }} 
               />
             <img src={questionMarks} alt="Question Marks" style={{ width: '10%', height: '10%', marginLeft: '10px' }} />
           </div>
