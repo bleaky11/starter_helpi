@@ -17,6 +17,7 @@ export interface Account
   basicComplete: boolean;
   detailedComplete: boolean;
   quiz: Question[]; // basic career questions
+  progress: number,
   detailedQuiz: DetailedQuestion[];
   ivUser: string;
   ivPass: string;
@@ -314,6 +315,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           loggedIn: "true",
           basicComplete: false,
           detailedComplete: false,
+          progress: 0,
           quiz: [],
           detailedQuiz: []
         };
@@ -494,14 +496,13 @@ const updateSavedUsers = () => {
           const putRequest = store.put(userAccount);
           
           putRequest.onsuccess = () => {
-            // After successful database update, perform UI updates
             setTimeout(() => {
               clearForm();
               sessionStorage.setItem("loggedIn", "false");  
               sessionStorage.removeItem("username");
-              setIsLoggedIn(false);  // Set the React state for logged-in status
-              setLoggedUser(null);  // Reset logged-in user state
-              setIsFormOpen(false);  // Close the login form if open
+              setIsLoggedIn(false);  
+              setLoggedUser(null); 
+              setIsFormOpen(false);  
               alert("Logged out successfully!");  // Notify the user
             }, 1500);
           };

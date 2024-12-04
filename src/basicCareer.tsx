@@ -57,7 +57,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
-  const [userBasicComplete, setBasicCompletition] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchLoggedInUser = async () => {
@@ -110,28 +109,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     fetchLoggedInUser();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db]);
-
-  useEffect(() => 
-  {
-    if(userBasicComplete !== loggedUser?.basicComplete)
-    {
-      console.log("Does this ever run????");
-      if(db && loggedUser)
-      {
-        const transaction = db.transaction("users", "readwrite");
-        const store = transaction.objectStore("users");
-        if(loggedUser)
-        {
-          const updatedUser = {...loggedUser, basicComplete: true};
-          const updateRequest = store.put(updatedUser);
-          updateRequest.onsuccess = () =>
-          {
-            console.log("worked!");
-          }
-        }
-      }
-    }
-  }, [db, loggedUser, loggedUser?.basicComplete, userBasicComplete])
     
   function handleBasicSave() {
     if (loggedUser && db) {
@@ -139,21 +116,26 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
   
-      const updatedUser = {
-        ...loggedUser,
-        quiz: [...questions],
-        progress,
-      };
-  
-      const updateRequest = store.put(updatedUser);
-  
-      updateRequest.onsuccess = () => {
-        alert("Quiz progress saved!");
-      };
-  
-      updateRequest.onerror = (event) => {
-        console.error("Failed to save quiz progress:", event);
-      };
+      let updatedUser = {};
+
+      if(progress === 100)
+      {
+        updatedUser = {
+          ...loggedUser,
+          quiz: [...questions],
+          progress: progress,
+          basicComplete: true
+        };
+      }
+      else
+      {
+        updatedUser = {
+          ...loggedUser,
+          quiz: [...questions],
+          progress: progress,
+        };
+      }
+      store.put(updatedUser);
     } else {
       sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
       sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
@@ -227,34 +209,13 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   }
 
   function handleSubmit({ toggleBasic }: SubmitButton) {
-    if (db && loggedUser) 
-    {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
-      const submitRequest = store.get(loggedUser.username);
-  
-      submitRequest.onsuccess = () => 
-      {
-        const userRecord = submitRequest.result;
-        if (userRecord) 
-        {
-            setBasicCompletition(true);
-            handleBasicSave();
-            handleUpdateValues();
-            alert("Thanks for completing the Basic Career quiz!");
-        };
-      }
-      submitRequest.onerror = () => {
-        console.error("Failed to retrieve user record from the database.");
-      };
-    } else {
-      // Handle case for guests
-      setBasicCareer("basicQuizAnswers"); // Sets state that tracks guest's saved answers
-      toggleBasic(true); // Sets state that tracks basic quiz completion to true
       handleBasicSave();
+      if(!loggedUser)
+      {
+        setBasicCareer("basicQuizAnswers"); // Sets state that tracks guest's saved answers
+        toggleBasic(true); // Sets state that tracks basic quiz completion to true
+      }
       handleUpdateValues();
-    }
-    alert("Thanks for completing the Basic Career quiz!");
   }  
 
 useEffect(() => { //Populates and tags array of answers each time an answer is selected
@@ -266,7 +227,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element { //Submit button - Disabled if progress is less than 100%
     return(<div>
-      <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), ]}>Submit</Button>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), alert("Thank you for completeting the basic quiz!")]}>Submit</Button>
     </div>)
   }
 
