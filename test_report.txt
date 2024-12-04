@@ -74,7 +74,7 @@ All files            |       0 |        0 |       0 |       0 |
   chatGpt.ts         |       0 |        0 |       0 |       0 | 4-34              
   db.tsx             |       0 |        0 |       0 |       0 | 1-15              
   detailedCareer.tsx |       0 |        0 |       0 |       0 | 22-226            
-  gptResponse.tsx    |       0 |        0 |       0 |       0 | 18-101            
+  gptResponse.tsx    |       0 |        0 |       0 |       0 | 18-104            
   header.tsx         |       0 |        0 |       0 |       0 | 11-57             
   home.tsx           |       0 |        0 |       0 |       0 | 24-182            
   homepagelogo.tsx   |       0 |        0 |       0 |       0 | 20-553            
@@ -90,5 +90,5 @@ All files            |       0 |        0 |       0 |       0 |
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.22 s
+Time:        5.54 s
 Ran all test suites.
