@@ -37,53 +37,82 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, db, 
   if(sessionStorage.getItem("quizAnswers") === null){
     sessionStorage.setItem("quizAnswers", JSON.stringify({}))
   }
+  // if(JSON.parse(JSON.stringify(loggedUser?.detailedQuiz)) === null)
+  // {
+  //   const transaction = db.transaction("users", "readwrite");
+  //   const store = transaction.objectStore("users");
+  //   const userToUpdate = {...loggedUser, detailedQuiz: userSavedAnswers};
+  //   store.put(userToUpdate);
+  // }
 
   const updateProgress = useCallback(() => {
     const totalQuestions = questions.length;
-    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-    sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
+
+    if(loggedUser && db)
+    {
+      const userSavedAnswers = loggedUser.detailedQuiz.length ? JSON.parse(JSON.stringify(loggedUser.detailedQuiz)): "{}";
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+      const userToUpdate = {...loggedUser, detailedQuiz: userSavedAnswers};
+      store.put(userToUpdate);
+      const answeredQuestions = Object.keys(userSavedAnswers).filter(key => userSavedAnswers[key]).length;
+      const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+      setProgress(progressPercentage);
+    }
+    else
+    {
+      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
+      const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
+      const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+      setProgress(progressPercentage);
+    }
   
     const updatedTags = assignTags(prompts);  // Map answers to tags
     setPrompts(updatedTags.map(tag => tag.response));
 
-    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
-    const progressPercentage = (answeredQuestions / totalQuestions) * 100;
-    setProgress(progressPercentage);
-  }, [prompts, questions.length]);  
+  }, [db, loggedUser, prompts, questions.length]);  
 
   useEffect(() => {
-    const storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
-    if (storedQuestions.length > 0) {
-      setQuestions(storedQuestions);
-      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-      const updatedPrompts = Object.keys(savedAnswers).map((key) => savedAnswers[key]); 
-      setPrompts(updatedPrompts); // Set the prompts after updating with saved answers
-    } else {
-      const defaultQuestions = [
-        { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
-        { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
-        { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
-        { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
-        { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
-        { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
-        { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
-      ];
-      setQuestions(defaultQuestions);
-      sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
+    let storedQuestions = [];
+    if(!loggedUser)
+    {
+      storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
+      if (storedQuestions.length > 0) {
+        setQuestions(storedQuestions);
+        const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+        const updatedPrompts = Object.keys(savedAnswers).map((key) => savedAnswers[key]); 
+        setPrompts(updatedPrompts); // Set the prompts after updating with saved answers
+      } else {
+        const defaultQuestions = [
+          { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
+          { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
+          { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
+          { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
+          { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
+          { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
+          { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
+        ];
+        setQuestions(defaultQuestions);
+        sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
+        const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+        const updatedTempAnswers = new Array(7).fill("");
+        Object.keys(savedAnswers).forEach((key) => {
+          updatedTempAnswers[parseInt(key)] = savedAnswers[key];
+        });
+        setTempAnswers(updatedTempAnswers);
+      
+        const totalQuestions = storedQuestions.length;
+        const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
+        const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0;
+        setProgress(progressPercentage);
     }
-  
-    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-    const updatedTempAnswers = new Array(7).fill("");
-    Object.keys(savedAnswers).forEach((key) => {
-      updatedTempAnswers[parseInt(key)] = savedAnswers[key];
-    });
-    setTempAnswers(updatedTempAnswers);
-  
-    const totalQuestions = storedQuestions.length;
-    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
-    const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0;
-    setProgress(progressPercentage);
-  }, []); // Make sure prompts are set first  
+  }
+  else
+  {
+    // saving progress
+  }
+  }, [loggedUser]); // Make sure prompts are set first  
 
   function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
     if (currentQuestion) {
