@@ -412,7 +412,7 @@ const deleteAccount = async (username: string) => {
         const getRequest = store.getAll();
 
         getRequest.onsuccess = () => {
-          const userAccount = findUser(userInfo.username, accounts);
+          const userAccount = findUser(username, accounts);
           if (userAccount) 
             {
             if (userAccount.remembered) {
@@ -422,7 +422,12 @@ const deleteAccount = async (username: string) => {
             const deleteRequest = store.delete(userAccount.username);  // Delete the account using its encrypted username
 
             deleteRequest.onsuccess = () => {
-              handleLogout(userInfo.username);
+              clearForm();
+              sessionStorage.setItem("loggedIn", "false");  
+              sessionStorage.removeItem("username");
+              setIsLoggedIn(false);  
+              setLoggedUser(null); 
+              setIsFormOpen(false);  
               toggleForm();
               updateSavedUsers(); // Update saved accounts
               alert("Account deleted!");

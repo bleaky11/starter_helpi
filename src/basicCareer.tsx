@@ -134,6 +134,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
           ...loggedUser,
           quiz: [...questions],
           progress: progress,
+          basicComplete: false,
         };
       }
   
@@ -237,7 +238,8 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
   function BasicSave({savedBasicCareer, setBasicCareer}: saveButton): JSX.Element  //Save button
   {
     return(<div>
-      <Button onClick = {handleBasicSave} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Save</Button>
+      <Button onClick={() => {handleBasicSave(); alert("Quiz saved!")}}
+ style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Save</Button>
     </div>)
   }
 
