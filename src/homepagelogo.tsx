@@ -65,27 +65,24 @@ export const HomePage = ({db, setDb, loggedUser, setLoggedUser}: Users & Databas
           const allAccounts = await loadAccounts();
           setAccounts(allAccounts);
           
-          // Check login status from sessionStorage
           const loggedIn = sessionStorage.getItem("loggedIn") === "true";
           const storedUsername = sessionStorage.getItem("username");
   
           if (loggedIn && storedUsername) {
-            // Find the user in the accounts
             const user = findUser(storedUsername, allAccounts);
             if (user) {
-              // Set user info and login state
               setUserInfo({
                 username: decryptUsername(user.username, user.ivUser),
                 password: user.password,
                 remembered: user.remembered,
               });
               setIsLoggedIn(true);
-              setLoggedUser(user); // Set the logged-in user directly here
+              setLoggedUser(user); 
             } else {
               setIsLoggedIn(false);
             }
           } else {
-            setIsLoggedIn(false); // Ensure you're setting it to false when not logged in
+            setIsLoggedIn(false); 
           }
         }
       } catch (error) {
@@ -95,7 +92,7 @@ export const HomePage = ({db, setDb, loggedUser, setLoggedUser}: Users & Databas
   
     fetchAccountsAndCheckLogin();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db]);  // Only depend on 'db' as we are already handling login logic inside this useEffect 
+  }, [db]);  
   
   const loadAccounts = async (): Promise<typeof accounts> => {
     if (!db) {
@@ -241,7 +238,7 @@ const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: strin
   }
 };
 
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
 
   if (!accounts.length) {
@@ -369,6 +366,42 @@ const removeFromDropdown = (username: string) => {
   }
 };
 
+const handleLogout = async (username: string) => {
+  if (db) {
+    const transaction = db.transaction("users", "readwrite");
+    const store = transaction.objectStore("users");
+    
+    const getRequest = store.getAll();  
+
+    getRequest.onsuccess = () => {
+      const userAccount = findUser(username, accounts);  
+      if (userAccount) {
+        userAccount.loggedIn = "false";  
+        const putRequest = store.put(userAccount);
+        
+        putRequest.onsuccess = () => {
+            clearForm();
+            sessionStorage.setItem("loggedIn", "false");  
+            sessionStorage.removeItem("username");
+            setIsLoggedIn(false);  
+            setLoggedUser(null); 
+            setIsFormOpen(false);  
+        };
+
+        putRequest.onerror = (error) => {
+          console.error("Error updating user status in the database:", error);
+        };
+      } else {
+        alert("User not found!");  // Handle the case where the user is not found
+      }
+    };
+
+    getRequest.onerror = (error) => {
+      console.error("Error fetching users for logout:", error);
+    };
+  }
+};   
+
 const deleteAccount = async (username: string) => {
   if (db) {
     const transaction = db.transaction("users", "readwrite");
@@ -389,10 +422,7 @@ const deleteAccount = async (username: string) => {
             const deleteRequest = store.delete(userAccount.username);  // Delete the account using its encrypted username
 
             deleteRequest.onsuccess = () => {
-              clearForm();
-              sessionStorage.setItem("loggedIn", "false");  // Clear session storage
-              sessionStorage.removeItem("username");
-              setIsLoggedIn(false);  // Update React state
+              handleLogout(userInfo.username);
               toggleForm();
               updateSavedUsers(); // Update saved accounts
               alert("Account deleted!");
@@ -481,46 +511,6 @@ const updateSavedUsers = () => {
     }));
   };   
   
-  const handleLogout = async (username: string) => {
-    if (db) {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
-      
-      const getRequest = store.getAll();  
-  
-      getRequest.onsuccess = () => {
-        const userAccount = findUser(username, accounts);  
-        if (userAccount) {
-          userAccount.loggedIn = "false";  // Mark user as logged out in the database
-          // Update the database with the new logged-in status
-          const putRequest = store.put(userAccount);
-          
-          putRequest.onsuccess = () => {
-            setTimeout(() => {
-              clearForm();
-              sessionStorage.setItem("loggedIn", "false");  
-              sessionStorage.removeItem("username");
-              setIsLoggedIn(false);  
-              setLoggedUser(null); 
-              setIsFormOpen(false);  
-              alert("Logged out successfully!");  // Notify the user
-            }, 1500);
-          };
-  
-          putRequest.onerror = (error) => {
-            console.error("Error updating user status in the database:", error);
-          };
-        } else {
-          alert("User not found!");  // Handle the case where the user is not found
-        }
-      };
-  
-      getRequest.onerror = (error) => {
-        console.error("Error fetching users for logout:", error);
-      };
-    }
-  };   
-  
   const handleRemember = () => {
     const newRememberState = !remember; // switch remember on check mark click/unclick
     setRemember(newRememberState); 
@@ -552,7 +542,7 @@ const updateSavedUsers = () => {
           <div style={{ gap: "10px" }}>
             <Button
               style={{ borderRadius: "20px", backgroundColor: "salmon" }}
-              onClick={() => handleLogout(userInfo.username)}
+              onClick={() => [handleLogout(userInfo.username), alert("Logged out successfully!")]}
             >
               Log out
             </Button>
@@ -593,7 +583,7 @@ const updateSavedUsers = () => {
         remember={remember}
         setRemember={setRemember}
         handleRemember={handleRemember}
-        handleSubmit={handleSubmit}
+        handleLogin={handleLogin}
         updateStatus={updateStatus}
         selectedUser={selectedUser}
         setSelect={setSelect}

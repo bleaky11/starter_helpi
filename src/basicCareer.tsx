@@ -60,27 +60,21 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
 
   useEffect(() => {
     const fetchLoggedInUser = async () => {
-      if (!db)
-      {
-        return;
-      }
-
+      if (!db) return;
+  
       const initializeGuestSession = () => {
-        // Ensure no existing session data is used incorrectly
         const savedBasicProgress = sessionStorage.getItem("basicQuizProgress");
         const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
-    
+  
         if (!savedBasicProgress && !savedBasicAnswers) {
           setProgress(0);
-          setQuestions(defaultQuestions); // Default guest questions
-        }
-        else
-        {
-          setProgress(JSON.parse(savedBasicProgress || "0")); // Load guest data
+          setQuestions(defaultQuestions);
+        } else {
+          setProgress(JSON.parse(savedBasicProgress || "0"));
           setQuestions(JSON.parse(savedBasicAnswers || "[]"));
         }
       };
-
+  
       try {
         const transaction = db.transaction("users", "readonly");
         const store = transaction.objectStore("users");
@@ -88,7 +82,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   
         getLoggedInUserRequest.onsuccess = () => {
           const user = getLoggedInUserRequest.result;
-  
           if (user) {
             setQuestions(user.quiz.length ? user.quiz : defaultQuestions);
             setProgress(user.progress || 0);
@@ -97,49 +90,60 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
           }
         };
   
-        getLoggedInUserRequest.onerror = (event) => {
-          console.error("Error fetching user from DB:", event);
+        getLoggedInUserRequest.onerror = () => {
           initializeGuestSession();
         };
       } catch (error) {
-        console.error("Error during user fetch:", error);
         initializeGuestSession();
       }
     };
+  
     fetchLoggedInUser();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db]);
+  }, [db, loggedUser]); 
     
   function handleBasicSave() {
     if (loggedUser && db) {
-  
       const transaction = db.transaction("users", "readwrite");
       const store = transaction.objectStore("users");
   
-      let updatedUser = {};
-
-      if(progress === 100)
-      {
+      let updatedUser: Account = {
+        username: "",
+        password: "",
+        remembered: false,
+        loggedIn: "",
+        basicComplete: false,
+        detailedComplete: false,
+        quiz: [],
+        progress: 0,
+        detailedQuiz: [],
+        ivUser: "",
+        ivPass: ""
+      };
+      
+      if (progress === 100) {
         updatedUser = {
           ...loggedUser,
           quiz: [...questions],
           progress: progress,
-          basicComplete: true
+          basicComplete: true,
         };
-      }
-      else
-      {
+      } else {
         updatedUser = {
           ...loggedUser,
           quiz: [...questions],
           progress: progress,
         };
       }
-      store.put(updatedUser);
+  
+      const request = store.put(updatedUser);
+  
+      request.onsuccess = () => {
+        setLoggedUser(updatedUser); // Ensure the `loggedUser` state is updated
+      };
     } else {
       sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
       sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
-      alert("Quiz saved to session storage!");
     }
   }  
 
@@ -344,12 +348,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
         </Link>
       </div>
     ) : (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Button className="Button" disabled={true}>
-          Results
-        </Button>
-        <h6>Please complete the basic quiz!</h6>
-      </div>
+      null
     )
   ) : ( // User is logged in
     loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
