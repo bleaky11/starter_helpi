@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/starter_helpi/static/css/main.46bece77.css",
-    "main.js": "/starter_helpi/static/js/main.9e9754ce.js",
+    "main.css": "/starter_helpi/static/css/main.40326b1b.css",
+    "main.js": "/starter_helpi/static/js/main.a6070698.js",
     "static/js/453.dda23872.chunk.js": "/starter_helpi/static/js/453.dda23872.chunk.js",
     "static/media/detective-walking-unscreen.gif": "/starter_helpi/static/media/detective-walking-unscreen.704a485db434b0ba83a7.gif",
     "static/media/detective-profile.png": "/starter_helpi/static/media/detective-profile.47c139e74c55522bc773.png",
@@ -11,12 +11,12 @@
     "static/media/Detective2.png": "/starter_helpi/static/media/Detective2.e82d437746508369f2f7.png",
     "static/media/Detective.png": "/starter_helpi/static/media/Detective.36a652c320ea41a8d242.png",
     "index.html": "/starter_helpi/index.html",
-    "main.46bece77.css.map": "/starter_helpi/static/css/main.46bece77.css.map",
-    "main.9e9754ce.js.map": "/starter_helpi/static/js/main.9e9754ce.js.map",
+    "main.40326b1b.css.map": "/starter_helpi/static/css/main.40326b1b.css.map",
+    "main.a6070698.js.map": "/starter_helpi/static/js/main.a6070698.js.map",
     "453.dda23872.chunk.js.map": "/starter_helpi/static/js/453.dda23872.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.46bece77.css",
-    "static/js/main.9e9754ce.js"
+    "static/css/main.40326b1b.css",
+    "static/js/main.a6070698.js"
   ]
 }
