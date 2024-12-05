@@ -24,7 +24,7 @@
 
 .container {
   display: flex;
-  justify-content: flex-end;  /* Pushes the image to the right */
+  justify-content: center;  /* Pushes the image to the right */
   align-items: center;        /* Optional: vertically center the image */
   height: 10%;              /* Full viewport height */
 }
@@ -115,6 +115,7 @@
   flex: 1;
   background-color: #dda15e;
   height: 500px;
+  box-sizing: border-box; /*suggestion from chatgpt*/
 }
 
 .ResultBorder {
@@ -125,6 +126,7 @@
   flex: 1;
   background-color: #dda15e;
   width: 80%;
+  max-width: 97%;
 }
 
 .Body-Heading {
