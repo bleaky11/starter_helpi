@@ -14,8 +14,9 @@ interface detailedAnswer {
 
 // Function that takes in an API key (entered on homepage) and an array of key:value paired answers (provided by basic quiz), then
 // places the answers into a prompt. Prompt is sent to chatGPT and first response is returned.
-export function GptResponse({ apiKey, taggedAnswers, detailedAnswers}: { apiKey: string, taggedAnswers: taggedAnswer[], detailedAnswers: detailedAnswer[]}): JSX.Element {
-  const [message, setMessage] = useState<string>("Default");
+export function GptResponse({ apiKey, taggedAnswers, detailedAnswers }: { apiKey: string, taggedAnswers: taggedAnswer[], detailedAnswers:detailedAnswer[] }): JSX.Element {
+  const [message, setMessage] = useState<string>("Press the button to see your results!");
+  const [keyState, setKeyState] = useState<string>("Valid");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const generatePrompt = (taggedAnswers: taggedAnswer[], detailedAnswers: detailedAnswer[]): string => {
@@ -73,7 +74,9 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers}: { apiKey:
       const formattedResponse = formatResponse(data.choices[0].message.content); // Format response
       setMessage(formattedResponse); // Set the formatted response from ChatGPT
     } catch (error) {
-      console.error("Error getting response from ChatGPT:", error); //Error handling
+      console.error("Error getting response from ChatGPT:", error); //Error handling\
+      setMessage("OpenAI API Key is invalid. Please Return to the homepage and enter a valid key.");
+      setKeyState("Invalid");
     } finally {
       setIsLoading(false); //Set loading state to false
     }
@@ -100,17 +103,24 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers}: { apiKey:
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-      <Button onClick={handleSendMessage} disabled={isLoading} style={{ marginBottom: '20px', background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid" }}>
-        GPT Test: {isLoading ? "loading" : "send"}
+      <Button onClick={handleSendMessage} disabled={isLoading} className="flashy-button">
+        {isLoading ? "Loading" : "Sending to Chatgpt"}
       </Button>
       
       <div>
         <h2>Results:</h2>
+        {keyState === "Valid" ?
         <div
           dangerouslySetInnerHTML={{
             __html: message,
           }}
         />
+        :
+        <div style={{color:"red", fontSize:"large"}}>
+          {message}
+        </div>
+        
+        }
       </div>
     </div>
   );

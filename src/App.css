@@ -24,7 +24,7 @@
 
 .container {
   display: flex;
-  justify-content: flex-end;  /* Pushes the image to the right */
+  justify-content: center;  /* Pushes the image to the right */
   align-items: center;        /* Optional: vertically center the image */
   height: 10%;              /* Full viewport height */
 }
@@ -121,6 +121,7 @@
   flex: 1;
   background-color: #dda15e;
   height: 500px;
+  box-sizing: border-box; /*suggestion from chatgpt*/
 }
 
 .ResultBorder {
@@ -131,6 +132,7 @@
   flex: 1;
   background-color: #dda15e;
   width: 80%;
+  max-width: 97%;
 }
 
 .Body-Heading {
@@ -156,10 +158,17 @@
   background: #f39440;
   border: 5px;
   border-color: #e3822d;
-  border-style: outset
+  border-style: inset
 }
 
 .Button:active {
+  background: #c47937;
+  border: 5px;
+  border-color: #bc6c25;
+  border-style: inset
+}
+
+.Button:focus {
   background: #c47937;
   border: 5px;
   border-color: #bc6c25;
@@ -193,6 +202,17 @@
   cursor: pointer;
   transition: border-color 0.3s ease; /* Smooth transition */
   animation: hoverBorderColorChange 1s linear infinite;
+}
+
+.flashy-button:disabled {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #DDA15E;
+  border: 4px outset #bc6c25; /* Initial border color */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s ease; /* Smooth transition */
+  animation: hoverBorderColorChange 2s linear infinite;
 }
 
 
