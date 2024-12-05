@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Database } from "./db";
 import { Account } from "./homepagelogo";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
@@ -44,7 +44,8 @@ interface Users
 
 export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage, loggedUser, setLoggedUser}: SubmitButton & saveButton & Answers & Pages & Users & Database): JSX.Element 
 {
-  const defaultQuestions = [{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
+  const defaultQuestions = useCallback(() =>
+  [{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
   { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
   { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
   { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Somewhat" }, { id: 3, label: "More often than not" }, { id: 4, label: "Extremely" }], selected: [false, false, false, false] },
@@ -52,7 +53,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
   { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
   { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
-  { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}];
+  { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}], []);
 
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
@@ -99,8 +100,8 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     };
   
     fetchLoggedInUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db, loggedUser]); 
+  
+  }, [db, defaultQuestions, loggedUser]); 
     
   function handleBasicSave() {
     if (loggedUser && db) {
@@ -191,7 +192,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     [key: number]: string;
   };
 
-  const answerTags: AnswerTagMap = { //Assigns a tag to identify each index of the answerVals array
+  const answerTags: AnswerTagMap = useMemo(() => ({
     0: 'noise',
     1: 'environment',
     2: 'STEM',
@@ -201,15 +202,14 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     6: 'salary',
     7: 'communication',
     8: 'education'
-  };
+  }), []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  function assignTagsToAnswers(answers: string[]): { answer: string, tag: string }[] { //Assigns initialized tags to each answer
+  const assignTagsToAnswers = useCallback((answers: string[]): { answer: string, tag: string }[] => {
     return answers.map((answer, index) => ({
       answer,
-      tag: answerTags[index] || 'unknown',
+      tag: answerTags[index] || "unknown",
     }));
-  }
+  }, [answerTags]); // Dependency on answerTags, assuming answerTags might change
 
   function handleSubmit({ toggleBasic }: SubmitButton) {
       handleBasicSave();
