@@ -58,7 +58,7 @@ export function MainPage({
           <Row style={{ display:'flex', flexWrap:'wrap', maxWidth:'100%' }}>
             <Col
               className="Bordered"
-              style={{ display: "flex", flexDirection: "column" }}
+              style={{ display: "flex", flexDirection: "column", maxWidth:'100%' }}
             >
               <div style={{ flex: 1 }}>
                 <div><h2>Basic Career Assessment</h2></div>
@@ -152,10 +152,9 @@ export function MainPage({
                   alt="Detective"
                   style={{
                     margin: "0 auto",
-                    paddingBottom: "30px",
+                    paddingBottom: "5%",
                     width: "200px",
                     height: "230px",
-                    marginRight: "10px",
                   }}
                 />
                 <img
@@ -163,10 +162,9 @@ export function MainPage({
                   alt="Detective"
                   style={{
                     margin: "0 auto",
-                    paddingBottom: "30px",
+                    paddingBottom: "5%",
                     width: "200px",
                     height: "230px",
-                    marginRight: "40px",
                   }}
                 />
               </div>
