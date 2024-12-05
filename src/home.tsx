@@ -39,7 +39,7 @@ export function MainPage({
 
         <Container>
           <Col className="ResultBorder" >
-              <div style={{ flex: 2 }}>
+              <div style={{ flex: 1 }}>
                 <h2>Results Page</h2>
                 <h6 className="Body-Heading" style={{fontSize: "16px" }}>
                   Results of the quiz will be displayed after completing basic and/or detailed question
@@ -78,10 +78,10 @@ export function MainPage({
             
         </Container>
         <Container>
-          <Row>
+          <Row style={{ display:'flex', flexWrap:'wrap', maxWidth:'100%' }}>
             <Col
               className="Bordered"
-              style={{ display: "flex", flexDirection: "column" }}
+              style={{ display: "flex", flexDirection: "column", maxWidth:'100%' }}
             >
               <div style={{ flex: 1 }}>
                 <div><h2>Basic Career Assessment</h2></div>
@@ -154,7 +154,7 @@ export function MainPage({
               className="Bordered"
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <div style={{ flex: 1 }}>
+              <div>
                 <h2>Detailed Career Assessment</h2>
                 <h6 className="Body-Heading" style={{fontSize: "16px" }}>
                   You will be asked a series of elaborate questions that may
@@ -175,10 +175,9 @@ export function MainPage({
                   alt="Detective"
                   style={{
                     margin: "0 auto",
-                    paddingBottom: "30px",
+                    paddingBottom: "5%",
                     width: "200px",
                     height: "230px",
-                    marginRight: "10px",
                   }}
                 />
                 <img
@@ -186,10 +185,9 @@ export function MainPage({
                   alt="Detective"
                   style={{
                     margin: "0 auto",
-                    paddingBottom: "30px",
+                    paddingBottom: "5%",
                     width: "200px",
                     height: "230px",
-                    marginRight: "40px",
                   }}
                 />
               </div>

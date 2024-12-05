@@ -153,7 +153,6 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       ...question,
       selected: question.selected.map(() => false) // Reset all selected states to false
     }));
-    
     toggleBasic(false);
     setQuestions(clearedQuestions);
     setProgress(0);
@@ -276,7 +275,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
         <progress
           id="question"
           value={progress}
-          style = {{height: "40px", width: "300px"}}
+          style = {{height: "45px", width: "300px"}}
           max="100"
         ></progress>
         </div>
@@ -285,9 +284,9 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
             src={detectiveWalk}
             alt="detective-walking"
             style={{
-              position: "absolute",
-              left: `${(progress / 100) * 270 - 310}px`,
-              transition: "left 0.1s ease-out",
+              position: "relative",
+              left: `${(progress / 100) * 300 - 325}px`,
+              transition: "left 1s ease-in",
               width: "45px",
               height: "auto", // Maintain aspect ratio
               marginTop: "35px"
