@@ -80,10 +80,11 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
         const transaction = db.transaction("users", "readonly");
         const store = transaction.objectStore("users");
         const getLoggedInUserRequest = store.index("loggedIn").get("true");
-  
+
         getLoggedInUserRequest.onsuccess = () => {
           const user = getLoggedInUserRequest.result;
-          if (user) {
+          if (user) 
+          {
             setQuestions(user.quiz.length ? user.quiz : defaultQuestions);
             setProgress(user.progress || 0);
           } else {
@@ -121,7 +122,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
         ivUser: "",
         ivPass: ""
       };
-      
+
       if (progress === 100) {
         updatedUser = {
           ...loggedUser,
@@ -150,16 +151,20 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   }  
 
   function handleClear(){ //Clears user's saved progress and resets quiz
-    if(!loggedUser)
-    {
-      sessionStorage.removeItem("basicQuizProgress");
-      sessionStorage.removeItem("basicQuizAnswers");
-    }
     const clearedQuestions = questions.map(question => ({
       ...question,
       selected: question.selected.map(() => false) // Reset all selected states to false
     }));
-    toggleBasic(false);
+    if(!loggedUser)
+    {
+        sessionStorage.removeItem("basicQuizProgress");
+        sessionStorage.removeItem("basicQuizAnswers");
+        toggleBasic(false);
+    }
+    else
+    {
+      //handleBasicSave();
+    }
     setQuestions(clearedQuestions);
     setProgress(0);
     setTimeout(() => {
