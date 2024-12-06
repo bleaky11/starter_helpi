@@ -68,18 +68,18 @@ File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #
 ---------------------|---------|----------|---------|---------|-------------------
 All files            |       0 |        0 |       0 |       0 |                   
  src                 |       0 |        0 |       0 |       0 |                   
-  App.tsx            |       0 |        0 |       0 |       0 | 12-102            
+  App.tsx            |       0 |        0 |       0 |       0 | 13-113            
   LoginForm.tsx      |       0 |        0 |       0 |       0 | 33-260            
-  basicCareer.tsx    |       0 |        0 |       0 |       0 | 41-346            
+  basicCareer.tsx    |       0 |        0 |       0 |       0 | 47-363            
   chatGpt.ts         |       0 |        0 |       0 |       0 | 4-34              
-  db.tsx             |       0 |        0 |       0 |       0 | 1-15              
-  detailedCareer.tsx |       0 |        0 |       0 |       0 | 22-226            
+  db.tsx             |       0 |        0 |       0 |       0 | 7-21              
+  detailedCareer.tsx |       0 |        0 |       0 |       0 | 28-234            
   gptResponse.tsx    |       0 |        0 |       0 |       0 | 18-104            
-  header.tsx         |       0 |        0 |       0 |       0 | 11-57             
-  home.tsx           |       0 |        0 |       0 |       0 | 24-180            
-  homepagelogo.tsx   |       0 |        0 |       0 |       0 | 20-553            
+  header.tsx         |       0 |        0 |       0 |       0 | 23-66             
+  home.tsx           |       0 |        0 |       0 |       0 | 29-203            
+  homepagelogo.tsx   |       0 |        0 |       0 |       0 | 32-576            
   index.tsx          |       0 |      100 |     100 |       0 | 7-19              
-  notification.tsx   |       0 |        0 |       0 |       0 | 11-47             
+  notification.tsx   |       0 |        0 |       0 |       0 | 23-83             
   reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10              
   resultPage.tsx     |       0 |        0 |       0 |       0 | 19-28             
  src/CSS             |       0 |      100 |     100 |       0 |                   
@@ -90,5 +90,5 @@ All files            |       0 |        0 |       0 |       0 |
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.284 s
+Time:        5.361 s
 Ran all test suites.
