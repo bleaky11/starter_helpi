@@ -105,6 +105,25 @@
   height: 100%;
 }
 
+.Breathing {
+  animation: breathe 2s ease-in-out infinite;
+  opacity: 0.1;
+}
+
+@keyframes breathe {
+  0% {
+    opacity: 0.1; /* Fully visible */
+    fill: gold;
+  }
+  50% {
+    opacity: 0; /* Fully transparent */
+  }
+  100% {
+    opacity: 0.1; /* Back to fully visible */
+    fill: gold;
+  }
+}
+
 .Background {
   background: transparent;
   border-color: #2F0B06;

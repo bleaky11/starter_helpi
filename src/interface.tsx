@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 import quizInterface from "./Images/quizInterface.png";
 import { Container, Col, Button, Row } from 'react-bootstrap';
 import { NotifBell } from './notification';
+import { Database } from "./db";
+import { Account } from './homepagelogo';
 
 interface QuizInterfaceProps {
+    loggedUser: Account | null;
     page: string;
     setPage: (page: string) => void;
     basicComplete: boolean;
@@ -12,11 +15,14 @@ interface QuizInterfaceProps {
     isKeyEntered: boolean;
   }
 
-export function QuizInterface({basicComplete, detailedComplete, setPage, isKeyEntered}: QuizInterfaceProps): JSX.Element {
+export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedComplete, setPage, isKeyEntered}: QuizInterfaceProps & Database): JSX.Element {
     return (
         <header className='App-header'>
             <div style={{marginTop: '12vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', position: 'relative', zIndex: 10}}>
-                <NotifBell
+                <NotifBell 
+                db={db}
+                setDb={setDb}
+                loggedUser={loggedUser}
                 basicComplete={basicComplete}
                 detailedComplete={detailedComplete}
                 ></NotifBell>
@@ -39,8 +45,8 @@ export function QuizInterface({basicComplete, detailedComplete, setPage, isKeyEn
                         !localStorage.getItem("quizProgress") &&
                         !sessionStorage.getItem("isKeyEntered") ? (
                             <div>
-                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Basic Career Questions</Button>
-                            <h6>Please enter an API Key</h6>
+                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Collect Evidence</Button>
+                            <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
                             </div>
                         ) :
                         !localStorage.getItem("quizProgress") &&
@@ -49,16 +55,16 @@ export function QuizInterface({basicComplete, detailedComplete, setPage, isKeyEn
                             to="/basic-questions"
                             onClick={() => setPage("Basic-Questions")}
                             >
-                            <Button className="Button">Basic Questions</Button>
+                            <Button className="Button">Collect Evidence</Button>
                             </Link>
                         ) :
                         localStorage.getItem("quizProgress") &&
                             !sessionStorage.getItem("isKeyEntered") ? (
                             <div>
                             <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>
-                                Basic Questions (Last Save)
+                                Collect Evidence (Last Save)
                             </Button>
-                            <h6>Please enter an API Key</h6>
+                            <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
                             </div>
                         ) :
                         localStorage.getItem("quizProgress") &&
@@ -67,7 +73,7 @@ export function QuizInterface({basicComplete, detailedComplete, setPage, isKeyEn
                             to="/basic-questions"
                             onClick={() => setPage("Basic-Questions")}
                             >
-                            <Button className="Button">Basic Questions (Last Save)</Button>
+                            <Button className="Button">Collect Evidence (Last Save)</Button>
                             </Link>
                         ) : null}
                         </nav>
@@ -77,25 +83,31 @@ export function QuizInterface({basicComplete, detailedComplete, setPage, isKeyEn
                     className="Bordered"
                     style={{ display: "flex", flexDirection: "column" }}
                     >
-                    <div>
-                        <h6 style={{marginTop: 'auto', fontSize: '20px', color: '#D7DCF4', textShadow: '15px 15px 18px black', textAlign: 'center'}}>
-                        Great work, detective, we're getting closer. We've just gathered our leading witnesses,
-                        now we need you to go in there and question them in order to find out what they know. Report back ASAP.
-                        </h6>
-                    </div>
+                    {basicComplete ? <div><h6 style={{marginTop: 'auto', fontSize: '20px', color: '#D7DCF4', textShadow: '15px 15px 18px black', textAlign: 'center'}}>
+                            Great work, detective, we're getting closer. We've just gathered our leading witnesses,
+                            now we need you to go in there and question them in order to find out what they know. Report back ASAP.
+                        </h6></div> : <div><h6 style={{marginTop: 'auto', fontSize: '20px', color: '#D7DCF4', textShadow: '15px 15px 18px black', textAlign: 'center', opacity: "30%"}}>
+                            Great work, detective, we're getting closer. We've just gathered our leading witnesses,
+                            now we need you to go in there and question them in order to find out what they know. Report back ASAP.
+                        </h6></div>}
                     <nav style={{ marginTop: "auto", textAlign: "center" }}>
                         {!isKeyEntered ? (
                         <div>
-                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Detailed Questions</Button>
-                            <h6>Please enter an API Key</h6>
+                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Question Witnesses</Button>
+                            <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
                         </div>
-                        ) : (
+                        ) : (basicComplete ? (
                         <Link
                             to="/detailed-questions"
                             onClick={() => setPage("Detailed-Questions")}
                         >
-                            <Button className="Button">Detailed Questions</Button>
-                        </Link>
+                            <Button className="Button">Question Witnesses</Button>
+                        </Link>) : (
+                            <div>
+                                <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Question Witnesses</Button>
+                                <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Go Collect Some Evidence, Detective!</h6>
+                            </div>
+                        )
                         )}
                     </nav>
                     </Col>

@@ -57,7 +57,7 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers }: { apiKey
       fullPrompt = basicPromptTemplate; // basic questions only complete
     }
 
-    fullPrompt += '\nWhat would be some ideal career paths for me and why? Give me 5 careers including career name, salary, how to get started, and why it would appeal to me based on my responses.';
+    fullPrompt += '\nWhat would be some ideal career paths for me and why? Give me 2 careers including career name, salary, requirements to get started, and why it would appeal to me based on my responses. Please keep responses relatively short.';
 
     console.log(fullPrompt);
 
@@ -94,7 +94,7 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers }: { apiKey
     });
 
     //Add line breaks after each highlight (salary, how to start, why)
-    const fullyFormatted = formattedResponse.replace(/( - S| - H| - W)/g, (match) => {
+    const fullyFormatted = formattedResponse.replace(/( - S| - R| - W)/g, (match) => {
       return `<br />${match}`;
     });
 
@@ -102,15 +102,15 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers }: { apiKey
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', maxWidth: "67vh" }}>
       <Button onClick={handleSendMessage} disabled={isLoading} className="flashy-button">
-        {isLoading ? "Loading" : "Sending to Chatgpt"}
+        {isLoading ? "Chief is Reading" : "Present Your Case"}
       </Button>
       
       <div>
-        <h2>Results:</h2>
+        <h4>Your suspect may have one of these occupations:</h4>
         {keyState === "Valid" ?
-        <div
+        <div style={{fontSize: '15px'}}
           dangerouslySetInnerHTML={{
             __html: message,
           }}

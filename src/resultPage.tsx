@@ -29,9 +29,13 @@ interface detailedAnswer {
     return (
       <header>
         <div style={{color: "black", paddingLeft: "2.5%", position: 'absolute', zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", width: "100%", height: "auto"}}>
-          {!(basicComplete && detailedComplete) && (
-            <h2 style={{ textAlign: "center", paddingTop: "5%" }}>Complete some questions for results</h2>
+          {!(basicComplete) && (
+            <h2 style={{ textAlign: "center", paddingTop: "5%" }}>Go collect some evidence, Detective!</h2>
           )}
+          {(basicComplete && !detailedComplete) && (
+              <h2 style={{ textAlign: "center", paddingTop: "5%" }}>You still have witnesses to question!</h2>
+          )}
+          <br />
           <GptResponse apiKey={apiKey} taggedAnswers={answerVals} detailedAnswers={answers} />
         </div>
         <img className='home-background' src={resultsPage} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />

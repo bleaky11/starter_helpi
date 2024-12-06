@@ -342,7 +342,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
     basicComplete ? ( // Guest condition: basic quiz complete
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-          <Button className="flashy-button">Results</Button>
+          <Button className="flashy-button">Approach Police Chief</Button>
         </Link>
       </div>
     ) : (
@@ -352,7 +352,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
     loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-          <Button className="flashy-button">Results</Button>
+          <Button className="flashy-button">Approach Police Chief</Button>
         </Link>
       </div>
     ) : null

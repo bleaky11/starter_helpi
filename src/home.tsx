@@ -25,7 +25,7 @@ export function MainPage({
   return (
     <div>
       <header className="App-header"> 
-        <HomeBackground setPage={setPage} page={page}/>
+        <HomeBackground basicComplete={basicComplete} setPage={setPage} page={page}/>
       </header>
     </div>
   );

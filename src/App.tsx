@@ -113,7 +113,7 @@ function MainContent({ setPage, db, setDb, basicComplete, toggleBasic, detailedC
 
   return (
     <>
-      <HeaderComponent db = {db} setDb = {setDb} setPage={setPage} loggedUser = {loggedUser} setLoggedUser = {setLoggedUser} page={currentPage} />
+      <HeaderComponent basicComplete = {basicComplete} db = {db} setDb = {setDb} setPage={setPage} loggedUser = {loggedUser} setLoggedUser = {setLoggedUser} page={currentPage} />
       <Routes>
         <Route path="/basic-questions" element={<BasicCareerComponent db = {db} setDb = {setDb} basicComplete={basicComplete} toggleBasic={toggleBasic} savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
         loggedUser = {loggedUser} setLoggedUser = {setLoggedUser} setPage={setPage}/>} />
