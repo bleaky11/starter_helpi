@@ -525,6 +525,7 @@ const updateSavedUsers = () => {
     setFormTitle(title);
     if (title === "Create Account") {
       clearForm(); // clear form fields when switching to "Create Account"
+      setRemember(false);
     }
     else if(title === "Log in")
     {
@@ -533,35 +534,29 @@ const updateSavedUsers = () => {
     toggleForm();
   }; 
 
-  return (<div style={{ height: '100px', display: "flex", alignItems: "center", position:'relative' }}>
-    <div style={{position:'absolute', zIndex: 5 }}>
-      {isLoggedIn ? (
-        <div style={{ gap: "10px" }}>
-          <img
-            src={detective} // default profile picture
-            alt="detective profile"
-            style={{ width: '80px', height: '80px', cursor: 'pointer' }}
-            onClick={() => showForm("Create Account")}
-            title={userInfo.username}
-          />
-          <div style={{ gap: "10px" }}>
-            <Button
-              style={{ borderRadius: "20px", backgroundColor: "salmon" }}
-              onClick={() => [handleLogout(userInfo.username), alert("Logged out successfully!")]}
-            >
-              Log out
-            </Button>
-            <Button
-              onClick={() => deleteAccount(userInfo.username)}
-              style={{
-                borderRadius: "20px",
-                backgroundColor: "darkred"
-              }}
-            >
-              Delete Account
-            </Button>
-          </div>
-        </div>
+  return (<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+    {isLoggedIn ? (
+      <>
+        <img
+          src={detective}
+          alt="detective profile"
+          style={{ width: "70px", height: "70px", cursor: "pointer" }}
+          onClick={() => showForm("Create Account")}
+          title={userInfo.username}
+        />
+        <Button
+          style={{ borderRadius: "20px", backgroundColor: "salmon" }}
+          onClick={() => [handleLogout(userInfo.username), alert("Logged out successfully!")]}
+        >
+          Log out
+        </Button>
+        <Button
+          onClick={() => deleteAccount(userInfo.username)}
+          style={{ borderRadius: "20px", backgroundColor: "darkred" }}
+        >
+          Delete Account
+        </Button>
+      </>
       ) : (
         <div>
           <img
@@ -579,7 +574,6 @@ const updateSavedUsers = () => {
           </Button>
         </div>
       )}
-    </div>
   
     {isFormOpen && !isLoggedIn && (
       <LoginForm
