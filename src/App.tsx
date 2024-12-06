@@ -8,6 +8,7 @@ import { HeaderComponent } from './header';
 import { MainPage } from './home';
 import { ResultPage } from './resultPage';
 import { Account } from './homepagelogo';
+import { QuizInterface } from './interface';
 
 // Local storage and API Key
 let keyData = "";
@@ -108,14 +109,15 @@ interface MainContentProps {
 function MainContent({ setPage, db, setDb, basicComplete, toggleBasic, detailedComplete, toggleDetailed, isKeyEntered,
    savedBasicCareer, setBasicCareer, savedDetailedCareer, setDetailedCareer, apiKey, answerVals, setAnswerVals, loggedUser, setLoggedUser}: MainContentProps) {
   const location = useLocation();
-  const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : (location.pathname === "/detailed-questions" ? "Detailed-Questions": "Results-Page"));
+  const currentPage = location.pathname === "/" ? "Home" : (location.pathname === "/basic-questions" ? "Basic-Questions" : (location.pathname === "/detailed-questions" ? "Detailed-Questions": (location.pathname === "/interface" ? "Interface": "Results-Page")));
 
   return (
     <>
-      <HeaderComponent db = {db} setDb = {setDb} setPage={setPage} loggedUser = {loggedUser} setLoggedUser = {setLoggedUser} page={currentPage} />
+      <HeaderComponent basicComplete = {basicComplete} db = {db} setDb = {setDb} setPage={setPage} loggedUser = {loggedUser} setLoggedUser = {setLoggedUser} page={currentPage} />
       <Routes>
         <Route path="/basic-questions" element={<BasicCareerComponent db = {db} setDb = {setDb} basicComplete={basicComplete} toggleBasic={toggleBasic} savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
         loggedUser = {loggedUser} setLoggedUser = {setLoggedUser} setPage={setPage}/>} />
+         <Route path="/interface" element={<QuizInterface loggedUser={loggedUser} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} setPage={setPage} isKeyEntered={isKeyEntered} db={db} setDb={setDb}/>} />
         <Route path="/detailed-questions" element={<DetailedCareerComponent detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
         <Route path="/results-page" element={<ResultPage basicComplete={basicComplete} detailedComplete={detailedComplete} apiKey={apiKey} answerVals={answerVals}></ResultPage>} />
         <Route path="/" element={<MainPage setPage={setPage} page={currentPage} db = {db} setDb = {setDb} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} apiKey={apiKey} loggedUser={loggedUser}/>} />

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import questionMarks from "./Images/Questions.png";
 import detective2 from "./Images/Detective2.png";
+import quizInterface from './Images/quizInterface.png';
 
 export interface DetailedQuestion // Interface to handle question attributes
 {
@@ -62,16 +63,16 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
     else 
     {
       const defaultQuestions = [
-                { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
-                { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
-                { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
-                { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
-                { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
-                { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
-                { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
-        ];
-        setQuestions(defaultQuestions);
-        sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
+        { text: "What did our suspect always want to be when they grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
+        { text: "Whether inside or outside of school, what is our suspects favorite class that they have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
+        { text: "What societal stressor does our suspect feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
+        { text: "What does our suspect dislike most about jobs or tasks they've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
+        { text: "What is a topic or subject that our suspect could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
+        { text: "What are our suspects favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
+        { text: "What 3 words would you use to describe our suspect?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
+      ];
+      setQuestions(defaultQuestions);
+      sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
         const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
         const updatedTempAnswers = new Array(7).fill("");
         Object.keys(savedAnswers).forEach((key) => {
@@ -148,13 +149,13 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
     sessionStorage.removeItem("quizAnswers"); //removes saved answers from storage
     sessionStorage.removeItem("quizQuestions"); //removes saved questions from storage
     const defaultQuestions = [
-      { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
-      { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
-      { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
-      { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
-      { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
-      { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
-      { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
+      { text: "What did our suspect always want to be when they grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
+      { text: "Whether inside or outside of school, what is our suspects favorite class that they have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
+      { text: "What societal stressor does our suspect feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
+      { text: "What does our suspect dislike most about jobs or tasks they've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
+      { text: "What is a topic or subject that our suspect could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
+      { text: "What are our suspects favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
+      { text: "What 3 words would you use to describe our suspect?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
     ]; //Initializes a questions array with blank answers, false answer value
     setQuestions(defaultQuestions); //Update state with empty questions array
     setTempAnswers(new Array(defaultQuestions.length).fill("")); //Initializes a new array the length of the defaultQuestions array and fills it with empty strings
@@ -177,7 +178,8 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
   }  
   
   return (
-    <div className="Background">
+    <header>
+    <div className="Background" style={{position: 'absolute', zIndex: 10}}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
           <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>
             Percent Complete: {progress.toFixed(0)}%
@@ -185,29 +187,22 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
           <progress id="question" value={progress} max="100" style={{ height: "45px", width: "300px" }} />
         </div>
       <div style={{textAlign: "center"}}>
-        <h1>Here is the Detailed Career Page!</h1>
-        <div></div>
-        <Container style={{ border: "2px solid red" }}>
-            <p>
-            This assessment is designed to determine an appopriate career path going
-            forward. You will be asked a series of elaborate questions that may require some
-            additional thought to answer. Before you begin, make sure you're in a comfortable environment and
-            answer each question to your best ability.
-            </p>
-        </Container>
+        <h2>Our witnesses know our suspect in various ways. Find out what they know.</h2>
       </div>
+      <br/>
+      <br/>
       <div>
       {currentQuestion && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <h2>{currentQuestion.text}
+          <h3>{currentQuestion.text}
           <Button 
             onClick={toggleExplanation} 
             style={{fontSize: '24px', marginLeft: '10px', background: 'transparent', border: 'none', cursor: 'pointer', color: 'blue' }}>
             ?
           </Button>
-          </h2>
+          </h3>
           {showExplanation && (
-            <div style={{ marginTop: '10px', padding: '10px', border: '1px solid lightgray', borderRadius: '5px', background: '#f9f9f9' }}>
+            <div style={{color: "black", marginTop: '10px', padding: '10px', border: '1px solid lightgray', borderRadius: '5px', background: '#f9f9f9' }}>
               <p>{currentQuestion.tip}</p>
             </div>
           )}
@@ -239,5 +234,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
         <DetailedClear />
       </div>
     </div>
+    <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
+  </header>
   );
 }
