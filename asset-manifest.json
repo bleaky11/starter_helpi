@@ -1,22 +1,24 @@
 {
   "files": {
-    "main.css": "/starter_helpi/static/css/main.40326b1b.css",
-    "main.js": "/starter_helpi/static/js/main.30b1aefd.js",
+    "main.css": "/starter_helpi/static/css/main.f2891a62.css",
+    "main.js": "/starter_helpi/static/js/main.3ac49357.js",
     "static/js/453.dda23872.chunk.js": "/starter_helpi/static/js/453.dda23872.chunk.js",
     "static/media/detective-walking-unscreen.gif": "/starter_helpi/static/media/detective-walking-unscreen.704a485db434b0ba83a7.gif",
+    "static/media/resultsPage.png": "/starter_helpi/static/media/resultsPage.204967cc1e8d62b5478a.png",
+    "static/media/themeHome.svg": "/starter_helpi/static/media/themeHome.de19c8cb9c5f89437f8af4e04d5a657d.svg",
+    "static/media/quizInterface.png": "/starter_helpi/static/media/quizInterface.d5102c696655ef9fd35f.png",
     "static/media/detective-profile.png": "/starter_helpi/static/media/detective-profile.47c139e74c55522bc773.png",
     "static/media/Questions.png": "/starter_helpi/static/media/Questions.baf323050048168249fe.png",
     "static/media/user-profile.png": "/starter_helpi/static/media/user-profile.7ab529588e42fc95ea7b.png",
     "static/media/notificationBell.png": "/starter_helpi/static/media/notificationBell.aeac01ea29301b455c98.png",
     "static/media/Detective2.png": "/starter_helpi/static/media/Detective2.e82d437746508369f2f7.png",
-    "static/media/Detective.png": "/starter_helpi/static/media/Detective.36a652c320ea41a8d242.png",
     "index.html": "/starter_helpi/index.html",
-    "main.40326b1b.css.map": "/starter_helpi/static/css/main.40326b1b.css.map",
-    "main.30b1aefd.js.map": "/starter_helpi/static/js/main.30b1aefd.js.map",
+    "main.f2891a62.css.map": "/starter_helpi/static/css/main.f2891a62.css.map",
+    "main.3ac49357.js.map": "/starter_helpi/static/js/main.3ac49357.js.map",
     "453.dda23872.chunk.js.map": "/starter_helpi/static/js/453.dda23872.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.40326b1b.css",
-    "static/js/main.30b1aefd.js"
+    "static/css/main.f2891a62.css",
+    "static/js/main.3ac49357.js"
   ]
 }

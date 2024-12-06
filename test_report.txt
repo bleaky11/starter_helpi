@@ -43,7 +43,7 @@ FAIL src/App.test.tsx
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1728:14)
       at Object.<anonymous> (src/chatGpt.ts:2:1)
       at Object.<anonymous> (src/gptResponse.tsx:2:1)
-      at Object.<anonymous> (src/resultPage.tsx:3:1)
+      at Object.<anonymous> (src/resultPage.tsx:1:1)
       at Object.<anonymous> (src/App.tsx:9:1)
       at Object.<anonymous> (src/App.test.tsx:3:1)
       at TestScheduler.scheduleTests (node_modules/@jest/core/build/TestScheduler.js:333:13)
@@ -68,20 +68,22 @@ File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #
 ---------------------|---------|----------|---------|---------|-------------------
 All files            |       0 |        0 |       0 |       0 |                   
  src                 |       0 |        0 |       0 |       0 |                   
-  App.tsx            |       0 |        0 |       0 |       0 | 13-113            
+  App.tsx            |       0 |        0 |       0 |       0 | 14-114            
   LoginForm.tsx      |       0 |        0 |       0 |       0 | 33-260            
-  basicCareer.tsx    |       0 |        0 |       0 |       0 | 47-363            
+  basicCareer.tsx    |       0 |        0 |       0 |       0 | 48-354            
   chatGpt.ts         |       0 |        0 |       0 |       0 | 4-34              
   db.tsx             |       0 |        0 |       0 |       0 | 7-21              
-  detailedCareer.tsx |       0 |        0 |       0 |       0 | 28-234            
+  detailedCareer.tsx |       0 |        0 |       0 |       0 | 29-229            
   gptResponse.tsx    |       0 |        0 |       0 |       0 | 18-104            
-  header.tsx         |       0 |        0 |       0 |       0 | 23-66             
-  home.tsx           |       0 |        0 |       0 |       0 | 29-203            
+  header.tsx         |       0 |        0 |       0 |       0 | 24-79             
+  home.tsx           |       0 |      100 |       0 |       0 | 25                
+  homeBackground.tsx |       0 |        0 |       0 |       0 | 12-87             
   homepagelogo.tsx   |       0 |        0 |       0 |       0 | 32-576            
   index.tsx          |       0 |      100 |     100 |       0 | 7-19              
+  interface.tsx      |       0 |        0 |       0 |       0 | 19-102            
   notification.tsx   |       0 |        0 |       0 |       0 | 23-83             
   reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10              
-  resultPage.tsx     |       0 |        0 |       0 |       0 | 19-28             
+  resultPage.tsx     |       0 |        0 |       0 |       0 | 18-27             
  src/CSS             |       0 |      100 |     100 |       0 |                   
   Border.tsx         |       0 |      100 |     100 |       0 | 3                 
   Center.tsx         |       0 |      100 |     100 |       0 | 3                 
@@ -90,5 +92,5 @@ All files            |       0 |        0 |       0 |       0 |
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.361 s
+Time:        5.59 s
 Ran all test suites.
