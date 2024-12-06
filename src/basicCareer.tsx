@@ -5,6 +5,7 @@ import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 import { Link } from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
+import quizInterface from './Images/quizInterface.png';
 
 export interface SubmitButton {
   basicComplete: boolean;
@@ -38,15 +39,15 @@ interface Answers
 
 export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage}: SubmitButton & saveButton & Answers & Pages): JSX.Element 
 {
-  const defaultQuestions = [{ text: "How much noise do you mind in your work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
-  { text: "What type of environment would you prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
-  { text: "Are you interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
-  { text: "Would you be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Somewhat" }, { id: 3, label: "More often than not" }, { id: 4, label: "Extremely" }], selected: [false, false, false, false] },
-  { text: "How much would you like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasionally" }, { id: 4, label: "Fairly often" }, { id: 5, label: "All the time" }], selected: [false, false, false, false, false] },
-  { text: "How comfortable are you with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
-  { text: "What is your ideal annual salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
-  { text: "How much do you value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
-  { text: "What's the highest level of education you plan on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}];
+  const defaultQuestions = [{ text: "How much noise does our suspect mind in the work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
+  { text: "What type of environment would our suspect prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
+  { text: "Is our suspect interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
+  { text: "Would our suspect be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Somewhat" }, { id: 3, label: "More often than not" }, { id: 4, label: "Extremely" }], selected: [false, false, false, false] },
+  { text: "How much would our suspect like to interact with others?", type: "radio", choices: [{ id: 1, label: "Strictly never" }, { id: 2, label: "As little as possible" }, { id: 3, label: "Occasionally" }, { id: 4, label: "Fairly often" }, { id: 5, label: "All the time" }], selected: [false, false, false, false, false] },
+  { text: "How comfortable is our suspect with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
+  { text: "What is our suspect's ideal salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
+  { text: "How much does our suspect value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
+  { text: "What's the highest level of education our suspect plans on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}];
 
   const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [loggedUser, setLoggedUser] = useState<Account| null>(null);
@@ -275,90 +276,82 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
   }
 
   return (
-    <div className="Background">
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
-        <div style = {{display: "flex", justifyContent: "flex-end"}}>
-        <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>
-          Percent Complete: {progress.toFixed(0)}%
-        </label>
-        <progress
-          id="question"
-          value={progress}
-          style = {{height: "45px", width: "300px"}}
-          max="100"
-        ></progress>
-        </div>
-        <div style={{ position: "relative", height: "25px"}}>
-          <img
-            src={detectiveWalk}
-            alt="detective-walking"
-            style={{
-              position: "relative",
-              left: `${(progress / 100) * 300 - 325}px`,
-              transition: "left 1s ease-in",
-              width: "45px",
-              height: "auto", // Maintain aspect ratio
-              marginTop: "35px"
-            }}
-          />
-        </div>
-      </div>
-  
-      {/* Basic Career Page content */}
-      <h1 style={{ textAlign: "center" }}>Here is the Basic Career Page!</h1>
-      <br />
-      <div>
-        <Container style={{ border: "2px solid red" }}>
-          <p>
-            This assessment is designed to determine an appropriate career path going forward.
-            You will be asked a series of multiple-choice questions. If you're looking for more
-            in-depth questions, go to the Detailed Career Page. Before you begin, make sure you're
-            in a comfortable environment and answer each question to the best of your ability.
-          </p>
-        </Container>
-      </div>
-  
-      <div style={{ marginLeft: "100px", marginRight: "100px" }}>
-        <br />
-        <Row>
-          {questions.map((question, index) => (
-            <Col key={index} xs={12} md={4}> {/* 4 columns in medium size and above, full width on smaller screens */}
-              <div>
-                <b>{question.text}</b>
-                <Form>
-                  {question.choices.map((choice, selectIndex) => (
-                    <Form.Check
-                      key={choice.id}
-                      type={question.type as FormCheckType}
-                      label={choice.label}
-                      name={`basic-question-${index}`} // Unique name for each question
-                      value={choice.id}
-                      checked={question.selected[selectIndex]} // Keep track of selected state
-                      onChange={(event) => updateAnswer(event, index, selectIndex)}
-                    />
-                  ))}
-                </Form>
-              </div>
-            </Col>
-          ))}
-        </Row>
-      </div>
-  
-      <div style={{ justifyContent: "center", marginTop: "80px" }}>
-        {basicComplete && (
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-              <Button className="flashy-button">Results</Button>
-            </Link>
+    <header>
+      <div className="Background" style={{position: 'absolute', zIndex: 10}}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
+          <div style = {{display: "flex", justifyContent: "flex-end"}}>
+          <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>
+            Percent Complete: {progress.toFixed(0)}%
+          </label>
+          <progress
+            id="question"
+            value={progress}
+            style = {{height: "45px", width: "300px"}}
+            max="100"
+          ></progress>
           </div>
-        )}
+          <div style={{ position: "relative", height: "25px"}}>
+            <img
+              src={detectiveWalk}
+              alt="detective-walking"
+              style={{
+                position: "relative",
+                left: `${(progress / 100) * 300 - 325}px`,
+                transition: "left 1s ease-in",
+                width: "45px",
+                height: "auto", // Maintain aspect ratio
+                marginTop: "35px"
+              }}
+            />
+          </div>
+        </div>
+    
+        {/* Basic Career Page content */}
+        <h3 style={{ textAlign: "center" }}>Look Closely, Detective. What can you find out about our suspect's occupation?</h3>
+        <br />    
+        <div style={{ marginLeft: "100px", marginRight: "100px" }}>
+          <br />
+          <Row>
+            {questions.map((question, index) => (
+              <Col key={index} xs={12} md={4}> {/* 4 columns in medium size and above, full width on smaller screens */}
+                <div>
+                  <b>{question.text}</b>
+                  <Form>
+                    {question.choices.map((choice, selectIndex) => (
+                      <Form.Check
+                        key={choice.id}
+                        type={question.type as FormCheckType}
+                        label={choice.label}
+                        name={`basic-question-${index}`} // Unique name for each question
+                        value={choice.id}
+                        checked={question.selected[selectIndex]} // Keep track of selected state
+                        onChange={(event) => updateAnswer(event, index, selectIndex)}
+                      />
+                    ))}
+                  </Form>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </div>
+    
+        <div style={{ justifyContent: "center", marginTop: "80px" }}>
+          {basicComplete && (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                <Button className="flashy-button">Results</Button>
+              </Link>
+            </div>
+          )}
+        </div>
+    
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "2px" }}>
+          <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
+          <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic} />
+          <BasicClear />
+        </div>
       </div>
-  
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "2px" }}>
-        <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
-        <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic} />
-        <BasicClear />
-      </div>
-    </div>
+      <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
+    </header>
   );
 }  

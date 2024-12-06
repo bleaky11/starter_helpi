@@ -1,14 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import theme from "./Images/themeHome.png";
+import theme from "./Images/themeHome.svg";
 
-export function HomeBackground(): JSX.Element {
+interface HomeBackgroundProps {
+    page: string;
+    setPage: (page: string) => void;
+  }
+
+export function HomeBackground({page, setPage}: HomeBackgroundProps): JSX.Element {
     const navigate = useNavigate();
 
     // SVG dimensions
     const svgDimensions = { width: "100%", height: "100%" };
     const handleNav = () => {
         navigate("/interface");
+        setPage("Interface");
     };
 
     return (

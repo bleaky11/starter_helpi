@@ -53,6 +53,17 @@ export function HeaderComponent({setPage, page}: HeaderComponentProps): JSX.Elem
             </div>
         )
     }
+    else if(page === "Interface"){//If on Interface page, display home button
+        return(
+            <div className="Header-footer">
+                <nav className="Centered">
+                    <Link to="/">
+                        <Button className="Button" onClick={() => setPage("Home")}>Home</Button>
+                    </Link>
+                </nav>
+            </div>
+        )
+    }
     else{//If on homepage, display homepage component
         return(
         <div className='Header-footer' style={{textAlign: "center"}}>

@@ -50,9 +50,9 @@
 }
 
 .notif-bell{
-  width: auto;
+  width: 90px;
   height: 100px;
-  max-height: 15%;
+  max-height: 10vh;
   right: 0%;
   position: absolute;
   transition: transform 0.25s ease, width 0.25s ease;
@@ -106,31 +106,32 @@
 }
 
 .Background {
-  background: #FDF6C3;
-  border-color: #bc6c25;
+  background: transparent;
+  border-color: #2F0B06;
   border-style: solid;
-  min-height: 100vh;
-  color: Black
+  min-height: 95%;
+  color: white;
+  text-shadow: 15px 15px 18px black;
 }
 
 .Bordered {
-  border: 10px solid #bc6c25;
+  border: 10px solid #2F0B06;
   border-radius: 25px;
   padding: 16px;
   margin: 10px;
   flex: 1;
-  background-color: #dda15e;
-  height: 500px;
+  background-color: transparent;
+  height: 300px;
   box-sizing: border-box; /*suggestion from chatgpt*/
 }
 
 .ResultBorder {
-  border: 10px solid #bc6c25;
+  border: 10px solid #2F0B06;
   border-radius: 25px;
   padding: 16px;
   margin: 10px;
   flex: 1;
-  background-color: #dda15e;
+  background-color: transparent;
   width: 80%;
   max-width: 97%;
 }
