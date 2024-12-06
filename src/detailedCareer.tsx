@@ -135,8 +135,8 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
 
   function handleSubmit({detailedComplete, toggleDetailed}: submitButton)
   {
-  toggleDetailed(true); // guest logic
-   alert("Thanks for completing the Detailed Career quiz!");
+    toggleDetailed(true); // guest logic
+    alert("Thanks for completing the Detailed Career quiz!");
   }
 
 function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element { //Submit button - disabled if progress is less than 100
