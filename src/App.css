@@ -95,10 +95,11 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  z-index: 10;
 }
 
 .home-background {
-  position: relative;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -129,7 +130,7 @@
   border-color: #2F0B06;
   border-style: solid;
   min-height: 95%;
-  color: white;
+  color: #f69015;
   text-shadow: 15px 15px 18px black;
 }
 
