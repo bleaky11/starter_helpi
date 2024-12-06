@@ -1,5 +1,3 @@
-
-import { Container } from "react-bootstrap";
 import { GptResponse } from "./gptResponse";
 import resultsPage from './Images/resultsPage.png';
 
