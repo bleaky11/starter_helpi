@@ -365,7 +365,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
           <BasicClear />
         </div>
       </div>
-      <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'fixed', zIndex: -1}} />
+      <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
     </header>
   );
 }

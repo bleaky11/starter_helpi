@@ -243,7 +243,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
         </Link>
       </div>}
     </div>
-    <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'fixed', zIndex: -1}} />
+    <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: -1}} />
   </header>
   );
 }
