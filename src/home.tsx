@@ -1,6 +1,8 @@
 import { Button, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { NotifBell } from "./notification";
+import { Database } from "./db";
+import { BasicProps } from "./notification";
 import magGlass from "./Images/magnifying-glass.jpg";
 import detective from "./Images/Detective.png";
 
@@ -20,14 +22,21 @@ export function MainPage({
   detailedComplete,
   isKeyEntered,
   apiKey,
-}: HomeComponentProps): JSX.Element {
+  db,
+  setDb,
+  loggedUser
+}: HomeComponentProps & Database & BasicProps): JSX.Element {
   return (
     <div className="App">
       <header className="App-header"> 
         <NotifBell
           basicComplete={basicComplete}
           detailedComplete={detailedComplete}
+          db = {db}
+          setDb = {setDb}
+          loggedUser={loggedUser}
         ></NotifBell>
+
         <Container>
           <Col className="ResultBorder" >
               <div style={{ flex: 1 }}>
@@ -37,20 +46,34 @@ export function MainPage({
                 </h6>
               </div>
               <nav style={{ marginTop: "auto", textAlign: "center" }}>
-                {!basicComplete && !detailedComplete ? (
-                  <div>
-                    <Button className="Button" disabled={true}>Results</Button>
-                    <h6>Please complete a Quiz!</h6>
-                  </div>
-                ) : (
-                  <Link
-                    to="/results-page"
-                    onClick={() => setPage("Results-Page")}
-                  >
-                    <Button className="flashy-button">Results</Button>
-                  </Link>
+              {!loggedUser ? ( // User is not logged in
+              !basicComplete && !detailedComplete ? (
+                <div>
+                  <Button className="Button" disabled={true}>
+                    Results
+                  </Button>
+                  <h6>Please complete a Quiz!</h6>
+                </div>
+              ) : (
+                <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                  <Button className="flashy-button">Results</Button>
+                </Link>
+              )
+            ) : ( // User is logged in
+                  !loggedUser.basicComplete && !loggedUser.detailedComplete ? (
+                    <div>
+                      <Button className="Button" disabled={true}>
+                        Results
+                      </Button>
+                      <h6>Please complete a Quiz!</h6>
+                    </div>
+                  ) : (
+                    <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                      <Button className="flashy-button">Results</Button>
+                    </Link>
+                  )
                 )}
-              </nav>
+            </nav>
             </Col>
             
         </Container>

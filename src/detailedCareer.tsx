@@ -3,12 +3,7 @@ import { Button, Container } from "react-bootstrap";
 import questionMarks from "./Images/Questions.png";
 import detective2 from "./Images/Detective2.png";
 
-interface submitButton{ // Interface for keeping track of Detailed Question Completion
-  detailedComplete: boolean;
-  toggleDetailed: (notDetailed: boolean) => void;
-}
-
-interface Question // Interface to handle question attributes
+export interface DetailedQuestion // Interface to handle question attributes
 {
   text: string;
   type: string;
@@ -18,10 +13,21 @@ interface Question // Interface to handle question attributes
   tip?: string;
 }
 
+interface submitButton{ // Interface for keeping track of Detailed Question Completion
+  detailedComplete: boolean;
+  toggleDetailed: (notDetailed: boolean) => void;
+}
+
+// interface UserProps
+// {
+//   db: IDBDatabase | null;
+//   loggedUser: Account | null;
+// }
+
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<DetailedQuestion[]>([]);
   const [progress, setProgress] = useState<number>(0);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
   const [prompts, setPrompts] = useState<string[]>([]);
@@ -31,62 +37,64 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
     sessionStorage.setItem("quizAnswers", JSON.stringify({}))
   }
 
-  const updateProgress = useCallback(() => {
+  const updateProgress = useCallback(() => 
+  {
     const totalQuestions = questions.length;
     const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
     sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
-  
-    const updatedTags = assignTags(prompts);  // Map answers to tags
-    setPrompts(updatedTags.map(tag => tag.response));
-
     const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]).length;
     const progressPercentage = (answeredQuestions / totalQuestions) * 100;
     setProgress(progressPercentage);
+    const updatedTags = assignTags(prompts);  // Map answers to tags
+    setPrompts(updatedTags.map(tag => tag.response));
+
   }, [prompts, questions.length]);  
 
   useEffect(() => {
-    const storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
+    let storedQuestions = [];
+    storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
     if (storedQuestions.length > 0) {
       setQuestions(storedQuestions);
       const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
       const updatedPrompts = Object.keys(savedAnswers).map((key) => savedAnswers[key]); 
       setPrompts(updatedPrompts); // Set the prompts after updating with saved answers
-    } else {
+    } 
+    else 
+    {
       const defaultQuestions = [
-        { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
-        { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
-        { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
-        { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
-        { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
-        { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
-        { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
-      ];
-      setQuestions(defaultQuestions);
-      sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
+                { text: "What have you always wanted to be when you grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
+                { text: "Whether inside or outside of school, what is your favorite class that you have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
+                { text: "What societal stressor do you feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
+                { text: "What did you dislike most about jobs or tasks you've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
+                { text: "What is a topic or subject that you could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
+                { text: "What are your favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
+                { text: "What 3 words would others use to describe you?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
+        ];
+        setQuestions(defaultQuestions);
+        sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
+        const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+        const updatedTempAnswers = new Array(7).fill("");
+        Object.keys(savedAnswers).forEach((key) => {
+          updatedTempAnswers[parseInt(key)] = savedAnswers[key];
+        });
+        setTempAnswers(updatedTempAnswers);
+      
+        const totalQuestions = storedQuestions.length;
+        const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
+        const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0;
+        setProgress(progressPercentage);
     }
-  
-    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-    const updatedTempAnswers = new Array(7).fill("");
-    Object.keys(savedAnswers).forEach((key) => {
-      updatedTempAnswers[parseInt(key)] = savedAnswers[key];
-    });
-    setTempAnswers(updatedTempAnswers);
-  
-    const totalQuestions = storedQuestions.length;
-    const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
-    const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0;
-    setProgress(progressPercentage);
   }, []); // Make sure prompts are set first  
 
   function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
     if (currentQuestion) {
       const updatedQuestions = [...questions];
-      updatedQuestions[questionPage].answered = true; //Updates the answered status of the question to true
-      updatedQuestions[questionPage].answer = tempAnswers[questionPage]; //Sets the answer value of the question to the user's answer
-      setQuestions(updatedQuestions); //Update the questions state to include user's answer
-      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}"); //Creates an array from "quizAnswers" in storage, or returns an empty array if it doesn't exist
-      savedAnswers[questionPage] = tempAnswers[questionPage]; //Populate array with user's answer
-      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers)); //Update "quizAnswers" in storage with the new array
+      updatedQuestions[questionPage].answered = true;
+      updatedQuestions[questionPage].answer = tempAnswers[questionPage]; 
+      setQuestions(updatedQuestions); 
+      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}"); 
+      savedAnswers[questionPage] = tempAnswers[questionPage]; 
+      sessionStorage.setItem("quizAnswers", JSON.stringify(savedAnswers)); 
       updateProgress();
     }if(tempAnswers[questionPage]){
       setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))
@@ -125,10 +133,10 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
   }
 
   function handleSubmit({detailedComplete, toggleDetailed}: submitButton)
-{
-  toggleDetailed(true);
-  alert("Thanks for completing the Detailed Career quiz!");
-}
+  {
+  toggleDetailed(true); // guest logic
+   alert("Thanks for completing the Detailed Career quiz!");
+  }
 
 function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element { //Submit button - disabled if progress is less than 100
   return(<div>
