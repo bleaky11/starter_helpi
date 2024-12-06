@@ -1,8 +1,5 @@
-import { Button, Container, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { NotifBell } from "./notification";
-import magGlass from "./Images/magnifying-glass.jpg";
-import detective from "./Images/Detective.png";
+import { Database } from "./db";
+import { BasicProps } from "./notification";
 import { HomeBackground } from "./homeBackground";
 
 interface HomeComponentProps {
@@ -21,7 +18,10 @@ export function MainPage({
   detailedComplete,
   isKeyEntered,
   apiKey,
-}: HomeComponentProps): JSX.Element {
+  db,
+  setDb,
+  loggedUser
+}: HomeComponentProps & Database & BasicProps): JSX.Element {
   return (
     <div>
       <header className="App-header"> 

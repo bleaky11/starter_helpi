@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { initializeDatabase } from "./db";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Database } from "./db";
 import { Account } from "./homepagelogo";
-import { Button, Container, Form, Row, Col } from "react-bootstrap";
+import { Button, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
 import quizInterface from './Images/quizInterface.png';
 
@@ -37,9 +37,15 @@ interface Answers
   setAnswerVals: (newState: {answer: string, tag: string}[]) => void;
 }
 
-export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage}: SubmitButton & saveButton & Answers & Pages): JSX.Element 
+interface Users
 {
-  const defaultQuestions = [{ text: "How much noise does our suspect mind in the work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
+  loggedUser: Account | null;
+  setLoggedUser: React.Dispatch<React.SetStateAction<Account | null>>;
+}
+
+export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , savedBasicCareer, setBasicCareer, answers, setAnswerVals, setPage, loggedUser, setLoggedUser}: SubmitButton & saveButton & Answers & Pages & Users & Database): JSX.Element 
+{
+  const defaultQuestions = useCallback(() => [{ text: "How much noise does our suspect mind in the work environment?", type: "radio", choices: [{ id: 1, label: "No noise" }, { id: 2, label: "A little noise" }, { id: 3, label: "A lot of noise" }, { id: 4, label: "As much as possible" }], selected: [false, false, false, false] },
   { text: "What type of environment would our suspect prefer to work in?", type: "checkbox", choices: [{ id: 1, label: "Office" }, { id: 2, label: "Outdoors" }, { id: 3, label: "Remote" }, { id: 4, label: "Hybrid" }], selected: [false, false, false, false] },
   { text: "Is our suspect interested in any STEM fields?", type: "checkbox", choices: [{ id: 1, label: "Science" }, { id: 2, label: "Technology" }, { id: 3, label: "Engineering" }, { id: 4, label: "Math" }, { id: 5, label: "None" }], selected: [false, false, false, false, false] },
   { text: "Would our suspect be fine doing manual labor?", type: "radio", choices: [{ id: 1, label: "Not at all" }, { id: 2, label: "Somewhat" }, { id: 3, label: "More often than not" }, { id: 4, label: "Extremely" }], selected: [false, false, false, false] },
@@ -47,113 +53,118 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
   { text: "How comfortable is our suspect with technology?", type: "radio", choices: [{ id: 1, label: "Very uncomfortable" }, { id: 2, label: "Slightly uncomfortable" }, { id: 3, label: "Decently experienced" }, { id: 4, label: "Extremely comfortable" }], selected: [false, false, false, false] },
   { text: "What is our suspect's ideal salary?", type: "radio", choices: [{ id: 1, label: "$30k - $50k" }, { id: 2, label: "$50k - $70k" }, { id: 3, label: "$70k - $90k" }, { id: 4, label: "$90k - $110k" }], selected: [false, false, false, false] },
   { text: "How much does our suspect value communication skills?", type: "radio", choices: [{ id: 1, label: "Not important at all" }, { id: 2, label: "Slightly Important" }, { id: 3, label: "Very Important" }, { id: 4, label: "Extremely important" }], selected: [false, false, false, false] },
-  { text: "What's the highest level of education our suspect plans on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}];
+  { text: "What's the highest level of education our suspect plans on taking?", type: "radio", choices: [{ id: 1, label: "High School diploma" }, { id: 2, label: "Bachelor's Degree" }, { id: 3, label: "Master's Degree" }, { id: 4, label: "Doctoral Degree" }], selected: [false, false, false, false]}], []);
 
-  const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
-  const [loggedUser, setLoggedUser] = useState<Account| null>(null);
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
 
-    useEffect(() => {
-      const fetchLoggedInUser = async () => {
-        if (db) {
-          try {
-            const savedBasicProgress = localStorage.getItem("basicQuizProgress");
-            const savedBasicAnswers = localStorage.getItem("basicQuizAnswers");
-    
-            if (loggedUser) {
-              return; // If the logged-in user is already set, no need to check localStorage
-            }  
-            else if (!savedBasicProgress && !savedBasicAnswers) { // blank quiz on start
-              sessionStorage.setItem("quizAttempt", "true");
-              setProgress(0); 
-              setQuestions(questions); 
-            } else {
-              setProgress(JSON.parse(savedBasicProgress || "0")); // Load guest data
-              setQuestions(JSON.parse(savedBasicAnswers || "[]"));
-            }
-    
-            const transaction = db.transaction("users", "readonly");
-            const store = transaction.objectStore("users");
-            const getLoggedInUserRequest = store.index("loggedIn").get("true");
-    
-            getLoggedInUserRequest.onsuccess = () => {
-              const user = getLoggedInUserRequest.result;
-              console.log("Logged-in user fetched from DB:", user);
-    
-              if (user) {
-                setLoggedUser(user); // Set logged-in user state
-                setQuestions(user.quiz.length ? user.quiz : defaultQuestions); // Load user-specific questions
-                setProgress(user.progress || 0); // Load user-specific progress
-              } else {
-                console.log("No logged-in user found in database.");
-              }
-            };
-    
-            getLoggedInUserRequest.onerror = (event) => {
-              console.error("Error fetching logged-in user:", event);
-            };
-    
-          } catch (error) {
-            console.error("Error initializing database:", error);
-          }
+  useEffect(() => {
+    const fetchLoggedInUser = async () => {
+      if (!db) return;
+  
+      const initializeGuestSession = () => {
+        const savedBasicProgress = sessionStorage.getItem("basicQuizProgress");
+        const savedBasicAnswers = sessionStorage.getItem("basicQuizAnswers");
+  
+        if (!savedBasicProgress && !savedBasicAnswers) {
+          setProgress(0);
+          setQuestions(defaultQuestions);
+        } else {
+          setProgress(JSON.parse(savedBasicProgress || "0"));
+          setQuestions(JSON.parse(savedBasicAnswers || "[]"));
         }
       };
-    
-      if (!db) {
-        const initDb = async () => {
-          try {
-            const dbInstance = await initializeDatabase();
-            setDb(dbInstance as IDBDatabase);
-          } catch (error) {
-            console.error("Error initializing database:", error);
+  
+      try {
+        const transaction = db.transaction("users", "readonly");
+        const store = transaction.objectStore("users");
+        const getLoggedInUserRequest = store.index("loggedIn").get("true");
+
+        getLoggedInUserRequest.onsuccess = () => {
+          const user = getLoggedInUserRequest.result;
+          if (user) 
+          {
+            setQuestions(user.quiz.length ? user.quiz : defaultQuestions);
+            setProgress(user.progress || 0);
+          } else {
+            initializeGuestSession();
           }
         };
-        initDb();
-      } else {
-        fetchLoggedInUser(); // Fetch user if db initialized
+  
+        getLoggedInUserRequest.onerror = () => {
+          initializeGuestSession();
+        };
+      } catch (error) {
+        initializeGuestSession();
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [db, loggedUser]);
+    };
+  
+    fetchLoggedInUser();
+  
+  }, [db, defaultQuestions, loggedUser]); 
+    
+  function handleBasicSave() {
+    if (loggedUser && db) {
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+  
+      let updatedUser: Account = {
+        username: "",
+        password: "",
+        remembered: false,
+        loggedIn: "",
+        basicComplete: false,
+        detailedComplete: false,
+        quiz: [],
+        progress: 0,
+        detailedQuiz: [],
+        ivUser: "",
+        ivPass: ""
+      };
 
-    
-    function handleBasicSave() {
-      if (loggedUser && db) {
-        console.log("Saving progress for logged-in user:", loggedUser.username);
-    
-        const transaction = db.transaction("users", "readwrite");
-        const store = transaction.objectStore("users");
-    
-        const updatedUser = {
+      if (progress === 100) {
+        updatedUser = {
           ...loggedUser,
-          quiz: [...questions],  // Save updated quiz answers
-          progress,              // Save quiz progress
-        };
-    
-        const updateRequest = store.put(updatedUser);
-    
-        updateRequest.onerror = (event) => {
-          console.error("Failed to save quiz progress:", event);
+          quiz: [...questions],
+          progress: progress,
+          basicComplete: true,
         };
       } else {
-        localStorage.setItem("basicQuizProgress", JSON.stringify(progress));
-        localStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+        updatedUser = {
+          ...loggedUser,
+          quiz: [...questions],
+          progress: progress,
+          basicComplete: false,
+        };
       }
-      alert("Quiz saved!");
+  
+      const request = store.put(updatedUser);
+  
+      request.onsuccess = () => {
+        setLoggedUser(updatedUser); // Ensure the `loggedUser` state is updated
+      };
+    } else {
+      sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
+      sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
     }
+  }  
 
   function handleClear(){ //Clears user's saved progress and resets quiz
-    if(!loggedUser)
-    {
-      localStorage.removeItem("basicQuizProgress");
-      localStorage.removeItem("basicQuizAnswers");
-    }
     const clearedQuestions = questions.map(question => ({
       ...question,
       selected: question.selected.map(() => false) // Reset all selected states to false
     }));
-    toggleBasic(false);
+    if(!loggedUser)
+    {
+        sessionStorage.removeItem("basicQuizProgress");
+        sessionStorage.removeItem("basicQuizAnswers");
+        toggleBasic(false);
+    }
+    else
+    {
+      //handleBasicSave();
+    }
     setQuestions(clearedQuestions);
     setProgress(0);
     setTimeout(() => {
@@ -187,7 +198,7 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     [key: number]: string;
   };
 
-  const answerTags: AnswerTagMap = { //Assigns a tag to identify each index of the answerVals array
+  const answerTags: AnswerTagMap = useMemo(() => ({
     0: 'noise',
     1: 'environment',
     2: 'STEM',
@@ -197,34 +208,24 @@ export function BasicCareerComponent({ basicComplete, toggleBasic , savedBasicCa
     6: 'salary',
     7: 'communication',
     8: 'education'
-  };
+  }), []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  function assignTagsToAnswers(answers: string[]): { answer: string, tag: string }[] { //Assigns initialized tags to each answer
+  const assignTagsToAnswers = useCallback((answers: string[]): { answer: string, tag: string }[] => {
     return answers.map((answer, index) => ({
       answer,
-      tag: answerTags[index] || 'unknown',
+      tag: answerTags[index] || "unknown",
     }));
-  }
+  }, [answerTags]); // Dependency on answerTags, assuming answerTags might change
 
-  function handleSubmit({basicComplete, toggleBasic}: SubmitButton) //Handles user submission of quiz
-  {
-    toggleBasic(true); //Sets state that tracks basic quiz completion to true
-    handleBasicSave(); //Saves user's progress
-    setBasicCareer("basicQuizAnswers"); //Sets state that tracks user's saved answers
-    handleUpdateValues(); //Populates array to track user's answers to each question
-    const taggedAnswers = assignTagsToAnswers(promptValues);  // Assign tags to the answers
-    setAnswerVals(taggedAnswers);  // Set the state with the tagged answers
-    alert("Thanks for completing the Basic Career quiz!");
-    console.log(answers)
-  }
-
-//   const clearStorage = () => 
-//     {
-//       localStorage.removeItem("basicQuizProgress");
-//       localStorage.removeItem("basicQuizAnswers");
-//       sessionStorage.removeItem("quizAttempt");
-// }
+  function handleSubmit({ toggleBasic }: SubmitButton) {
+      handleBasicSave();
+      if(!loggedUser)
+      {
+        setBasicCareer("basicQuizAnswers"); // Sets state that tracks guest's saved answers
+        toggleBasic(true); // Sets state that tracks basic quiz completion to true
+      }
+      handleUpdateValues();
+  }  
 
 useEffect(() => { //Populates and tags array of answers each time an answer is selected
   if (promptValues.length > 0) {
@@ -236,14 +237,15 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element { //Submit button - Disabled if progress is less than 100%
     return(<div>
-      <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), ]}>Submit</Button>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), alert("Thank you for completeting the basic quiz!")]}>Submit</Button>
     </div>)
   }
 
   function BasicSave({savedBasicCareer, setBasicCareer}: saveButton): JSX.Element  //Save button
   {
     return(<div>
-      <Button onClick = {handleBasicSave} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Save</Button>
+      <Button onClick={() => {handleBasicSave(); alert("Quiz saved!")}}
+ style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Save</Button>
     </div>)
   }
 
@@ -336,14 +338,26 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
         </div>
     
         <div style={{ justifyContent: "center", marginTop: "80px" }}>
-          {basicComplete && (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-                <Button className="flashy-button">Results</Button>
-              </Link>
-            </div>
-          )}
-        </div>
+  {!loggedUser ? ( // User is not logged in
+    basicComplete ? ( // Guest condition: basic quiz complete
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+          <Button className="flashy-button">Results</Button>
+        </Link>
+      </div>
+    ) : (
+      null
+    )
+  ) : ( // User is logged in
+    loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+          <Button className="flashy-button">Results</Button>
+        </Link>
+      </div>
+    ) : null
+  )}
+</div>
     
         <div style={{ display: "flex", justifyContent: "center", marginTop: "2px" }}>
           <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
@@ -354,4 +368,4 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
       <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
     </header>
   );
-}  
+}
