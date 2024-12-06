@@ -525,6 +525,7 @@ const updateSavedUsers = () => {
     setFormTitle(title);
     if (title === "Create Account") {
       clearForm(); // clear form fields when switching to "Create Account"
+      setRemember(false);
     }
     else if(title === "Log in")
     {
