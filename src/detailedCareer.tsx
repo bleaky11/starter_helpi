@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import questionMarks from "./Images/Questions.png";
 import detective2 from "./Images/Detective2.png";
 import quizInterface from './Images/quizInterface.png';
+import { Link } from "react-router-dom";
 
 export interface DetailedQuestion // Interface to handle question attributes
 {
@@ -17,6 +18,7 @@ export interface DetailedQuestion // Interface to handle question attributes
 interface submitButton{ // Interface for keeping track of Detailed Question Completion
   detailedComplete: boolean;
   toggleDetailed: (notDetailed: boolean) => void;
+  setPage: (page: string) => void;
 }
 
 // interface UserProps
@@ -25,7 +27,7 @@ interface submitButton{ // Interface for keeping track of Detailed Question Comp
 //   loggedUser: Account | null;
 // }
 
-export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: submitButton): JSX.Element {
+export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setPage}: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
   const [questions, setQuestions] = useState<DetailedQuestion[]>([]);
@@ -141,11 +143,11 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed}: sub
 
 function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element { //Submit button - disabled if progress is less than 100
   return(<div>
-    <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => handleSubmit({detailedComplete, toggleDetailed})}>Submit</Button>
+    <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => handleSubmit({detailedComplete, toggleDetailed, setPage})}>Submit</Button>
   </div>)
 }
 
-  function handleClear(){ //Function to handle clearing quiz and resetting progress
+  function handleClear({detailedComplete, toggleDetailed, setPage}:submitButton){ //Function to handle clearing quiz and resetting progress
     sessionStorage.removeItem("quizAnswers"); //removes saved answers from storage
     sessionStorage.removeItem("quizQuestions"); //removes saved questions from storage
     const defaultQuestions = [
@@ -164,11 +166,12 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
       alert("Quiz Cleared!");
   }, 0); //Wait until all of the clear logic runs before displaying message
     setQuestionPage(prev => Math.min(questions.length - 1, 0))
+    toggleDetailed(false)
   }
 
-  function DetailedClear(){ //Clear button
+  function DetailedClear({detailedComplete, toggleDetailed, setPage}:submitButton){ //Clear button
     return(<div>
-      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
+      <Button onClick={() => handleClear({detailedComplete, toggleDetailed, setPage})} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
     </div>)
   }
 
@@ -230,11 +233,17 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
       </div>
     </div>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "80px" }}>
-        <DetailedSubmit detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>
-        <DetailedClear />
+        
+        <DetailedSubmit setPage={setPage} detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>
+        <DetailedClear setPage={setPage} detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>
       </div>
+      {detailedComplete && <div style={{ display: "flex", justifyContent: "center" }}>
+        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+          <Button className="flashy-button">Approach Police Chief</Button>
+        </Link>
+      </div>}
     </div>
-    <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
+    <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'fixed', zIndex: -1}} />
   </header>
   );
 }
