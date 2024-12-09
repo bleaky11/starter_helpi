@@ -171,6 +171,18 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     }, 0);
   }
 
+  function handleRandomizeAnswers() {
+    const randomAnswers: Question[] = questions.map((question) => {
+      const randomIndex = Math.floor(Math.random() * 4); // new random each time
+      return {
+        ...question, 
+        selected: question.selected.map((value, index) => index === randomIndex), // line written by ChatGPT
+      };
+    });
+    setQuestions(randomAnswers); // Update state with the new questions array
+    setProgress(100);
+  }  
+
   const getSelectedAnswer = (questions: Question[]) => { // Helper function to grab the user's selected answer string from each question
     return questions.map((question) => {
       const selectedChoiceIndex = question.selected.findIndex((selected) => selected === true);
@@ -245,7 +257,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
 
   function RandomizeAnswers(){ //Clear button
     return(<div>
-      <Button onClick={handleClear} style = {{height: "75px", width: "110px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Randomize Answers</Button>
+      <Button onClick={handleRandomizeAnswers} style = {{height: "75px", width: "110px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Randomize Answers</Button>
     </div>)
   }
 
@@ -331,34 +343,33 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
           </Row>
         </div>
     
-        <div style={{ justifyContent: "center", marginTop: "80px" }}>
-  {!loggedUser ? ( // User is not logged in
-    basicComplete ? ( // Guest condition: basic quiz complete
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-          <Button className="flashy-button">Approach Police Chief</Button>
-        </Link>
+        <div style = {{marginTop: "80px"}}>
+        {!loggedUser ? ( // User is not logged in
+          basicComplete ? ( // Guest condition: basic quiz complete
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                <Button className="flashy-button">Approach Police Chief</Button>
+              </Link>
+            </div>
+          ) : (
+            null
+          )
+        ) : ( // User is logged in
+          loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
+            <div style={{display: "flex", justifyContent: "center", marginRight: "30px", marginBottom: "75px"}}>
+              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                <Button className="flashy-button">Approach Police Chief</Button>
+              </Link>
+            </div>
+          ) : null
+        )}
       </div>
-    ) : (
-      null
-    )
-  ) : ( // User is logged in
-    loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-          <Button className="flashy-button">Approach Police Chief</Button>
-        </Link>
-      </div>
-    ) : null
-  )}
-</div>
-    
-        <div style={{ display: "flex", justifyContent: "center", position: "relative", bottom: "60px", right: "40px", left: "40px"}}>
+        <div style={{ display: "flex", justifyContent: "center", position: "relative", bottom: "60px", right: "40px", left: "40px", zIndex: 0}}>
           <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
           <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic} />
           <BasicClear />
+          <div style = {{position: "relative", bottom: "20px", right: "825px"}}><RandomizeAnswers/></div>      
         </div>  
-        <div style = {{position: "relative", left: "10px", bottom: "130px"}}><RandomizeAnswers/></div>      
       </div>
       <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
     </header>
