@@ -99,9 +99,8 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
         initializeGuestSession();
       }
     };
-  
     fetchLoggedInUser();
-  
+    console.log("Running");
   }, [db, defaultQuestions, loggedUser]); 
     
   function handleBasicSave() {
@@ -232,8 +231,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
     const taggedAnswers = assignTagsToAnswers(promptValues);
     setAnswerVals(taggedAnswers);
   }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [promptValues]);
+}, [assignTagsToAnswers, promptValues, setAnswerVals]);
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element { //Submit button - Disabled if progress is less than 100%
     return(<div>
