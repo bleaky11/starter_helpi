@@ -5,7 +5,6 @@ import { Button, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 import { Link} from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
-import stillDetective from './Images/static-detective.png';
 import quizInterface from './Images/quizInterface.png';
 
 export interface SubmitButton {
