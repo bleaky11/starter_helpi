@@ -371,7 +371,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
           <div style = {{position: "relative", bottom: "20px", right: "825px"}}><RandomizeAnswers/></div>      
         </div>  
       </div>
-      <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
+      <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'fixed', zIndex: -1}} />
     </header>
   );
 }
