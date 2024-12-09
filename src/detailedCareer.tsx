@@ -21,12 +21,6 @@ interface submitButton{ // Interface for keeping track of Detailed Question Comp
   setPage: (page: string) => void;
 }
 
-// interface UserProps
-// {
-//   db: IDBDatabase | null;
-//   loggedUser: Account | null;
-// }
-
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setPage}: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
@@ -50,18 +44,25 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setP
     setProgress(progressPercentage);
     const updatedTags = assignTags(prompts);  // Map answers to tags
     setPrompts(updatedTags.map(tag => tag.response));
-
   }, [prompts, questions.length]);  
 
   useEffect(() => {
-    let storedQuestions = [];
-    storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
+    const storedQuestions = JSON.parse(sessionStorage.getItem("quizQuestions") || "[]");
+    const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+  
     if (storedQuestions.length > 0) {
       setQuestions(storedQuestions);
-      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-      const updatedPrompts = Object.keys(savedAnswers).map((key) => savedAnswers[key]); 
-      setPrompts(updatedPrompts); // Set the prompts after updating with saved answers
-    } 
+      const updatedTempAnswers = new Array(storedQuestions.length).fill("");
+      Object.keys(savedAnswers).forEach((key) => {
+        updatedTempAnswers[parseInt(key, 10)] = savedAnswers[key];
+      });
+      setTempAnswers(updatedTempAnswers);
+  
+      const answeredQuestions = Object.keys(savedAnswers).length;
+      const totalQuestions = storedQuestions.length;
+      const progressPercentage = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+      setProgress(progressPercentage);
+    }
     else 
     {
       const defaultQuestions = [
@@ -75,19 +76,18 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setP
       ];
       setQuestions(defaultQuestions);
       sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
-        const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-        const updatedTempAnswers = new Array(7).fill("");
-        Object.keys(savedAnswers).forEach((key) => {
-          updatedTempAnswers[parseInt(key)] = savedAnswers[key];
-        });
-        setTempAnswers(updatedTempAnswers);
-      
+      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
+      const updatedTempAnswers = new Array(questions.length).fill("");
+      Object.keys(savedAnswers).forEach((key) => {
+        updatedTempAnswers[parseInt(key, 10)] = savedAnswers[key];
+      });
+      setTempAnswers(updatedTempAnswers);
         const totalQuestions = storedQuestions.length;
         const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
         const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0;
         setProgress(progressPercentage);
     }
-  }, []); // Make sure prompts are set first  
+  }, [questions.length]);
 
   function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
     if (currentQuestion) {
