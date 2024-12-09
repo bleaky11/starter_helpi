@@ -5,6 +5,7 @@ import { Button, Form, Row, Col } from "react-bootstrap";
 import { FormCheckType } from 'react-bootstrap/esm/FormCheck';
 import { Link} from "react-router-dom";
 import detectiveWalk from './Images/detective-walking-unscreen.gif';
+import stillDetective from './Images/static-detective.png';
 import quizInterface from './Images/quizInterface.png';
 
 export interface SubmitButton {
@@ -298,14 +299,15 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
           </div>
             <img
                 src={detectiveWalk}
-                alt="detective-walking"
+                alt="detective-bar"
                 style={{
-                  position: "relative",
-                  left: progress === 100 ? "-15px": `${(progress / 100) * 300 - 315}px`,
-                  transition: progress === 100 ? "none": "left 1s ease-in",
-                  width: "30px",
-                  height: "auto", // Maintain aspect ratio
-                  marginTop: "40px"
+                  position: "relative", 
+                  left: `${(progress / 100) * 290 - 325}px`, 
+                  transition: "left 1s ease-in", 
+                  width: "40px",
+                  height: "70px", 
+                  objectFit: "contain", 
+                  marginTop: "40px", 
                 }}
               />
       </div>
