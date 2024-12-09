@@ -70,7 +70,7 @@ All files            |       0 |        0 |       0 |       0 |
  src                 |       0 |        0 |       0 |       0 |                   
   App.tsx            |       0 |        0 |       0 |       0 | 14-114            
   LoginForm.tsx      |       0 |        0 |       0 |       0 | 33-261            
-  basicCareer.tsx    |       0 |        0 |       0 |       0 | 48-354            
+  basicCareer.tsx    |       0 |        0 |       0 |       0 | 48-352            
   chatGpt.ts         |       0 |        0 |       0 |       0 | 4-34              
   db.tsx             |       0 |        0 |       0 |       0 | 7-21              
   detailedCareer.tsx |       0 |        0 |       0 |       0 | 31-241            
@@ -92,5 +92,5 @@ All files            |       0 |        0 |       0 |       0 |
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.45 s
+Time:        5.437 s
 Ran all test suites.
