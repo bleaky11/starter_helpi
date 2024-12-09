@@ -58,6 +58,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
+  const [isSubmitted, setSubmission] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchLoggedInUser = async () => {
@@ -99,78 +100,87 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
         initializeGuestSession();
       }
     };
-  
     fetchLoggedInUser();
-  
+    console.log("Running");
   }, [db, defaultQuestions, loggedUser]); 
-    
-  function handleBasicSave() {
-    if (loggedUser && db) {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
-  
-      let updatedUser: Account = {
-        username: "",
-        password: "",
-        remembered: false,
-        loggedIn: "",
-        basicComplete: false,
-        detailedComplete: false,
-        quiz: [],
-        progress: 0,
-        detailedQuiz: [],
-        ivUser: "",
-        ivPass: ""
-      };
 
-      if (progress === 100) {
-        updatedUser = {
+  const handleBasicSave = useCallback(() =>
+    {
+      if (loggedUser && db) {
+        const transaction = db.transaction("users", "readwrite");
+        const store = transaction.objectStore("users");
+    
+        const updatedUser: Account = {
           ...loggedUser,
           quiz: [...questions],
           progress: progress,
-          basicComplete: true,
+          basicComplete: progress === 100 && isSubmitted, // Determine completion based on progress
+        };
+    
+        const request = store.put(updatedUser);
+
+        request.onsuccess = () => {
+          setLoggedUser(updatedUser); 
+          setSubmission(false); // Reset submission state after save
         };
       } else {
-        updatedUser = {
-          ...loggedUser,
-          quiz: [...questions],
-          progress: progress,
-          basicComplete: false,
-        };
+        // Save to sessionStorage for guests
+        sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
+        sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+        setSubmission(false); // Reset submission state after save
       }
-  
-      const request = store.put(updatedUser);
-  
-      request.onsuccess = () => {
-        setLoggedUser(updatedUser); // Ensure the `loggedUser` state is updated
-      };
-    } else {
-      sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
-      sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+    }, [db, isSubmitted, loggedUser, progress, questions, setLoggedUser]) 
+
+  useEffect(() => {
+    if (isSubmitted) {
+      handleBasicSave(); 
     }
-  }  
+  }, [handleBasicSave, isSubmitted]);
+  
+  function handleSubmit({ toggleBasic }: SubmitButton) {
+    if (!loggedUser) {
+      setBasicCareer("basicQuizAnswers"); // Save guest answers
+      toggleBasic(true); // Mark basic quiz as completed
+    }
+    setSubmission(true); 
+    handleUpdateValues(); 
+  }
 
   function handleClear(){ //Clears user's saved progress and resets quiz
     const clearedQuestions = questions.map(question => ({
       ...question,
       selected: question.selected.map(() => false) // Reset all selected states to false
     }));
+    setQuestions(clearedQuestions);
+    setProgress(0);
     if(!loggedUser)
     {
         sessionStorage.removeItem("basicQuizProgress");
         sessionStorage.removeItem("basicQuizAnswers");
+        sessionStorage.removeItem("basicCount"); // reset notification after clear
         toggleBasic(false);
     }
     else
     {
-      //handleBasicSave();
+      sessionStorage.removeItem("userBasicCount");  // reset notification after clear
+      setSubmission(true); // force an invoke of the submit useEffect to update basicComplete to false
     }
-    setQuestions(clearedQuestions);
-    setProgress(0);
     setTimeout(() => {
         alert("Quiz Cleared!");
     }, 0);
   }
+
+  function handleRandomizeAnswers() {
+    const randomAnswers: Question[] = questions.map((question) => {
+      const randomIndex = Math.floor(Math.random() * 4); // new random each time
+      return {
+        ...question, 
+        selected: question.selected.map((value, index) => index === randomIndex), // line written by ChatGPT
+      };
+    });
+    setQuestions(randomAnswers); // Update state with the new questions array
+    setProgress(100);
+  }  
 
   const getSelectedAnswer = (questions: Question[]) => { // Helper function to grab the user's selected answer string from each question
     return questions.map((question) => {
@@ -216,24 +226,13 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       tag: answerTags[index] || "unknown",
     }));
   }, [answerTags]); // Dependency on answerTags, assuming answerTags might change
-
-  function handleSubmit({ toggleBasic }: SubmitButton) {
-      handleBasicSave();
-      if(!loggedUser)
-      {
-        setBasicCareer("basicQuizAnswers"); // Sets state that tracks guest's saved answers
-        toggleBasic(true); // Sets state that tracks basic quiz completion to true
-      }
-      handleUpdateValues();
-  }  
-
+  
 useEffect(() => { //Populates and tags array of answers each time an answer is selected
   if (promptValues.length > 0) {
     const taggedAnswers = assignTagsToAnswers(promptValues);
     setAnswerVals(taggedAnswers);
   }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [promptValues]);
+}, [assignTagsToAnswers, promptValues, setAnswerVals]);
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element { //Submit button - Disabled if progress is less than 100%
     return(<div>
@@ -252,6 +251,12 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
   function BasicClear(){ //Clear button
     return(<div>
       <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
+    </div>)
+  }
+
+  function RandomizeAnswers(){ //Clear button
+    return(<div>
+      <Button onClick={handleRandomizeAnswers} style = {{height: "75px", width: "110px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Randomize Answers</Button>
     </div>)
   }
 
@@ -337,35 +342,35 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
           </Row>
         </div>
     
-        <div style={{ justifyContent: "center", marginTop: "80px" }}>
-  {!loggedUser ? ( // User is not logged in
-    basicComplete ? ( // Guest condition: basic quiz complete
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-          <Button className="flashy-button">Approach Police Chief</Button>
-        </Link>
+        <div style = {{marginTop: "80px"}}>
+        {!loggedUser ? ( // User is not logged in
+          basicComplete ? ( // Guest condition: basic quiz complete
+            <div style={{ display: "flex", justifyContent: "center", marginRight: "30px", marginBottom: "75px" }}>
+              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                <Button className="flashy-button">Approach Police Chief</Button>
+              </Link>
+            </div>
+          ) : (
+            null
+          )
+        ) : ( // User is logged in
+          loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
+            <div style={{display: "flex", justifyContent: "center", marginRight: "30px", marginBottom: "75px"}}>
+              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                <Button className="flashy-button">Approach Police Chief</Button>
+              </Link>
+            </div>
+          ) : null
+        )}
       </div>
-    ) : (
-      null
-    )
-  ) : ( // User is logged in
-    loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-          <Button className="flashy-button">Approach Police Chief</Button>
-        </Link>
-      </div>
-    ) : null
-  )}
-</div>
-    
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "2px" }}>
+        <div style={{ display: "flex", justifyContent: "center", position: "relative", bottom: "60px", right: "40px", left: "40px", zIndex: 0}}>
           <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
           <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic} />
           <BasicClear />
-        </div>
+          <div style = {{position: "relative", bottom: "20px", right: "825px"}}><RandomizeAnswers/></div>      
+        </div>  
       </div>
-      <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
+      <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'fixed', zIndex: -1}} />
     </header>
   );
 }

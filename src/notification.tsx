@@ -91,25 +91,25 @@ export function NotifBell({
                 />
             </div>
             {notifBar && (
-                <div className="notif-bar">
-                   {
-                    loggedUser
-                        ? loggedUser.basicComplete && loggedUser.detailedComplete // logged in logic
-                        ? "Both Basic and Detailed Questions are complete! Check out the results page!"
-                        : loggedUser.basicComplete
-                        ? "Basic Questions are complete! Check out the results page!"
-                        : loggedUser.detailedComplete
-                        ? "Detailed Questions are complete! Check out the results page!"
-                        : "No questions finished yet"
-                        : basicComplete // Guest logic
-                        ? "Basic Questions are complete! Check out the results page!"
-                        : detailedComplete
-                        ? "Detailed Questions are complete! Check out the results page!"
-                        : basicComplete && detailedComplete
-                        ? "Both Basic and Detailed Questions are complete! Check out the results page"
-                        : "No questions finished yet!"}
-                </div>
-            )}
+        <div className="notif-bar">
+        {loggedUser
+            ? loggedUser.basicComplete && loggedUser.detailedComplete
+                ? "Both Basic and Detailed Questions are complete! Check out the results page!"
+                : loggedUser.basicComplete
+                ? "Basic Questions are complete! Check out the results page!"
+                : loggedUser.detailedComplete
+                ? "Detailed Questions are complete! Check out the results page!"
+                : "No questions finished yet"
+            : basicComplete && detailedComplete
+            ? "Both Basic and Detailed Questions are complete! Check out the results page!"
+            : basicComplete
+            ? "Basic Questions are complete! Check out the results page!"
+            : detailedComplete
+            ? "Detailed Questions are complete! Check out the results page!"
+            : "No questions finished yet!"}
+    </div>
+)}
+
         </div>
     );
 }
