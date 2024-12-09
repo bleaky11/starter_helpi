@@ -293,7 +293,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
           <progress
             id="question"
             value={progress}
-            style = {{height: "45px", width: "300px"}}
+            style = {{position: "relative", height: "45px", width: "300px"}}
             max="100"
           ></progress>
           </div>
@@ -312,9 +312,8 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
             />
           </div>
         </div>
-    
         {/* Basic Career Page content */}
-        <h3 style={{ textAlign: "center" }}>Look Closely, Detective. What can you find out about our suspect's occupation?</h3>
+        <h3 style={{display: "flex", justifyContent: "flex-start", marginLeft: "10px" }}>Look Closely, Detective. What can you find out about our suspect's occupation?</h3>
         <br />    
         <div style={{ marginLeft: "100px", marginRight: "100px" }}>
           <br />
