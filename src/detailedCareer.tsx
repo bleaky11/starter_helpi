@@ -4,6 +4,8 @@ import questionMarks from "./Images/Questions.png";
 import detective2 from "./Images/Detective2.png";
 import quizInterface from './Images/quizInterface.png';
 import { Link } from "react-router-dom";
+import { Account } from "./homepagelogo";
+import { Database } from "./db";
 
 export interface DetailedQuestion // Interface to handle question attributes
 {
@@ -13,6 +15,12 @@ export interface DetailedQuestion // Interface to handle question attributes
   page: number;
   answer: string;
   tip?: string;
+}
+
+interface Users
+{
+  loggedUser: Account | null;
+  setLoggedUser: React.Dispatch<React.SetStateAction<Account | null>>;
 }
 
 interface submitButton{ // Interface for keeping track of Detailed Question Completion
@@ -31,7 +39,7 @@ const defaultQuestions = [
   { text: "What 3 words would you use to describe our suspect?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
 ];
 
-export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setPage}: submitButton): JSX.Element {
+export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setPage, loggedUser, setLoggedUser, db}: submitButton & Users & Database): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
   const [questions, setQuestions] = useState<DetailedQuestion[]>([]);
@@ -128,7 +136,20 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setP
 
   function handleSubmit({detailedComplete, toggleDetailed}: submitButton)
   {
-    toggleDetailed(true); // guest logic
+    if(db && loggedUser)
+    {
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+      const userToUpdate = {
+        ...loggedUser,
+        detailedComplete: true
+      }
+      store.put(userToUpdate);
+    }
+    else
+    {
+      toggleDetailed(true); // guest logic
+    }
     alert("Thanks for completing the Detailed Career quiz!");
   }
 
@@ -151,7 +172,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
     toggleDetailed(false)
   }
 
-  function DetailedClear({detailedComplete, toggleDetailed, setPage}:submitButton){ //Clear button
+  function DetailedClear({detailedComplete, toggleDetailed, setPage}: submitButton) { //Clear button
     return(<div>
       <Button onClick={() => handleClear({detailedComplete, toggleDetailed, setPage})} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
     </div>)

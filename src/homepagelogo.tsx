@@ -385,6 +385,8 @@ const handleLogout = async (username: string) => {
             sessionStorage.removeItem("username");
             sessionStorage.removeItem("userBasicCount"); // reset for a fresh count of the next logged in user
             sessionStorage.removeItem("userDetailedCount");
+            sessionStorage.removeItem("quizAnswers"); // remove detailed sessionStorage for distinction between users and guests
+            sessionStorage.removeItem("quizQuestions"); 
             setIsLoggedIn(false);  
             setLoggedUser(null); 
             setIsFormOpen(false);  
