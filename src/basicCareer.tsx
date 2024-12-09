@@ -284,36 +284,33 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
 
   return (
     <header>
-      <div className="Background" style={{position: 'absolute', zIndex: 10}}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: "10px", marginRight: "30px" }}>
-          <div style = {{display: "flex", justifyContent: "flex-end"}}>
-          <label htmlFor="question" style={{ marginRight: "10px", fontSize: "25px" }}>
-            Percent Complete: {progress.toFixed(0)}%
-          </label>
-          <progress
-            id="question"
-            value={progress}
-            style = {{position: "relative", height: "45px", width: "300px"}}
-            max="100"
-          ></progress>
+       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start"}}>
+          <div style = {{display: "flex", alignItems: "center"}}>
+            <label htmlFor="question" style = {{display: "flex", alignItems: "center", fontSize: "20px", color: "#f69015", marginRight: "10px"}}>
+             Percent Complete: {progress.toFixed(0)}%
+            </label>
+            <progress
+               id="question"
+              value={progress}
+              style = {{height: "45px", width: "300px"}}
+              max="100"
+             ></progress>
           </div>
-          <div style={{ position: "relative", height: "25px"}}>
             <img
-              src={detectiveWalk}
-              alt="detective-walking"
-              style={{
-                position: "relative",
-                left: `${(progress / 100) * 300 - 325}px`,
-                transition: "left 1s ease-in",
-                width: "45px",
-                height: "auto", // Maintain aspect ratio
-                marginTop: "35px"
-              }}
-            />
-          </div>
-        </div>
-        {/* Basic Career Page content */}
-        <h3 style={{display: "flex", justifyContent: "flex-start", marginLeft: "10px" }}>Look Closely, Detective. What can you find out about our suspect's occupation?</h3>
+                src={detectiveWalk}
+                alt="detective-walking"
+                style={{
+                  position: "relative",
+                  left: progress === 100 ? "-15px": `${(progress / 100) * 300 - 315}px`,
+                  transition: progress === 100 ? "none": "left 1s ease-in",
+                  width: "30px",
+                  height: "auto", // Maintain aspect ratio
+                  marginTop: "40px"
+                }}
+              />
+      </div>
+      <div className="Background" style={{position: 'absolute', zIndex: 10}}>
+        <h3 style={{display: "flex", justifyContent: "center", marginLeft: "10px" }}>Look Closely, Detective. What can you find out about our suspect's occupation?</h3>
         <br />    
         <div style={{ marginLeft: "100px", marginRight: "100px" }}>
           <br />
