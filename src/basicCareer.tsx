@@ -158,10 +158,12 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     {
         sessionStorage.removeItem("basicQuizProgress");
         sessionStorage.removeItem("basicQuizAnswers");
+        sessionStorage.removeItem("basicCount"); // reset notification after clear
         toggleBasic(false);
     }
     else
     {
+      sessionStorage.removeItem("userBasicCount");  // reset notification after clear
       setSubmission(true); // force an invoke of the submit useEffect to update basicComplete to false
     }
     setTimeout(() => {

@@ -4,7 +4,7 @@
   top: 10px;  /* Distance from the top of the screen */
   left: 10px; /* Distance from the left of the screen */
   border: 3px solid #f1f1f1;
-  z-index: 9;
+  z-index: 9999;
   background-color: white;
   padding: 10px;
   max-width: 80%; /* Limits the width */
