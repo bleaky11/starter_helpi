@@ -383,6 +383,8 @@ const handleLogout = async (username: string) => {
             clearForm();
             sessionStorage.setItem("loggedIn", "false");  
             sessionStorage.removeItem("username");
+            sessionStorage.removeItem("userBasicCount"); // reset for a fresh count of the next logged in user
+            sessionStorage.removeItem("userDetailedCount");
             setIsLoggedIn(false);  
             setLoggedUser(null); 
             setIsFormOpen(false);  

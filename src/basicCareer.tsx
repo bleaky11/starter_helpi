@@ -58,6 +58,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
   const [promptValues, setValues] = useState<string[]>([])
   const [progress, setProgress] = useState<number>(0);
   const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
+  const [isSubmitted, setSubmission] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchLoggedInUser = async () => {
@@ -102,70 +103,68 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
     fetchLoggedInUser();
     console.log("Running");
   }, [db, defaultQuestions, loggedUser]); 
-    
-  function handleBasicSave() {
-    if (loggedUser && db) {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
-  
-      let updatedUser: Account = {
-        username: "",
-        password: "",
-        remembered: false,
-        loggedIn: "",
-        basicComplete: false,
-        detailedComplete: false,
-        quiz: [],
-        progress: 0,
-        detailedQuiz: [],
-        ivUser: "",
-        ivPass: ""
-      };
 
-      if (progress === 100) {
-        updatedUser = {
+  const handleBasicSave = useCallback(() =>
+    {
+      if (loggedUser && db) {
+        const transaction = db.transaction("users", "readwrite");
+        const store = transaction.objectStore("users");
+    
+        const updatedUser: Account = {
           ...loggedUser,
           quiz: [...questions],
           progress: progress,
-          basicComplete: true,
+          basicComplete: progress === 100 && isSubmitted, // Determine completion based on progress
+        };
+    
+        const request = store.put(updatedUser);
+
+        request.onsuccess = () => {
+          setLoggedUser(updatedUser); 
+          setSubmission(false); // Reset submission state after save
         };
       } else {
-        updatedUser = {
-          ...loggedUser,
-          quiz: [...questions],
-          progress: progress,
-          basicComplete: false,
-        };
+        // Save to sessionStorage for guests
+        sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
+        sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+        setSubmission(false); // Reset submission state after save
       }
-  
-      const request = store.put(updatedUser);
-  
-      request.onsuccess = () => {
-        setLoggedUser(updatedUser); // Ensure the `loggedUser` state is updated
-      };
-    } else {
-      sessionStorage.setItem("basicQuizProgress", JSON.stringify(progress));
-      sessionStorage.setItem("basicQuizAnswers", JSON.stringify(questions));
+    }, [db, isSubmitted, loggedUser, progress, questions, setLoggedUser]) 
+
+  useEffect(() => {
+    if (isSubmitted) {
+      handleBasicSave(); 
     }
-  }  
+  }, [handleBasicSave, isSubmitted]);
+  
+  function handleSubmit({ toggleBasic }: SubmitButton) {
+    if (!loggedUser) {
+      setBasicCareer("basicQuizAnswers"); // Save guest answers
+      toggleBasic(true); // Mark basic quiz as completed
+    }
+    setSubmission(true); 
+    handleUpdateValues(); 
+  }
 
   function handleClear(){ //Clears user's saved progress and resets quiz
     const clearedQuestions = questions.map(question => ({
       ...question,
       selected: question.selected.map(() => false) // Reset all selected states to false
     }));
+    setQuestions(clearedQuestions);
+    setProgress(0);
     if(!loggedUser)
     {
         sessionStorage.removeItem("basicQuizProgress");
         sessionStorage.removeItem("basicQuizAnswers");
+        sessionStorage.removeItem("basicCount"); // reset notification after clear
         toggleBasic(false);
     }
     else
     {
-      //handleBasicSave();
+      sessionStorage.removeItem("userBasicCount");  // reset notification after clear
+      setSubmission(true); // force an invoke of the submit useEffect to update basicComplete to false
     }
-    setQuestions(clearedQuestions);
-    setProgress(0);
     setTimeout(() => {
         alert("Quiz Cleared!");
     }, 0);
@@ -215,17 +214,7 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       tag: answerTags[index] || "unknown",
     }));
   }, [answerTags]); // Dependency on answerTags, assuming answerTags might change
-
-  function handleSubmit({ toggleBasic }: SubmitButton) {
-      handleBasicSave();
-      if(!loggedUser)
-      {
-        setBasicCareer("basicQuizAnswers"); // Sets state that tracks guest's saved answers
-        toggleBasic(true); // Sets state that tracks basic quiz completion to true
-      }
-      handleUpdateValues();
-  }  
-
+  
 useEffect(() => { //Populates and tags array of answers each time an answer is selected
   if (promptValues.length > 0) {
     const taggedAnswers = assignTagsToAnswers(promptValues);
