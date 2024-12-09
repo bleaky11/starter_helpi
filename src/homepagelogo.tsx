@@ -560,7 +560,7 @@ const updateSavedUsers = () => {
         </Button>
       </>
       ) : (
-        <div>
+        <div style={{width:"10%"}}>
           <img
             src={userProfile}
             alt="User Profile"
@@ -613,5 +613,6 @@ const updateSavedUsers = () => {
         The Career Codebreaker
       </a>
     </div>
+    <div style={{width:"10%"}}/>
   </div>
 )}  
