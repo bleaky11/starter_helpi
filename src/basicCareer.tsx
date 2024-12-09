@@ -243,6 +243,12 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
     </div>)
   }
 
+  function RandomizeAnswers(){ //Clear button
+    return(<div>
+      <Button onClick={handleClear} style = {{height: "75px", width: "110px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Randomize Answers</Button>
+    </div>)
+  }
+
   function updateAnswer(event: React.ChangeEvent<HTMLInputElement>, index: number, selectIndex: number) { //Function to accurately update progress - sets "answered" to true if question is answered, updates progress
     const updatedQuestions = [...questions];
 
@@ -347,11 +353,12 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
   )}
 </div>
     
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "2px" }}>
+        <div style={{ display: "flex", justifyContent: "center", position: "relative", bottom: "60px", right: "40px", left: "40px"}}>
           <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
           <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic} />
           <BasicClear />
-        </div>
+        </div>  
+        <div style = {{position: "relative", left: "10px", bottom: "130px"}}><RandomizeAnswers/></div>      
       </div>
       <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: 0}} />
     </header>
