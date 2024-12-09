@@ -21,6 +21,16 @@ interface submitButton{ // Interface for keeping track of Detailed Question Comp
   setPage: (page: string) => void;
 }
 
+const defaultQuestions = [
+  { text: "What did our suspect always want to be when they grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
+  { text: "Whether inside or outside of school, what is our suspects favorite class that they have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
+  { text: "What societal stressor does our suspect feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
+  { text: "What does our suspect dislike most about jobs or tasks they've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
+  { text: "What is a topic or subject that our suspect could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
+  { text: "What are our suspects favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
+  { text: "What 3 words would you use to describe our suspect?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
+];
+
 export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setPage}: submitButton): JSX.Element {
   const [questionPage, setQuestionPage] = useState<number>(0);
   const [tempAnswers, setTempAnswers] = useState<string[]>(new Array(7).fill(""));
@@ -65,29 +75,10 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setP
     }
     else 
     {
-      const defaultQuestions = [
-        { text: "What did our suspect always want to be when they grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
-        { text: "Whether inside or outside of school, what is our suspects favorite class that they have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
-        { text: "What societal stressor does our suspect feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
-        { text: "What does our suspect dislike most about jobs or tasks they've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
-        { text: "What is a topic or subject that our suspect could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
-        { text: "What are our suspects favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
-        { text: "What 3 words would you use to describe our suspect?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
-      ];
       setQuestions(defaultQuestions);
       sessionStorage.setItem("quizQuestions", JSON.stringify(defaultQuestions));
-      const savedAnswers = JSON.parse(sessionStorage.getItem("quizAnswers") || "{}");
-      const updatedTempAnswers = new Array(questions.length).fill("");
-      Object.keys(savedAnswers).forEach((key) => {
-        updatedTempAnswers[parseInt(key, 10)] = savedAnswers[key];
-      });
-      setTempAnswers(updatedTempAnswers);
-        const totalQuestions = storedQuestions.length;
-        const answeredQuestions = Object.keys(savedAnswers).filter(key => savedAnswers[key]);
-        const progressPercentage = totalQuestions > 0 ? (answeredQuestions.length / totalQuestions) * 100 : 0;
-        setProgress(progressPercentage);
     }
-  }, [questions.length]);
+  }, []);
 
   function updateAnswered() { //Function to record the user's answer when they click the "Record Answer" button
     if (currentQuestion) {
@@ -150,15 +141,6 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
   function handleClear({detailedComplete, toggleDetailed, setPage}:submitButton){ //Function to handle clearing quiz and resetting progress
     sessionStorage.removeItem("quizAnswers"); //removes saved answers from storage
     sessionStorage.removeItem("quizQuestions"); //removes saved questions from storage
-    const defaultQuestions = [
-      { text: "What did our suspect always want to be when they grew up?", type: "text", answered: false, page: 0, answer: "", tip: "A lot of kids want to be a police officer, firefighter, nurse, doctor, etc. when they grow up." },
-      { text: "Whether inside or outside of school, what is our suspects favorite class that they have ever taken?", type: "text", answered: false, page: 1, answer: "", tip: "The class “Nebula Formation of Dying Stars” was Sarah's favorite, now she is an Aerospace Engineer."  },
-      { text: "What societal stressor does our suspect feel most passionate about addressing?", type: "text", answered: false, page: 2, answer: "", tip: "Epidemics/Pandemics, Homelessness, Crime, Education, Agriculture, Technology, National Defense, Environmental Conservation, etc."  },
-      { text: "What does our suspect dislike most about jobs or tasks they've had to do in the past?", type: "text", answered: false, page: 3, answer: "", tip: "A lot of people dislike working in groups as they have less control over the task at hand."  },
-      { text: "What is a topic or subject that our suspect could teach someone about?", type: "text", answered: false, page: 4, answer: "", tip: "Bailey loves History, as a result she loves to share new historical facts that fascinate her. She is happy to discuss History with anybody that is willing to listen."  },
-      { text: "What are our suspects favorite hobbies?", type: "text", answered: false, page: 5, answer: "", tip: "Do you enjoy any outdoor activities, sports, instruments, or games?"  },
-      { text: "What 3 words would you use to describe our suspect?", type: "text", answered: false, page: 6, answer: "", tip: "How might a friend describe you? How might your sister describe you? How might a therapist describe you? How would you describe yourself? Are there any similarities?"  }
-    ]; //Initializes a questions array with blank answers, false answer value
     setQuestions(defaultQuestions); //Update state with empty questions array
     setTempAnswers(new Array(defaultQuestions.length).fill("")); //Initializes a new array the length of the defaultQuestions array and fills it with empty strings
     setProgress(0); //Reset progress
