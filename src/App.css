@@ -130,8 +130,12 @@
   border-color: #2F0B06;
   border-style: solid;
   min-height: 95%;
-  color: #f69015;
-  text-shadow: 15px 15px 18px black;
+  color: #ff8c00;
+  text-shadow: 
+    -1px -1px 0 black,  
+    1px -1px 0 black,  
+    -1px 1px 0 black,  
+    1px 1px 0 black; /* Creates a black outline */
 }
 
 .Bordered {
