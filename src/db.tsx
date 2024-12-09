@@ -1,3 +1,9 @@
+export interface Database 
+{
+  db: IDBDatabase | null; 
+  setDb: React.Dispatch<React.SetStateAction<IDBDatabase | null>>; 
+}
+
 export const initializeDatabase = async () => {
   return new Promise<IDBDatabase>((resolve, reject) => {
     const request = window.indexedDB.open("userDatabase", 3);

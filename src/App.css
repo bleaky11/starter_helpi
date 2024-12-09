@@ -25,7 +25,7 @@
 
 .container {
   display: flex;
-  justify-content: flex-end;  /* Pushes the image to the right */
+  justify-content: center;  /* Pushes the image to the right */
   align-items: center;        /* Optional: vertically center the image */
   height: 10%;              /* Full viewport height */
 }
@@ -51,9 +51,9 @@
 }
 
 .notif-bell{
-  width: auto;
+  width: 90px;
   height: 100px;
-  max-height: 15%;
+  max-height: 10vh;
   right: 0%;
   position: absolute;
   transition: transform 0.25s ease, width 0.25s ease;
@@ -64,16 +64,14 @@
 }
 
 .App-header {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  height: 100vh;
+  display: block;
   font-size: calc(10px + 2vmin);
   color: black;
   background: #FDF6C3;
   border-color: #bc6c25;
   border-style: solid;
+  position: relative;
 }
 
 .App-link {
@@ -98,34 +96,65 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  z-index: 10;
+}
+
+.home-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.Breathing {
+  animation: breathe 2s ease-in-out infinite;
+  opacity: 0.1;
+}
+
+@keyframes breathe {
+  0% {
+    opacity: 0.1; /* Fully visible */
+    fill: gold;
+  }
+  50% {
+    opacity: 0; /* Fully transparent */
+  }
+  100% {
+    opacity: 0.1; /* Back to fully visible */
+    fill: gold;
+  }
 }
 
 .Background {
-  background: #FDF6C3;
-  border-color: #bc6c25;
+  background: transparent;
+  border-color: #2F0B06;
   border-style: solid;
-  min-height: 100vh;
-  color: Black
+  min-height: 95%;
+  color: #f69015;
+  text-shadow: 15px 15px 18px black;
 }
 
 .Bordered {
-  border: 10px solid #bc6c25;
+  border: 10px solid #2F0B06;
   border-radius: 25px;
   padding: 16px;
   margin: 10px;
   flex: 1;
-  background-color: #dda15e;
-  height: 500px;
+  background-color: transparent;
+  height: 300px;
+  box-sizing: border-box; /*suggestion from chatgpt*/
 }
 
 .ResultBorder {
-  border: 10px solid #bc6c25;
+  border: 10px solid #2F0B06;
   border-radius: 25px;
   padding: 16px;
   margin: 10px;
   flex: 1;
-  background-color: #dda15e;
+  background-color: transparent;
   width: 80%;
+  max-width: 97%;
 }
 
 .Body-Heading {
@@ -151,7 +180,7 @@
   background: #f39440;
   border: 5px;
   border-color: #e3822d;
-  border-style: outset
+  border-style: inset
 }
 
 .Button:active {
@@ -165,7 +194,7 @@
   background: #c47937;
   border: 5px;
   border-color: #bc6c25;
-  border-style: outset
+  border-style: inset
 }
 
 .Centered {

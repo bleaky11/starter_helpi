@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import userProfile from './Images/user-profile.png';
 import detective from './Images/detective-profile.png';
 import { initializeDatabase } from './db';
+import { Database } from './db';
 import { LoginForm } from './LoginForm';
 import { Button } from 'react-bootstrap';
 import { Question } from './basicCareer';
+import { DetailedQuestion } from './detailedCareer';
 
 export interface Account
 {
@@ -12,18 +14,27 @@ export interface Account
   password: string;
   remembered: boolean;
   loggedIn: string;
-  quiz: Question[];
+  basicComplete: boolean;
+  detailedComplete: boolean;
+  quiz: Question[]; // basic career questions
+  progress: number,
+  detailedQuiz: DetailedQuestion[];
   ivUser: string;
   ivPass: string;
 }
 
-export const HomePage = () => {
+interface Users
+{
+  loggedUser: Account | null;
+  setLoggedUser: React.Dispatch<React.SetStateAction<Account | null>>;
+}
+
+export const HomePage = ({db, setDb, loggedUser, setLoggedUser}: Users & Database) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ username: "", password: "", remembered: false});
   const [remember, setRemember] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);  
   const [formTitle, setFormTitle] = useState("Create Account");
-  const [db, setDb] = useState<IDBDatabase | null>(null); // stores the indexedDB database instance
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedUser, setSelect] = useState("Select a saved user");
   const [passwordPlaceholder, setPlaceholder] = useState<string>(""); // a blank input space for the reset form
@@ -41,21 +52,24 @@ export const HomePage = () => {
   }, [secretKey]);
 
   useEffect(() => {
-    const fetchAccounts = async () => {
+    const fetchAccountsAndCheckLogin = async () => {
       try {
+        // Initialize the database if not yet initialized
         if (!db) {
           const initializedDb = await initializeDatabase();
           setDb(initializedDb);
         }
+        
+        // Fetch accounts once the db is initialized
         if (db) {
           const allAccounts = await loadAccounts();
           setAccounts(allAccounts);
-    
+          
           const loggedIn = sessionStorage.getItem("loggedIn") === "true";
           const storedUsername = sessionStorage.getItem("username");
-    
+  
           if (loggedIn && storedUsername) {
-            const user = findUser(storedUsername, allAccounts); // Explicitly pass accounts
+            const user = findUser(storedUsername, allAccounts);
             if (user) {
               setUserInfo({
                 username: decryptUsername(user.username, user.ivUser),
@@ -63,25 +77,22 @@ export const HomePage = () => {
                 remembered: user.remembered,
               });
               setIsLoggedIn(true);
+              setLoggedUser(user); 
+            } else {
+              setIsLoggedIn(false);
             }
+          } else {
+            setIsLoggedIn(false); 
           }
         }
       } catch (error) {
         console.error("Error in fetchAccountsAndCheckLogin:", error);
-      }    
+      }
     };
   
-    fetchAccounts();
+    fetchAccountsAndCheckLogin();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db]);  
-
-  useEffect(() => {
-    const loggedIn = sessionStorage.getItem("loggedIn") === "true";
-    if(loggedIn !== isLoggedIn)
-    {
-      setIsLoggedIn(loggedIn);
-    }
-  }, [isLoggedIn]); 
   
   const loadAccounts = async (): Promise<typeof accounts> => {
     if (!db) {
@@ -227,7 +238,7 @@ const checkInfo = (savedEncryptedUsername: string, savedEncryptedPassword: strin
   }
 };
 
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
 
   if (!accounts.length) {
@@ -273,6 +284,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               sessionStorage.setItem("username", decryptedUsername); 
               sessionStorage.setItem("loggedIn", "true");
               setIsLoggedIn(true);
+              setLoggedUser(matchingUser);
               matchingUser.loggedIn = "true";
               store.put(matchingUser);
               updateSavedUsers();
@@ -294,15 +306,20 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         const newUser = { // store used with encrypted username and password for security
           username: encryptedUsername,
           password: encryptedPassword,
+          ivUser: ivUser,
           ivPass: ivPass,
           remembered: remember,
           loggedIn: "true",
+          basicComplete: false,
+          detailedComplete: false,
+          progress: 0,
           quiz: [],
-          ivUser: ivUser,
+          detailedQuiz: []
         };
         sessionStorage.setItem("username", userInfo.username);
         sessionStorage.setItem("loggedIn", "true");
         setIsLoggedIn(true); // React state updates
+        setLoggedUser(newUser);
         store.put(newUser).onsuccess = () => {
           alert("Account created successfully!");
           updateSavedUsers();
@@ -349,6 +366,44 @@ const removeFromDropdown = (username: string) => {
   }
 };
 
+const handleLogout = async (username: string) => {
+  if (db) {
+    const transaction = db.transaction("users", "readwrite");
+    const store = transaction.objectStore("users");
+    
+    const getRequest = store.getAll();  
+
+    getRequest.onsuccess = () => {
+      const userAccount = findUser(username, accounts);  
+      if (userAccount) {
+        userAccount.loggedIn = "false";  
+        const putRequest = store.put(userAccount);
+        
+        putRequest.onsuccess = () => {
+            clearForm();
+            sessionStorage.setItem("loggedIn", "false");  
+            sessionStorage.removeItem("username");
+            sessionStorage.removeItem("userBasicCount"); // reset for a fresh count of the next logged in user
+            sessionStorage.removeItem("userDetailedCount");
+            setIsLoggedIn(false);  
+            setLoggedUser(null); 
+            setIsFormOpen(false);  
+        };
+
+        putRequest.onerror = (error) => {
+          console.error("Error updating user status in the database:", error);
+        };
+      } else {
+        alert("User not found!");  // Handle the case where the user is not found
+      }
+    };
+
+    getRequest.onerror = (error) => {
+      console.error("Error fetching users for logout:", error);
+    };
+  }
+};   
+
 const deleteAccount = async (username: string) => {
   if (db) {
     const transaction = db.transaction("users", "readwrite");
@@ -359,7 +414,7 @@ const deleteAccount = async (username: string) => {
         const getRequest = store.getAll();
 
         getRequest.onsuccess = () => {
-          const userAccount = findUser(userInfo.username, accounts);
+          const userAccount = findUser(username, accounts);
           if (userAccount) 
             {
             if (userAccount.remembered) {
@@ -370,9 +425,11 @@ const deleteAccount = async (username: string) => {
 
             deleteRequest.onsuccess = () => {
               clearForm();
-              sessionStorage.setItem("loggedIn", "false");  // Clear session storage
+              sessionStorage.setItem("loggedIn", "false");  
               sessionStorage.removeItem("username");
-              setIsLoggedIn(false);  // Update React state
+              setIsLoggedIn(false);  
+              setLoggedUser(null); 
+              setIsFormOpen(false);  
               toggleForm();
               updateSavedUsers(); // Update saved accounts
               alert("Account deleted!");
@@ -461,38 +518,6 @@ const updateSavedUsers = () => {
     }));
   };   
   
-  const handleLogout = async (username: string) => {
-    
-    if (db) {
-      const transaction = db.transaction("users", "readwrite");
-      const store = transaction.objectStore("users");
-      
-      const getRequest = store.getAll();  
-  
-      getRequest.onsuccess = () => {
-        const userAccount = findUser(username, accounts);  
-        if (userAccount) {
-          userAccount.loggedIn = "false";  
-          store.put(userAccount);  
-          setTimeout(() => {
-            clearForm();
-            sessionStorage.setItem("loggedIn", "false");  
-            sessionStorage.removeItem("username");
-            setIsLoggedIn(false);  
-            setIsFormOpen(false);
-            alert("Logged out successfully!");  
-          }, 1500);
-        } else {
-          alert("User not found!");  // In case the user is not found
-        }
-      };
-  
-      getRequest.onerror = (error) => {
-        console.error("Error fetching users for logout:", error);
-      };
-    }
-  };  
-  
   const handleRemember = () => {
     const newRememberState = !remember; // switch remember on check mark click/unclick
     setRemember(newRememberState); 
@@ -502,6 +527,7 @@ const updateSavedUsers = () => {
     setFormTitle(title);
     if (title === "Create Account") {
       clearForm(); // clear form fields when switching to "Create Account"
+      setRemember(false);
     }
     else if(title === "Log in")
     {
@@ -510,35 +536,29 @@ const updateSavedUsers = () => {
     toggleForm();
   }; 
 
-  return (<div style={{ height: '100px', display: "flex", alignItems: "center", position:'relative' }}>
-    <div style={{position:'absolute', zIndex: 5 }}>
-      {isLoggedIn ? (
-        <div style={{ gap: "10px" }}>
-          <img
-            src={detective} // default profile picture
-            alt="detective profile"
-            style={{ width: '80px', height: '80px', cursor: 'pointer' }}
-            onClick={() => showForm("Create Account")}
-            title={userInfo.username}
-          />
-          <div style={{ gap: "10px" }}>
-            <Button
-              style={{ borderRadius: "20px", backgroundColor: "salmon" }}
-              onClick={() => handleLogout(userInfo.username)}
-            >
-              Log out
-            </Button>
-            <Button
-              onClick={() => deleteAccount(userInfo.username)}
-              style={{
-                borderRadius: "20px",
-                backgroundColor: "darkred"
-              }}
-            >
-              Delete Account
-            </Button>
-          </div>
-        </div>
+  return (<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+    {isLoggedIn ? (
+      <>
+        <img
+          src={detective}
+          alt="detective profile"
+          style={{ width: "70px", height: "70px", cursor: "pointer" }}
+          onClick={() => showForm("Create Account")}
+          title={userInfo.username}
+        />
+        <Button
+          style={{ borderRadius: "20px", backgroundColor: "salmon" }}
+          onClick={() => [handleLogout(userInfo.username), alert("Logged out successfully!")]}
+        >
+          Log out
+        </Button>
+        <Button
+          onClick={() => deleteAccount(userInfo.username)}
+          style={{ borderRadius: "20px", backgroundColor: "darkred" }}
+        >
+          Delete Account
+        </Button>
+      </>
       ) : (
         <div>
           <img
@@ -556,7 +576,6 @@ const updateSavedUsers = () => {
           </Button>
         </div>
       )}
-    </div>
   
     {isFormOpen && !isLoggedIn && (
       <LoginForm
@@ -565,7 +584,7 @@ const updateSavedUsers = () => {
         remember={remember}
         setRemember={setRemember}
         handleRemember={handleRemember}
-        handleSubmit={handleSubmit}
+        handleLogin={handleLogin}
         updateStatus={updateStatus}
         selectedUser={selectedUser}
         setSelect={setSelect}

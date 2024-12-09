@@ -11,7 +11,7 @@ export interface LoginFormProps {
   setRemember: React.Dispatch<React.SetStateAction<boolean>>;
   updateStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemember: () => void;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  handleLogin: (event: React.FormEvent<HTMLFormElement>) => void;
   accounts: { username: string; password: string; remembered: boolean; ivUser:string, ivPass: string }[];
   selectedUser: string;
   setSelect: (value: React.SetStateAction<string>) => void;
@@ -37,7 +37,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   setRemember,
   updateStatus,
   handleRemember,
-  handleSubmit,
+  handleLogin,
   closeForm,
   accounts,
   selectedUser,
@@ -112,6 +112,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     setFormTitle("Log in"); // go back to log in form to see change
     setUserInfo(prevState => ({
       ...prevState,
+      username: "",
       password: ""
     }));
     alert("Password Reset!");
@@ -126,7 +127,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <div className="form-popup" id="myForm">
-      <form className="form-container" onSubmit={handleSubmit}>
+      <form className="form-container" onSubmit={handleLogin}>
         <h1>{formTitle}</h1>
         <Form.Group controlId="savedUsers">
   {formTitle === "Log in" && (  
