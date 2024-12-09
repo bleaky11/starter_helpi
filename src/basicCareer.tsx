@@ -346,7 +346,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
         <div style = {{marginTop: "80px"}}>
         {!loggedUser ? ( // User is not logged in
           basicComplete ? ( // Guest condition: basic quiz complete
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ display: "flex", justifyContent: "center", marginRight: "30px", marginBottom: "75px" }}>
               <Link to="/results-page" onClick={() => setPage("Results-Page")}>
                 <Button className="flashy-button">Approach Police Chief</Button>
               </Link>
