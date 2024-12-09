@@ -284,7 +284,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
 
   return (
     <header>
-       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start"}}>
+       <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start"}}> 
           <div style = {{display: "flex", alignItems: "center"}}>
             <label htmlFor="question" style = {{display: "flex", alignItems: "center", fontSize: "20px", color: "#f69015", marginRight: "10px"}}>
              Percent Complete: {progress.toFixed(0)}%
@@ -311,7 +311,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
               />
       </div>
       <div className="Background" style={{position: 'absolute', zIndex: 10}}>
-        <h3 style={{display: "flex", justifyContent: "center", marginLeft: "10px" }}>Look Closely, Detective. What can you find out about our suspect's occupation?</h3>
+        <h3 style={{display: "flex", justifyContent: "center", marginTop: "20px", marginLeft: "10px" }}>Look Closely, Detective. What can you find out about our suspect's occupation?</h3>
         <br />    
         <div style={{ marginLeft: "100px", marginRight: "100px" }}>
           <br />
