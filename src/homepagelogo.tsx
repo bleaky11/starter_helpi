@@ -318,6 +318,8 @@ const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         };
         sessionStorage.setItem("username", userInfo.username);
         sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.removeItem("quizAnswers"); // remove detailed sessionStorage for distinction between users and guests
+        sessionStorage.removeItem("quizQuestions"); 
         setIsLoggedIn(true); // React state updates
         setLoggedUser(newUser);
         store.put(newUser).onsuccess = () => {
