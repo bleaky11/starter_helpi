@@ -127,9 +127,6 @@
 
 .Background {
   background: transparent;
-  border-color: #2F0B06;
-  border-style: solid;
-  min-height: 95%;
   color: #f69015;
   text-shadow: 15px 15px 18px black;
 }
