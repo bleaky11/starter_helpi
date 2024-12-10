@@ -144,7 +144,11 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setP
         ...loggedUser,
         detailedComplete: true
       }
-      store.put(userToUpdate);
+      const updateRequest = store.put(userToUpdate);
+      updateRequest.onsuccess = () =>
+      {
+        setLoggedUser(userToUpdate);
+      }
     }
     else
     {
@@ -236,15 +240,26 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
       </div>
     </div>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "80px" }}>
-        
         <DetailedSubmit setPage={setPage} detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>
         <DetailedClear setPage={setPage} detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>
       </div>
-      {detailedComplete && <div style={{ display: "flex", justifyContent: "center" }}>
-        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-          <Button className="flashy-button">Approach Police Chief</Button>
-        </Link>
-      </div>}
+      {loggedUser ? (
+      loggedUser.detailedComplete && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                  <Button className="flashy-button">Approach Police Chief</Button>
+              </Link>
+          </div>
+      )
+  ) : (
+      detailedComplete && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+                  <Button className="flashy-button">Approach Police Chief</Button>
+              </Link>
+          </div>
+      )
+  )}
     </div>
     <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'relative', zIndex: -1}} />
   </header>
