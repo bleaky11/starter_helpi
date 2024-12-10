@@ -1,14 +1,17 @@
+
+/* Form styling taken from W3Schools*/
+
 .form-popup {
   display: block;
   position: fixed;
-  top: 10px;  /* Distance from the top of the screen */
-  left: 10px; /* Distance from the left of the screen */
+  top: 10px;  
+  left: 10px;
   border: 3px solid #f1f1f1;
   z-index: 11;
   background-color: white;
   padding: 10px;
-  max-width: 80%; /* Limits the width */
-  max-height: 80%; /* Limits the height */
+  max-width: 80%; 
+  max-height: 80%; 
   overflow: auto;
 }
 

@@ -57,8 +57,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   updateCalledUser
 }) => {
 
-  useEffect(() => {
-    // Displays saved credentials for dropdown for selected user
+  useEffect(() => { // Displays saved credentials for dropdown for selected user
     if (formTitle === "Log in" && selectedUser && accounts.length > 0) {
       const selectedAccount = accounts.find(account => account.username === selectedUser // Compare decrypted username
       );
@@ -66,16 +65,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         const decryptedUsername = decryptUsername(selectedAccount.username, selectedAccount.ivUser);
         const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.ivPass);
         if (
-          userInfo.username !== decryptedUsername || // Compare decrypted username
+          userInfo.username !== decryptedUsername || 
           userInfo.password !== decryptedPassword ||
           userInfo.remembered !== selectedAccount.remembered
         ) {
           setUserInfo({
-            username: decryptedUsername, // Use decrypted username
+            username: decryptedUsername, // updates user info with account credentials for input display
             password: decryptedPassword,
             remembered: selectedAccount.remembered ?? false,
           });
-          console.log(accounts);
         }
       }
     }
@@ -83,36 +81,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   
   const handleUserSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUsername = event.target.value;
-    setSelect(selectedUsername);
-    setCalled(selectedUsername);
+    setSelect(selectedUsername); // change selected user in saved dropdown
+    setCalled(selectedUsername); // handle username input
   
-    if (selectedUsername === "") {
+    if (selectedUsername === "") { // default user account for allowing logging into users not remembered
       setUserInfo({
         username: "",
         password: "",
         remembered: false,
       });
-    } else {
-      const selectedAccount = accounts.find(account => account.username === selectedUsername);
-  
-      if (selectedAccount) {
-        const decryptedUsername = decryptUsername(selectedAccount.username, selectedAccount.ivUser);
-        const decryptedPassword = decryptPassword(selectedAccount.password, selectedAccount.ivPass);
-        setUserInfo({
-          username: decryptedUsername, // Use decrypted username
-          password: decryptedPassword,
-          remembered: selectedAccount.remembered ?? false,
-        });
-      }
     }
   };  
 
-  const handleResetClick = () => { // Handle reset password click
-    setIsPasswordReset(false);
+  const handleResetClick = () => { 
+    setIsPasswordReset(false); 
     setFormTitle("Log in"); // go back to log in form to see change
     setUserInfo(prevState => ({
       ...prevState,
-      username: "",
+      username: "", 
       password: ""
     }));
     alert("Password Reset!");
