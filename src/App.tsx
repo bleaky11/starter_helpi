@@ -118,7 +118,7 @@ function MainContent({ setPage, db, setDb, basicComplete, toggleBasic, detailedC
         <Route path="/basic-questions" element={<BasicCareerComponent db = {db} setDb = {setDb} basicComplete={basicComplete} toggleBasic={toggleBasic} savedBasicCareer= {savedBasicCareer} setBasicCareer={setBasicCareer} answers={answerVals} setAnswerVals={setAnswerVals}
         loggedUser = {loggedUser} setLoggedUser = {setLoggedUser} setPage={setPage}/>} />
          <Route path="/interface" element={<QuizInterface loggedUser={loggedUser} page={currentPage} basicComplete={basicComplete} detailedComplete={detailedComplete} setPage={setPage} isKeyEntered={isKeyEntered} db={db} setDb={setDb}/>} />
-        <Route path="/detailed-questions" element={<DetailedCareerComponent setPage={setPage} detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>}/>
+        <Route path="/detailed-questions" element={<DetailedCareerComponent setPage={setPage} detailedComplete={detailedComplete} toggleDetailed={toggleDetailed} loggedUser={loggedUser} setLoggedUser={setLoggedUser} db = {db} setDb={setDb}/>}/>
         <Route path="/results-page" element={<ResultPage basicComplete={basicComplete} detailedComplete={detailedComplete} apiKey={apiKey} answerVals={answerVals}></ResultPage>} />
         <Route path="/" element={<MainPage setPage={setPage} page={currentPage} db = {db} setDb = {setDb} basicComplete={basicComplete} detailedComplete={detailedComplete} isKeyEntered={isKeyEntered} apiKey={apiKey} loggedUser={loggedUser}/>} />
         <Route path="*" element={<Navigate to="/" replace />} /> {/*Navigate to homepage if route is unrecognized*/}

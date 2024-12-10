@@ -164,6 +164,14 @@ const findUser = (username: string, accounts: Account[]) => {
   });
 };
 
+const resetUserData = () => 
+{
+  sessionStorage.removeItem("userBasicCount"); // reset for a fresh count of the next logged in user
+  sessionStorage.removeItem("userDetailedCount");
+  sessionStorage.removeItem("quizAnswers"); // remove detailed sessionStorage for distinction between users and guests
+  sessionStorage.removeItem("quizQuestions"); 
+}
+
 const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // Update the password to be reset in the reset form
   const placeholder = event.target.value;
   setPlaceholder(placeholder);
@@ -258,8 +266,10 @@ const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     getAllRequest.onsuccess = () => {
       const matchingUser = findUser(userInfo.username, accounts);
 
-      if (matchingUser) {
-        const { username: storedEncryptedUsername, password: storedEncryptedPassword, ivPass, remembered, ivUser } = matchingUser;
+      if (matchingUser) 
+        {
+
+        const { username: storedEncryptedUsername, password: storedEncryptedPassword, remembered, ivUser, ivPass} = matchingUser;
 
         if (formTitle === "Log in") {
           const isValid = checkInfo(  // Validate username and password
@@ -283,9 +293,11 @@ const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
               });
               sessionStorage.setItem("username", decryptedUsername); 
               sessionStorage.setItem("loggedIn", "true");
+              resetUserData();
               setIsLoggedIn(true);
               setLoggedUser(matchingUser);
               matchingUser.loggedIn = "true";
+              matchingUser.detailedComplete = false; // set to false on each log in via session storage
               store.put(matchingUser);
               updateSavedUsers();
 
@@ -318,6 +330,7 @@ const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         };
         sessionStorage.setItem("username", userInfo.username);
         sessionStorage.setItem("loggedIn", "true");
+        resetUserData();
         setIsLoggedIn(true); // React state updates
         setLoggedUser(newUser);
         store.put(newUser).onsuccess = () => {
@@ -381,13 +394,12 @@ const handleLogout = async (username: string) => {
         
         putRequest.onsuccess = () => {
             clearForm();
-            sessionStorage.setItem("loggedIn", "false");  
-            sessionStorage.removeItem("username");
-            sessionStorage.removeItem("userBasicCount"); // reset for a fresh count of the next logged in user
-            sessionStorage.removeItem("userDetailedCount");
+            resetUserData();
             setIsLoggedIn(false);  
             setLoggedUser(null); 
             setIsFormOpen(false);  
+            sessionStorage.setItem("loggedIn", "false");  
+            sessionStorage.removeItem("username");
         };
 
         putRequest.onerror = (error) => {

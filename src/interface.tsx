@@ -42,40 +42,20 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                     <nav style={{ marginTop: "auto", textAlign: "center" }}>
                         <nav>
                         {
-                        !localStorage.getItem("quizProgress") &&
                         !sessionStorage.getItem("isKeyEntered") ? (
                             <div>
                             <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Collect Evidence</Button>
                             <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
                             </div>
                         ) :
-                        !localStorage.getItem("quizProgress") &&
-                            sessionStorage.getItem("isKeyEntered") ? (
+                        (
                             <Link
                             to="/basic-questions"
                             onClick={() => setPage("Basic-Questions")}
                             >
                             <Button className="Button">Collect Evidence</Button>
                             </Link>
-                        ) :
-                        localStorage.getItem("quizProgress") &&
-                            !sessionStorage.getItem("isKeyEntered") ? (
-                            <div>
-                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>
-                                Collect Evidence (Last Save)
-                            </Button>
-                            <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
-                            </div>
-                        ) :
-                        localStorage.getItem("quizProgress") &&
-                            sessionStorage.getItem("isKeyEntered") ? (
-                            <Link
-                            to="/basic-questions"
-                            onClick={() => setPage("Basic-Questions")}
-                            >
-                            <Button className="Button">Collect Evidence (Last Save)</Button>
-                            </Link>
-                        ) : null}
+                        )}
                         </nav>
                     </nav>
                     </Col>
@@ -83,34 +63,107 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                     className="Bordered"
                     style={{ display: "flex", flexDirection: "column" }}
                     >
-                    {basicComplete ? <div><h6 style={{marginTop: 'auto', fontSize: '20px', color: '#D7DCF4', textShadow: '15px 15px 18px black', textAlign: 'center'}}>
+                    {loggedUser ?
+                        loggedUser.basicComplete ?
+                        <div><h6 style={{marginTop: 'auto', fontSize: '20px', color: '#D7DCF4', textShadow: '15px 15px 18px black', textAlign: 'center'}}>
                             Great work, detective, we're getting closer. We've just gathered our leading witnesses,
                             now we need you to go in there and question them in order to find out what they know. Report back ASAP.
                         </h6></div> : <div><h6 style={{marginTop: 'auto', fontSize: '20px', color: '#D7DCF4', textShadow: '15px 15px 18px black', textAlign: 'center', opacity: "30%"}}>
                             Great work, detective, we're getting closer. We've just gathered our leading witnesses,
                             now we need you to go in there and question them in order to find out what they know. Report back ASAP.
-                        </h6></div>}
+                        </h6></div>
+                    :
+                        basicComplete ? <div><h6 style={{marginTop: 'auto', fontSize: '20px', color: '#D7DCF4', textShadow: '15px 15px 18px black', textAlign: 'center'}}>
+                        Great work, detective, we're getting closer. We've just gathered our leading witnesses,
+                        now we need you to go in there and question them in order to find out what they know. Report back ASAP.
+                        </h6></div> : <div><h6 style={{marginTop: 'auto', fontSize: '20px', color: '#D7DCF4', textShadow: '15px 15px 18px black', textAlign: 'center', opacity: "30%"}}>
+                        Great work, detective, we're getting closer. We've just gathered our leading witnesses,
+                        now we need you to go in there and question them in order to find out what they know. Report back ASAP.
+                        </h6></div>
+                    }
                     <nav style={{ marginTop: "auto", textAlign: "center" }}>
-                        {!isKeyEntered ? (
+                    {!isKeyEntered ? (
                         <div>
-                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Question Witnesses</Button>
-                            <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
+                            <Button
+                                style={{
+                                    background: "#c47937",
+                                    border: "3px solid #bc6c25",
+                                    borderStyle: "solid",
+                                }}
+                                disabled={true}
+                            >
+                                Question Witnesses
+                            </Button>
+                            <h6
+                                style={{
+                                    color: "white",
+                                    textShadow: "15px 15px 18px black",
+                                }}
+                            >
+                                Please enter an API Key
+                            </h6>
                         </div>
-                        ) : (basicComplete ? (
+                    ) : loggedUser ? (
+                        loggedUser.basicComplete ? (
+                            <Link
+                                to="/detailed-questions"
+                                onClick={() => setPage("Detailed-Questions")}
+                            >
+                                <Button className="Button">Question Witnesses</Button>
+                            </Link>
+                        ) : (
+                            <div>
+                                <Button
+                                    style={{
+                                        background: "#c47937",
+                                        border: "3px solid #bc6c25",
+                                        borderStyle: "solid",
+                                    }}
+                                    disabled={true}
+                                >
+                                    Question Witnesses
+                                </Button>
+                                <h6
+                                    style={{
+                                        color: "white",
+                                        textShadow: "15px 15px 18px black",
+                                    }}
+                                >
+                                    Go Collect Some Evidence, Detective!
+                                </h6>
+                            </div>
+                        )
+                    ) : basicComplete ? (
                         <Link
                             to="/detailed-questions"
                             onClick={() => setPage("Detailed-Questions")}
                         >
                             <Button className="Button">Question Witnesses</Button>
-                        </Link>) : (
-                            <div>
-                                <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Question Witnesses</Button>
-                                <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Go Collect Some Evidence, Detective!</h6>
-                            </div>
-                        )
-                        )}
-                    </nav>
-                    </Col>
+                        </Link>
+                    ) : (
+                        <div>
+                            <Button
+                                style={{
+                                    background: "#c47937",
+                                    border: "3px solid #bc6c25",
+                                    borderStyle: "solid",
+                                }}
+                                disabled={true}
+                            >
+                                Question Witnesses
+                            </Button>
+                            <h6
+                                style={{
+                                    color: "white",
+                                    textShadow: "15px 15px 18px black",
+                                }}
+                            >
+                                Go Collect Some Evidence, Detective!
+                            </h6>
+                        </div>
+                    )}
+                </nav>
+                </Col>
                 </Row>
                 </Container>
             </div>

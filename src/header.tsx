@@ -28,9 +28,21 @@ export function HeaderComponent({ basicComplete, setPage, page, db, setDb, logge
                     <Link to="/">
                         <Button className="Button" onClick={() => setPage("Home")}>Home</Button>
                     </Link>
-                    {basicComplete ? (<Link to="/detailed-questions">
+                    {loggedUser ? (
+                    loggedUser.basicComplete ? (
+                        <Link to="/detailed-questions">
+                            <Button className="Button" onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
+                        </Link>
+                    ) : (
+                        <Button className="Button" disabled={true}>Question Witnesses</Button>
+                    )
+                ) : basicComplete ? (
+                    <Link to="/detailed-questions">
                         <Button className="Button" onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
-                    </Link>) : <Button className="Button" disabled={true}>Question Witnesses</Button>}
+                    </Link>
+                ) : (
+                    <Button className="Button" disabled={true}>Question Witnesses</Button>
+                )}
                 </nav>
             </div>
         );
