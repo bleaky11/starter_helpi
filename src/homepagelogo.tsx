@@ -227,11 +227,6 @@ const updatePassword = (event: React.ChangeEvent<HTMLInputElement>) => { // Upda
 
   setNewPassword(encryptedPassword);
 
-  setUserInfo((prevState) => ({  // Update user info
-    ...prevState,
-    password: encryptedPassword,
-  }));
-
   const usernameToUpdate = findUser(userInfo.username, accounts)?.username;
 
   if (db && usernameToUpdate) {
