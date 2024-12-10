@@ -42,40 +42,20 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                     <nav style={{ marginTop: "auto", textAlign: "center" }}>
                         <nav>
                         {
-                        !localStorage.getItem("quizProgress") &&
                         !sessionStorage.getItem("isKeyEntered") ? (
                             <div>
                             <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Collect Evidence</Button>
                             <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
                             </div>
                         ) :
-                        !localStorage.getItem("quizProgress") &&
-                            sessionStorage.getItem("isKeyEntered") ? (
+                        (
                             <Link
                             to="/basic-questions"
                             onClick={() => setPage("Basic-Questions")}
                             >
                             <Button className="Button">Collect Evidence</Button>
                             </Link>
-                        ) :
-                        localStorage.getItem("quizProgress") &&
-                            !sessionStorage.getItem("isKeyEntered") ? (
-                            <div>
-                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>
-                                Collect Evidence (Last Save)
-                            </Button>
-                            <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
-                            </div>
-                        ) :
-                        localStorage.getItem("quizProgress") &&
-                            sessionStorage.getItem("isKeyEntered") ? (
-                            <Link
-                            to="/basic-questions"
-                            onClick={() => setPage("Basic-Questions")}
-                            >
-                            <Button className="Button">Collect Evidence (Last Save)</Button>
-                            </Link>
-                        ) : null}
+                        )}
                         </nav>
                     </nav>
                     </Col>
