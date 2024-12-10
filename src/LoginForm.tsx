@@ -98,7 +98,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     setFormTitle("Log in"); // go back to log in form to see change
     setUserInfo(prevState => ({
       ...prevState,
-      username: "",
+      username: "", 
       password: ""
     }));
     alert("Password Reset!");

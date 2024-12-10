@@ -116,7 +116,7 @@ export const HomePage = ({db, setDb, loggedUser, setLoggedUser}: Users & Databas
     });
   }, [decryptUsername]);
 
-  const loadAccounts = useCallback(
+  const loadAccounts = useCallback( // ChatGPT assisted with Promise logic
     async (database: IDBDatabase): Promise<Account[]> => { // returns a Promise to perform async db operations
       if (!database) throw new Error("Database not initialized");
   
@@ -516,8 +516,8 @@ const deleteAccount = async (username: string) => {
     }, 50); 
   };  
 
-  const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target; // destructured HTML element
+  const updateStatus = (event: React.ChangeEvent<HTMLInputElement>) => { // ChatGPT assisted with function logic
+    const { name, value, type, checked } = event.target; 
     setUserInfo((prevInfo) => ({
       ...prevInfo,
       [name]: type === "checkbox" ? checked : value, // takes name as generic key... updates field based on type
