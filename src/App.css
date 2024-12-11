@@ -1,7 +1,7 @@
 @import 'normalize.css';
 
 .App {
-  cursor: url(/Images/magnify-cursor.png), auto;
+  cursor: url('/magnify-cursor.png'), auto;
 }
 
 .App-logo {
