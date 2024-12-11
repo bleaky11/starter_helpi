@@ -197,6 +197,18 @@ export function BasicCareerComponent({ db, setDb, basicComplete, toggleBasic , s
       }
     });
   };
+
+  function BasicApproach(): JSX.Element {
+    return (basicComplete ?
+      (
+        <Link to="/results-page" onClick={() => setPage("Results-Page")}>
+       <Button className="flashy-button" onClick={() => setPage("Results-Page")} style = {{height: "60px", width: "210px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Approach Police Chief</Button>
+     </Link>
+     ) : (
+     <Button className="flashy-button" disabled={true} style = {{height: "60px", width: "210px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto", cursor: "not-allowed"}}>Approach Police Chief</Button>
+     )
+    )
+  }
   
   const handleUpdateValues = () => { // Helper function to populate array with user's answers
     const selectedAnswers = getSelectedAnswer(questions);
@@ -256,7 +268,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
 
   function RandomizeAnswers(){ //Clear button
     return(<div>
-      <Button onClick={handleRandomizeAnswers} style = {{height: "75px", width: "110px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Randomize Answers</Button>
+      <Button onClick={handleRandomizeAnswers} style = {{height: "60px", width: "200px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Randomize Answers</Button>
     </div>)
   }
 
@@ -342,9 +354,9 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
         <div style = {{marginTop: "80px"}}>
         {!loggedUser ? ( // User is not logged in
           basicComplete ? ( // Guest condition: basic quiz complete
-            <div style={{ display: "flex", justifyContent: "center", marginRight: "30px", marginBottom: "75px" }}>
-              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-                <Button className="flashy-button">Approach Police Chief</Button>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "75px" }}>
+              <Link to="/detailed-questions" onClick={() => setPage("Detailed-Questions")}>
+                <Button style = {{height: "50px", width: "200px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Question Witnesses</Button>
               </Link>
             </div>
           ) : (
@@ -352,20 +364,23 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
           )
         ) : ( // User is logged in
           loggedUser.basicComplete ? ( // Logged-in condition: basic quiz complete
-            <div style={{display: "flex", justifyContent: "center", marginRight: "30px", marginBottom: "75px"}}>
-              <Link to="/results-page" onClick={() => setPage("Results-Page")}>
-                <Button className="flashy-button">Approach Police Chief</Button>
+            <div style={{display: "flex", justifyContent: "center", marginBottom: "75px"}}>
+              <Link to="/detailed-questions" onClick={() => setPage("Detailed-Questions")}>
+                <Button style = {{height: "50px", width: "200px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Question Witnesses</Button>
               </Link>
             </div>
           ) : null
         )}
       </div>
-        <div style={{ display: "flex", justifyContent: "center", position: "relative", pointerEvents: "none", bottom: "60px", right: "40px", left: "40px", zIndex: 0}}>
+        <div style={{ display: "flex", justifyContent: "center", position: "relative", bottom: "60px", zIndex: 0}}>
           <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
           <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic} />
           <BasicClear />
-          <div style = {{position: "relative", pointerEvents: "auto", bottom: "20px", right: "825px"}}><RandomizeAnswers/></div>      
-        </div>  
+        </div>
+        <div style={{ display: "flex", justifyContent: "left", position: "relative", bottom: "40px", marginLeft: "60px"}}>
+          <RandomizeAnswers/>
+          <BasicApproach/>
+        </div>
       </div>
       <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'fixed', zIndex: -1}} />
     </header>
