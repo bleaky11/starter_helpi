@@ -5,7 +5,6 @@ import theme1 from "./Images/themeHomeDrawerOpen1.svg"
 import theme2 from "./Images/themeHomeDrawerOpen2.svg"
 import theme3 from "./Images/themeHomeDrawerOpen3.svg"
 import theme4 from "./Images/themeHomeDrawerOpen4.svg"
-import { Images } from 'openai/resources';
 
 interface HomeBackgroundProps {
     basicComplete: boolean;
@@ -18,13 +17,9 @@ export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundPro
     const [isHovered, setIsHovered] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [backgroundImageIndex, setImageIndex] = useState(0);
-    const backgrounds = [
-        theme,
-        theme1,
-        theme2,
-        theme3,
-        theme4
-    ]
+    const backgrounds = [theme, theme1, theme2, theme3, theme4]
+    const [drawerOpened, setDrawerOpened] = useState(false);
+    const [myCursor, setMyCursor] = useState<string>('Pointer');
 
     // SVG dimensions
     const svgDimensions = { width: "100%", height: "100%" };
@@ -39,11 +34,17 @@ export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundPro
     }
 
     const openDrawer = () => {
+        if(!drawerOpened){
+            setDrawerOpened(true)
+        } else{
+            return;
+        }
         if(isAnimating){
             return;
         }
         else{
             setIsAnimating(true);
+            setMyCursor("auto");
             let currentIndex = 0;
             const interval = setInterval(() => {
                 if(currentIndex < backgrounds.length - 1){
@@ -71,14 +72,13 @@ export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundPro
             className="home-background"
             style={{position: 'absolute', zIndex: 0}}
         >
-            {/* Image fill the SVG container */}
             <image 
                 href={backgrounds[backgroundImageIndex]} 
                 x="0" 
                 y="0" 
                 width="100%" 
                 height="100%" 
-                preserveAspectRatio="xMidYMid slice"  // Ensures the image fills the SVG
+                preserveAspectRatio="xMidYMid slice"
             />
             
             {basicComplete ? <ellipse
@@ -123,14 +123,13 @@ export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundPro
         />}
 
         <rect 
-            width={180}
-            height={58}
-            x={136}
-            y={590}
-            stroke='red'
-            fill='transparent'
-            style={{ cursor: 'pointer' }}
+            width={278}
+            height={138}
+            x={86}
+            y={550}
+            style={{ cursor: (myCursor) }}
             onClick={openDrawer}
+            
         />
             
         </svg>
