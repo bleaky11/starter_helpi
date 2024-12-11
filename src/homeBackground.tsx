@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import theme from "./Images/themeHome.svg";
+import theme1 from "./Images/themeHomeDrawerOpen1.svg"
+import theme2 from "./Images/themeHomeDrawerOpen2.svg"
+import theme3 from "./Images/themeHomeDrawerOpen3.svg"
+import theme4 from "./Images/themeHomeDrawerOpen4.svg"
+import { Images } from 'openai/resources';
 
 interface HomeBackgroundProps {
     basicComplete: boolean;
@@ -11,6 +16,15 @@ interface HomeBackgroundProps {
 export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundProps): JSX.Element {
     const navigate = useNavigate();
     const [isHovered, setIsHovered] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [backgroundImageIndex, setImageIndex] = useState(0);
+    const backgrounds = [
+        theme,
+        theme1,
+        theme2,
+        theme3,
+        theme4
+    ]
 
     // SVG dimensions
     const svgDimensions = { width: "100%", height: "100%" };
@@ -22,6 +36,25 @@ export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundPro
     const handleNavResults = () => {
         navigate("/results-page");
         setPage("Results-Page")
+    }
+
+    const openDrawer = () => {
+        if(isAnimating){
+            return;
+        }
+        else{
+            setIsAnimating(true);
+            let currentIndex = 0;
+            const interval = setInterval(() => {
+                if(currentIndex < backgrounds.length - 1){
+                    currentIndex++;
+                    setImageIndex(currentIndex);
+                } else {
+                    clearInterval(interval);
+                    setIsAnimating(false);
+                }
+            }, 500);
+        }
     }
 
 
@@ -40,7 +73,7 @@ export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundPro
         >
             {/* Image fill the SVG container */}
             <image 
-                href={theme} 
+                href={backgrounds[backgroundImageIndex]} 
                 x="0" 
                 y="0" 
                 width="100%" 
@@ -88,6 +121,17 @@ export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundPro
             fill="transparent"
             style={{ cursor: 'pointer' }}
         />}
+
+        <rect 
+            width={180}
+            height={58}
+            x={136}
+            y={590}
+            stroke='red'
+            fill='transparent'
+            style={{ cursor: 'pointer' }}
+            onClick={openDrawer}
+        />
             
         </svg>
         </div>
