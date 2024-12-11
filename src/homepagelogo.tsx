@@ -566,7 +566,7 @@ const deleteAccount = async (username: string) => {
         </Button>
       </>
       ) : (
-        <div>
+        <div style={{width:"10%"}}>
           <img
             src={userProfile}
             alt="User Profile"
@@ -619,5 +619,6 @@ const deleteAccount = async (username: string) => {
         The Career Codebreaker
       </a>
     </div>
+    <div style={{width:"10%"}}/>
   </div>
 )}  
