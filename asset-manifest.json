@@ -1,11 +1,15 @@
 {
   "files": {
     "main.css": "/starter_helpi/static/css/main.bf8f52fa.css",
-    "main.js": "/starter_helpi/static/js/main.39c394f2.js",
+    "main.js": "/starter_helpi/static/js/main.bc37aaab.js",
     "static/js/453.dda23872.chunk.js": "/starter_helpi/static/js/453.dda23872.chunk.js",
     "static/media/detective-walking-unscreen.gif": "/starter_helpi/static/media/detective-walking-unscreen.704a485db434b0ba83a7.gif",
     "static/media/resultsPage.png": "/starter_helpi/static/media/resultsPage.b2610de5f6a2aa3a379f.png",
     "static/media/themeHome.svg": "/starter_helpi/static/media/themeHome.de19c8cb9c5f89437f8af4e04d5a657d.svg",
+    "static/media/themeHomeDrawerOpen2.svg": "/starter_helpi/static/media/themeHomeDrawerOpen2.21dfa4cf81957dfa9d6be4640a550c82.svg",
+    "static/media/themeHomeDrawerOpen3.svg": "/starter_helpi/static/media/themeHomeDrawerOpen3.5e4402c066fb805f5ebffbbfe05056b5.svg",
+    "static/media/themeHomeDrawerOpen4.svg": "/starter_helpi/static/media/themeHomeDrawerOpen4.8edeb19c389ececef90b830a7b12ff74.svg",
+    "static/media/themeHomeDrawerOpen1.svg": "/starter_helpi/static/media/themeHomeDrawerOpen1.1fda2eb659449b416f8ffef83fdf89bd.svg",
     "static/media/quizInterface.png": "/starter_helpi/static/media/quizInterface.d5102c696655ef9fd35f.png",
     "static/media/detective-profile2.png": "/starter_helpi/static/media/detective-profile2.ded962bfbffdc9509dfe.png",
     "static/media/Questions.png": "/starter_helpi/static/media/Questions.baf323050048168249fe.png",
@@ -14,11 +18,11 @@
     "static/media/Detective2.png": "/starter_helpi/static/media/Detective2.e82d437746508369f2f7.png",
     "index.html": "/starter_helpi/index.html",
     "main.bf8f52fa.css.map": "/starter_helpi/static/css/main.bf8f52fa.css.map",
-    "main.39c394f2.js.map": "/starter_helpi/static/js/main.39c394f2.js.map",
+    "main.bc37aaab.js.map": "/starter_helpi/static/js/main.bc37aaab.js.map",
     "453.dda23872.chunk.js.map": "/starter_helpi/static/js/453.dda23872.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.bf8f52fa.css",
-    "static/js/main.39c394f2.js"
+    "static/js/main.bc37aaab.js"
   ]
 }
