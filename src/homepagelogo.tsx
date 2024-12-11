@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import userProfile from './Images/user-profile.png';
-import detective from './Images/detective-profile.png';
+import detective from './Images/detective-profile2.png';
 import { initializeDatabase } from './db';
 import { Database } from './db';
 import { LoginForm } from './LoginForm';
@@ -548,19 +548,19 @@ const deleteAccount = async (username: string) => {
         <img
           src={detective}
           alt="detective profile"
-          style={{ width: "70px", height: "70px", cursor: "pointer" }}
+          style={{ width: "60px", height: "70px", cursor: "pointer" }}
           onClick={() => showForm("Create Account")}
           title={userInfo.username}
         />
         <Button
-          style={{ borderRadius: "20px", backgroundColor: "salmon" }}
+          style={{position: "relative", borderRadius: "20px", height: "45px", backgroundColor: "salmon"}}
           onClick={() => [handleLogout(userInfo.username), alert("Logged out successfully!")]}
         >
           Log out
         </Button>
         <Button
           onClick={() => deleteAccount(userInfo.username)}
-          style={{ borderRadius: "20px", backgroundColor: "darkred" }}
+          style={{position: "relative", borderRadius: "20px", height: "45px", backgroundColor: "darkred"}}
         >
           Delete Account
         </Button>
@@ -570,12 +570,12 @@ const deleteAccount = async (username: string) => {
           <img
             src={userProfile}
             alt="User Profile"
-            style={{ width: '50px', height: '55px', cursor: 'pointer' }}
+            style={{ width: '60px', height: '70px', cursor: 'pointer' }}
             onClick={() => showForm("Create Account")}
             title="Guest" // default visitor status
           />
           <Button
-            style={{ borderRadius: "20px", height: "100%", backgroundColor: "darkblue" }}
+            style={{position: "relative", borderRadius: "20px", height: "45px", backgroundColor: "darkblue"}}
             onClick={() => showForm("Log in")}
           >
             Log in
@@ -611,11 +611,11 @@ const deleteAccount = async (username: string) => {
         updateCalledUser={updateCalledUser}
       />
     )}
-    <div style={{flexGrow:'1', textAlign:'center', position:'relative', zIndex: 1, marginTop: '15px'}}>
+    <div style={{flexGrow:'1', left: 100, right: 100, position:'absolute', pointerEvents: "none", zIndex: 1}}> {/* pointerEvents prevents div overlap with buttons*/}
       <a
         href="https://bleaky11.github.io/starter_helpi/"
-        style={{ color: 'black', fontSize: '45px', textDecoration: 'none', fontFamily:"fantasy" }}
-      >
+        style={{ color: 'black', fontSize: '45px', textDecoration: 'none', pointerEvents: "auto", fontFamily:"fantasy" }}
+      >  {/* pointerEvents: auto, allows the link to still be clickable*/}
         The Career Codebreaker
       </a>
     </div>
