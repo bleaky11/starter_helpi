@@ -42,7 +42,6 @@ function App() {
   }
 
   return (
-    <div className= 'App'>
     <Router>
       <MainContent
         answerVals={answerVals}
@@ -81,7 +80,6 @@ function App() {
         </Form></div>
       )}
     </Router>
-    </div>
   );
 }
 
