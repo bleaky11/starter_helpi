@@ -20,6 +20,7 @@
   border: none;       /* Optional: remove the border */
   padding: 10px 20px; /* Optional: adjust padding for better look */
   color: #bc6c25;
+  margin: 3px;
 }
 
 .container {
