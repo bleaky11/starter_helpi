@@ -115,7 +115,6 @@ describe("NotifBell", () => {
 
   test("should not show notification bar when notifBar is false", () => {
     render(<NotifBell basicComplete={true} detailedComplete={false} db={new IDBDatabase()} setDb={jest.fn()} loggedUser={loggedUser} />);
-    const bellIcon = screen.getByAltText("Bell here");
     expect(screen.queryByText("Basic Questions are complete! Check out the results page!")).not.toBe(true);
   });
 
