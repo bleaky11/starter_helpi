@@ -103,14 +103,14 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers }: { apiKey
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', maxWidth: "67vh" }}>
-      <Button onClick={handleSendMessage} disabled={isLoading} className="flashy-button">
+      <Button onClick={handleSendMessage} style = {{cursor: isLoading ? "not-allowed": "pointer", pointerEvents: "auto"}} disabled={isLoading} className="flashy-button">
         {isLoading ? "Chief is Reading" : "Present Your Case"}
       </Button>
       
       <div>
         <h4>Your suspect may have one of these occupations:</h4>
         {keyState === "Valid" ?
-        <div style={{fontSize: '15px'}}
+        <div style={{fontSize: '15px', pointerEvents: "none"}}
           dangerouslySetInnerHTML={{
             __html: message,
           }}

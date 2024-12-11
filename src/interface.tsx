@@ -43,8 +43,8 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                         <nav>
                         {
                         !sessionStorage.getItem("isKeyEntered") ? (
-                            <div>
-                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={true}>Collect Evidence</Button>
+                            <div style={{pointerEvents: "none"}}>
+                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", cursor: "not-allowed"}} disabled={true}>Collect Evidence</Button>
                             <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
                             </div>
                         ) :
@@ -83,12 +83,14 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                     }
                     <nav style={{ marginTop: "auto", textAlign: "center" }}>
                     {!isKeyEntered ? (
-                        <div>
+                        <div style = {{pointerEvents: "none"}}>
                             <Button
                                 style={{
                                     background: "#c47937",
                                     border: "3px solid #bc6c25",
                                     borderStyle: "solid",
+                                    pointerEvents: "auto",
+                                    cursor: "not-allowed"
                                 }}
                                 disabled={true}
                             >
@@ -118,6 +120,8 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                                         background: "#c47937",
                                         border: "3px solid #bc6c25",
                                         borderStyle: "solid",
+                                        pointerEvents: "auto",
+                                        cursor: "not-allowed"
                                     }}
                                     disabled={true}
                                 >
@@ -127,6 +131,7 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                                     style={{
                                         color: "white",
                                         textShadow: "15px 15px 18px black",
+                                        pointerEvents: "none"
                                     }}
                                 >
                                     Go Collect Some Evidence, Detective!
@@ -141,12 +146,14 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                             <Button className="Button">Question Witnesses</Button>
                         </Link>
                     ) : (
-                        <div>
+                        <div style = {{pointerEvents: "none"}}>
                             <Button
                                 style={{
                                     background: "#c47937",
                                     border: "3px solid #bc6c25",
                                     borderStyle: "solid",
+                                    pointerEvents: "auto",
+                                    cursor: "not-allowed"
                                 }}
                                 disabled={true}
                             >

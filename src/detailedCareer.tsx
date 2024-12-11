@@ -147,7 +147,7 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setP
       const updateRequest = store.put(userToUpdate);
       updateRequest.onsuccess = () =>
       {
-        setLoggedUser(userToUpdate);
+        setLoggedUser(userToUpdate); // invoke useEffect in other file to update db
       }
     }
     else
@@ -159,7 +159,7 @@ export function DetailedCareerComponent({ detailedComplete, toggleDetailed, setP
 
 function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.Element { //Submit button - disabled if progress is less than 100
   return(<div>
-    <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => handleSubmit({detailedComplete, toggleDetailed, setPage})}>Submit</Button>
+    <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto", cursor: progress < 100 ? "not-allowed": "pointer"}} disabled={progress < 100} onClick={() => handleSubmit({detailedComplete, toggleDetailed, setPage})}>Submit</Button>
   </div>)
 }
 
@@ -178,7 +178,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
 
   function DetailedClear({detailedComplete, toggleDetailed, setPage}: submitButton) { //Clear button
     return(<div>
-      <Button onClick={() => handleClear({detailedComplete, toggleDetailed, setPage})} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
+      <Button onClick={() => handleClear({detailedComplete, toggleDetailed, setPage})} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Clear</Button>
     </div>)
   }
 
@@ -233,13 +233,13 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
           <IsRecorded savedAnswer={getSavedAnswer(questionPage)} currentText={tempAnswers[questionPage]} /></div>
         )}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px', padding: "0 37%" }}>
-        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px', padding: "0 37%", pointerEvents: "none" }}>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto", cursor: questionPage === 0 ? "not-allowed": "pointer"}} onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
         <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", width: "200px"}} onClick={() => updateAnswered()}>Record Answer</Button>
-        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto", cursor: questionPage === 6 ? "not-allowed": "pointer"}} onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
       </div>
     </div>
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "80px" }}>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "80px", pointerEvents: "none" }}>
         <DetailedSubmit setPage={setPage} detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>
         <DetailedClear setPage={setPage} detailedComplete={detailedComplete} toggleDetailed={toggleDetailed}/>
       </div>
