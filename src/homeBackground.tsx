@@ -129,9 +129,8 @@ export function HomeBackground({basicComplete, page, setPage}: HomeBackgroundPro
             y={550}
             style={{ cursor: (myCursor) }}
             onClick={openDrawer}
-            
+            fill='transparent'
         />
-            
         </svg>
         </div>
     );
