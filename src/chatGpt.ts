@@ -3,13 +3,15 @@ import axios from "axios";
 
 const API_URL = 'https://api.openai.com/v1/chat/completions';
 
-export const getChatGptResponse = async (message: string, apiKey: string) => {
+export const getChatGptResponse = async (message: string, apiKey: string, conversationHistory: string[]) => {
   try {
+    const messages = [...conversationHistory, { role: 'user', content: message }];
+
     const response = await axios.post(
       API_URL,
       {
         model: 'gpt-4o', // or 'gpt-4o' depending on your access
-        messages: [{ role: 'user', content: message }],
+        messages: messages,
         max_tokens: 350
       },
       {
