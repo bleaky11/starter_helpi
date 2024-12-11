@@ -6,29 +6,29 @@ FAIL src/functionTests.test.tsx
   resultTests
     ✕ renders 'collect evidence' message when basicComplete is false (1 ms)
     ✕ renders 'question witnesses' message when basicComplete is false (1 ms)
-    ✕ should render the background image (1 ms)
+    ✕ should render the background image
     ✕ should correctly parse and display sessionStorage answers (1 ms)
-    ✕ should render the GptResponse component with correct props
+    ✕ should render the GptResponse component with correct props (1 ms)
   NotifBell
     ✕ should show the bell icon initially
-    ✕ should toggle the notification bar when bell icon is clicked (1 ms)
-    ✕ should show the correct notification message when basicComplete is true (1 ms)
-    ✕ should show the correct notification message when detailedComplete is true
-    ✕ should show 'No questions finished yet' when neither basicComplete nor detailedComplete are true
+    ✕ should toggle the notification bar when bell icon is clicked
+    ✕ should show the correct notification message when basicComplete is true
+    ✕ should show the correct notification message when detailedComplete is true (1 ms)
+    ✕ should show 'No questions finished yet' when neither basicComplete nor detailedComplete are true (1 ms)
     ✕ should update notification icon when notification is true
     ✕ should not show notification bar when notifBar is false
     ✕ should store basicCount in sessionStorage when bell is clicked and notification is active
-    ✕ should store detailedCount in sessionStorage when detailed questions are complete (1 ms)
+    ✕ should store detailedCount in sessionStorage when detailed questions are complete
   QuizInterface
     ✕ should render the QuizInterface component
     ✕ should disable 'Collect Evidence' button if no API Key entered
     ✕ should enable 'Collect Evidence' button if API Key entered
     ✕ should show 'Go Collect Some Evidence' message when loggedUser is null and basicComplete is false
-    ✕ should show 'Great work, detective...' when basicComplete is true (1 ms)
+    ✕ should show 'Great work, detective...' when basicComplete is true
     ✕ should show 'Question Witnesses' button when loggedUser is logged in and basicComplete is true
-    ✕ should disable 'Question Witnesses' button when basicComplete is false (1 ms)
+    ✕ should disable 'Question Witnesses' button when basicComplete is false
     ✕ should navigate to basic-questions page when 'Collect Evidence' is clicked
-    ✕ should navigate to detailed-questions page when 'Question Witnesses' is clicked
+    ✕ should navigate to detailed-questions page when 'Question Witnesses' is clicked (1 ms)
   HomeBackground
     ✕ should render the background and default text
     ✕ should render 'Show me your findings' when basicComplete is true (1 ms)
@@ -564,5 +564,5 @@ All files           |       0 |        0 |       0 |       0 |
 Test Suites: 1 failed, 1 total
 Tests:       28 failed, 28 total
 Snapshots:   0 total
-Time:        4.056 s
+Time:        4.23 s
 Ran all test suites.
