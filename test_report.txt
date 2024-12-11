@@ -8,9 +8,9 @@ FAIL src/functionTests.test.tsx
     ✕ renders 'question witnesses' message when basicComplete is false (1 ms)
     ✕ should render the background image (1 ms)
     ✕ should correctly parse and display sessionStorage answers
-    ✕ should render the GptResponse component with correct props (1 ms)
+    ✕ should render the GptResponse component with correct props
   NotifBell
-    ✕ should show the bell icon initially (1 ms)
+    ✕ should show the bell icon initially
     ✕ should toggle the notification bar when bell icon is clicked
     ✕ should show the correct notification message when basicComplete is true
     ✕ should show the correct notification message when detailedComplete is true (1 ms)
@@ -30,11 +30,11 @@ FAIL src/functionTests.test.tsx
     ✕ should navigate to basic-questions page when 'Collect Evidence' is clicked (1 ms)
     ✕ should navigate to detailed-questions page when 'Question Witnesses' is clicked
   HomeBackground
-    ✕ should render the background and default text
+    ✕ should render the background and default text (1 ms)
     ✕ should render 'Show me your findings' when basicComplete is true
-    ✕ should navigate to the quiz page when ellipse is clicked
+    ✕ should navigate to the quiz page when ellipse is clicked (1 ms)
     ✕ should navigate to the results page when rect is clicked
-    ✕ should change text when hovering over rect (1 ms)
+    ✕ should change text when hovering over rect
 
   ● resultTests › renders 'collect evidence' message when basicComplete is false
 
@@ -540,34 +540,29 @@ FAIL src/functionTests.test.tsx
       at _run10000 (node_modules/@jest/core/build/cli/index.js:320:7)
       at runCLI (node_modules/@jest/core/build/cli/index.js:173:3)
 
----------------------|---------|----------|---------|---------|-------------------
-File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
----------------------|---------|----------|---------|---------|-------------------
-All files            |       0 |        0 |       0 |       0 |                   
- src                 |       0 |        0 |       0 |       0 |                   
-  App.tsx            |       0 |        0 |       0 |       0 | 14-114            
-  LoginForm.tsx      |       0 |        0 |       0 |       0 | 33-247            
-  basicCareer.tsx    |       0 |        0 |       0 |       0 | 48-356            
-  chatGpt.ts         |       0 |        0 |       0 |       0 | 4-36              
-  db.tsx             |       0 |        0 |       0 |       0 | 7-21              
-  detailedCareer.tsx |       0 |        0 |       0 |       0 | 32-257            
-  gptResponse.tsx    |       0 |        0 |       0 |       0 | 19-144            
-  header.tsx         |       0 |        0 |       0 |       0 | 24-91             
-  home.tsx           |       0 |      100 |       0 |       0 | 25                
-  homeBackground.tsx |       0 |        0 |       0 |       0 | 12-87             
-  homepagelogo.tsx   |       0 |        0 |       0 |       0 | 32-579            
-  index.tsx          |       0 |      100 |     100 |       0 | 7-19              
-  interface.tsx      |       0 |        0 |       0 |       0 | 19-139            
-  notification.tsx   |       0 |        0 |       0 |       0 | 23-83             
-  reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10              
-  resultPage.tsx     |       0 |        0 |       0 |       0 | 18-27             
- src/CSS             |       0 |      100 |     100 |       0 |                   
-  Border.tsx         |       0 |      100 |     100 |       0 | 3                 
-  Center.tsx         |       0 |      100 |     100 |       0 | 3                 
-  Heading.tsx        |       0 |      100 |     100 |       0 | 3                 
----------------------|---------|----------|---------|---------|-------------------
+--------------------|---------|----------|---------|---------|-------------------
+File                | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+--------------------|---------|----------|---------|---------|-------------------
+All files           |       0 |        0 |       0 |       0 |                   
+ App.tsx            |       0 |        0 |       0 |       0 | 14-114            
+ LoginForm.tsx      |       0 |        0 |       0 |       0 | 33-247            
+ basicCareer.tsx    |       0 |        0 |       0 |       0 | 48-356            
+ chatGpt.ts         |       0 |        0 |       0 |       0 | 4-36              
+ db.tsx             |       0 |        0 |       0 |       0 | 7-21              
+ detailedCareer.tsx |       0 |        0 |       0 |       0 | 32-257            
+ gptResponse.tsx    |       0 |        0 |       0 |       0 | 19-144            
+ header.tsx         |       0 |        0 |       0 |       0 | 24-91             
+ home.tsx           |       0 |      100 |       0 |       0 | 25                
+ homeBackground.tsx |       0 |        0 |       0 |       0 | 12-87             
+ homepagelogo.tsx   |       0 |        0 |       0 |       0 | 32-579            
+ index.tsx          |       0 |      100 |     100 |       0 | 7-19              
+ interface.tsx      |       0 |        0 |       0 |       0 | 19-144            
+ notification.tsx   |       0 |        0 |       0 |       0 | 23-83             
+ reportWebVitals.ts |       0 |        0 |       0 |       0 | 3-10              
+ resultPage.tsx     |       0 |        0 |       0 |       0 | 18-27             
+--------------------|---------|----------|---------|---------|-------------------
 Test Suites: 1 failed, 1 total
 Tests:       28 failed, 28 total
 Snapshots:   0 total
-Time:        4.053 s
+Time:        4.031 s
 Ran all test suites.
