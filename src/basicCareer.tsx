@@ -244,13 +244,13 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
   {
     return(<div>
       <Button onClick={() => {handleBasicSave(); alert("Quiz saved!")}}
- style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Save</Button>
+ style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Save</Button>
     </div>)
   }
 
   function BasicClear(){ //Clear button
     return(<div>
-      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
+      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Clear</Button>
     </div>)
   }
 

@@ -39,13 +39,13 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                         Are you ready, Detective?
                         </h6>
                     </div>
-                    <nav style={{ marginTop: "auto", textAlign: "center" }}>
+                    <nav style={{ marginTop: "auto", textAlign: "center"}}>
                         <nav>
                         {
                         !sessionStorage.getItem("isKeyEntered") ? (
-                            <div style={{pointerEvents: "none"}}>
-                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", cursor: "not-allowed"}} disabled={true}>Collect Evidence</Button>
-                            <h6 style={{color: "white", textShadow: '15px 15px 18px black' }}>Please enter an API Key</h6>
+                            <div style = {{pointerEvents: "none"}}>
+                            <Button style={{background: "#c47937", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto", cursor: "not-allowed"}} disabled={true}>Collect Evidence</Button>
+                            <h6 style={{color: "white", textShadow: '15px 15px 18px black'}}>Please enter an API Key</h6>
                             </div>
                         ) :
                         (
@@ -53,7 +53,7 @@ export function QuizInterface({loggedUser, db, setDb, basicComplete, detailedCom
                             to="/basic-questions"
                             onClick={() => setPage("Basic-Questions")}
                             >
-                            <Button className="Button">Collect Evidence</Button>
+                            <Button style = {{pointerEvents: "auto"}} className="Button">Collect Evidence</Button>
                             </Link>
                         )}
                         </nav>

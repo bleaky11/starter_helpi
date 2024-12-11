@@ -235,7 +235,7 @@ function DetailedSubmit({detailedComplete, toggleDetailed}: submitButton): JSX.E
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '20px', padding: "0 37%", pointerEvents: "none" }}>
         <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto", cursor: questionPage === 0 ? "not-allowed": "pointer"}} onClick={() => setQuestionPage(prev => Math.max(0, prev - 1))} disabled={questionPage === 0}>Previous</Button>
-        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", width: "200px"}} onClick={() => updateAnswered()}>Record Answer</Button>
+        <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", width: "200px", pointerEvents: "auto"}} onClick={() => updateAnswered()}>Record Answer</Button>
         <Button style={{background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto", cursor: questionPage === 6 ? "not-allowed": "pointer"}} onClick={() => setQuestionPage(prev => Math.min(questions.length - 1, prev + 1))} disabled={questionPage === 6}>Next</Button>
       </div>
     </div>

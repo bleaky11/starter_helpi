@@ -26,19 +26,19 @@ export function HeaderComponent({ basicComplete, setPage, page, db, setDb, logge
             <div style = {{pointerEvents: "none"}} className='Header-footer'>
                 <nav className="Centered">
                     <Link to="/">
-                        <Button className="Button" onClick={() => setPage("Home")}>Home</Button>
+                        <Button className="Button" style = {{pointerEvents: "auto"}} onClick={() => setPage("Home")}>Home</Button>
                     </Link>
                     {loggedUser ? (
                     loggedUser.basicComplete ? (
                         <Link to="/detailed-questions">
-                            <Button className="Button" onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
+                            <Button className="Button" style = {{pointerEvents: "auto"}} onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
                         </Link>
                     ) : (
                         <Button className="Button" style = {{cursor: "not-allowed", pointerEvents: "auto"}} disabled={true}>Question Witnesses</Button>
                     )
                 ) : basicComplete ? (
                     <Link to="/detailed-questions">
-                        <Button className="Button" onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
+                        <Button className="Button" style = {{pointerEvents: "auto"}} onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
                     </Link>
                 ) : (
                     <Button className="Button" style = {{cursor: "not-allowed", pointerEvents: "auto"}} disabled={true}>Question Witnesses</Button>
