@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import {HashRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Button, Form } from 'react-bootstrap';
@@ -42,6 +42,7 @@ function App() {
   }
 
   return (
+    <div className= 'App'>
     <Router>
       <MainContent
         answerVals={answerVals}
@@ -80,6 +81,7 @@ function App() {
         </Form></div>
       )}
     </Router>
+    </div>
   );
 }
 
