@@ -23,25 +23,25 @@ interface UserProps
 export function HeaderComponent({ basicComplete, setPage, page, db, setDb, loggedUser, setLoggedUser }: HeaderComponentProps & DatabaseProps & UserProps): JSX.Element | null { 
     if (page === "Basic-Questions") {
         return (
-            <div className='Header-footer'>
+            <div style = {{pointerEvents: "none"}} className='Header-footer'>
                 <nav className="Centered">
                     <Link to="/">
-                        <Button className="Button" onClick={() => setPage("Home")}>Home</Button>
+                        <Button className="Button" style = {{pointerEvents: "auto"}} onClick={() => setPage("Home")}>Home</Button>
                     </Link>
                     {loggedUser ? (
                     loggedUser.basicComplete ? (
                         <Link to="/detailed-questions">
-                            <Button className="Button" onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
+                            <Button className="Button" style = {{pointerEvents: "auto"}} onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
                         </Link>
                     ) : (
-                        <Button className="Button" disabled={true}>Question Witnesses</Button>
+                        <Button className="Button" style = {{cursor: "not-allowed", pointerEvents: "auto"}} disabled={true}>Question Witnesses</Button>
                     )
                 ) : basicComplete ? (
                     <Link to="/detailed-questions">
-                        <Button className="Button" onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
+                        <Button className="Button" style = {{pointerEvents: "auto"}} onClick={() => setPage("Detailed-Questions")}>Question Witnesses</Button>
                     </Link>
                 ) : (
-                    <Button className="Button" disabled={true}>Question Witnesses</Button>
+                    <Button className="Button" style = {{cursor: "not-allowed", pointerEvents: "auto"}} disabled={true}>Question Witnesses</Button>
                 )}
                 </nav>
             </div>

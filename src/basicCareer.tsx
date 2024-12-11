@@ -236,7 +236,7 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
 
   function BasicSubmit({basicComplete, toggleBasic}: SubmitButton): JSX.Element { //Submit button - Disabled if progress is less than 100%
     return(<div>
-      <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), alert("Thank you for completeting the basic quiz!")]}>Submit</Button>
+      <Button style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto", cursor: progress < 100 ? "not-allowed": "pointer"}} disabled={progress < 100} onClick={() => [handleSubmit({basicComplete, toggleBasic}), alert("Thank you for completeting the basic quiz!")]}>Submit</Button>
     </div>)
   }
 
@@ -244,13 +244,13 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
   {
     return(<div>
       <Button onClick={() => {handleBasicSave(); alert("Quiz saved!")}}
- style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Save</Button>
+ style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Save</Button>
     </div>)
   }
 
   function BasicClear(){ //Clear button
     return(<div>
-      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid"}}>Clear</Button>
+      <Button onClick={handleClear} style = {{height: "50px", width: "75px", borderRadius: "15px", background: "#DDA15E", border: "3px", borderColor: "#bc6c25", borderStyle: "solid", pointerEvents: "auto"}}>Clear</Button>
     </div>)
   }
 
@@ -360,11 +360,11 @@ useEffect(() => { //Populates and tags array of answers each time an answer is s
           ) : null
         )}
       </div>
-        <div style={{ display: "flex", justifyContent: "center", position: "relative", bottom: "60px", right: "40px", left: "40px", zIndex: 0}}>
+        <div style={{ display: "flex", justifyContent: "center", position: "relative", pointerEvents: "none", bottom: "60px", right: "40px", left: "40px", zIndex: 0}}>
           <BasicSave savedBasicCareer={savedBasicCareer} setBasicCareer={setBasicCareer} />
           <BasicSubmit basicComplete={basicComplete} toggleBasic={toggleBasic} />
           <BasicClear />
-          <div style = {{position: "relative", bottom: "20px", right: "825px"}}><RandomizeAnswers/></div>      
+          <div style = {{position: "relative", pointerEvents: "auto", bottom: "20px", right: "825px"}}><RandomizeAnswers/></div>      
         </div>  
       </div>
       <img className='home-background' src={quizInterface} alt='Quiz Interface' style={{position: 'fixed', zIndex: -1}} />
