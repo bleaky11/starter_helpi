@@ -139,9 +139,9 @@ export function GptResponse({ apiKey, taggedAnswers, detailedAnswers }: { apiKey
           <div style={{color:"red", fontSize:"large"}}>{message}</div>
         )}
       </div>
-      <div style={{display: "flex", gap: "10px"}}>
-        <Button onClick={() => handleSendFollowUp("Give me another one. Keep formatting rules consistent.")} disabled={isLoading || responseCount === 0} className="flashy-button">Try again</Button>
-        <Button onClick={() => handleSendFollowUp("Can you expand upon how to get started and why this appeals for the same exact career path? Keep formatting rules and name consistent.")} disabled={isLoading || responseCount === 0} className="flashy-button">Tell me more</Button>
+      <div style={{display: "flex", gap: "10px", pointerEvents: "none"}}>
+        <Button style = {{pointerEvents: "auto", cursor: (isLoading || responseCount === 0) ? "not-allowed": "pointer"}} onClick={() => handleSendFollowUp("Give me another one. Keep formatting rules consistent.")} disabled={isLoading || responseCount === 0} className="flashy-button">Try again</Button>
+        <Button style = {{pointerEvents: "auto", cursor: (isLoading || responseCount === 0) ? "not-allowed": "pointer"}} onClick={() => handleSendFollowUp("Can you expand upon how to get started and why this appeals for the same exact career path? Keep formatting rules and name consistent.")} disabled={isLoading || responseCount === 0} className="flashy-button">Tell me more</Button>
       </div>
     </div>
   );
